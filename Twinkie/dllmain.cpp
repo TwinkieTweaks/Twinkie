@@ -13,9 +13,8 @@
 typedef long(__stdcall* EndScene)(LPDIRECT3DDEVICE9);
 typedef LRESULT(CALLBACK* WNDPROC)(HWND, UINT, WPARAM, LPARAM);
 
-// using DxResetFn = HRESULT(APIENTRY)(LPDIRECT3DDEVICE9, D3DPRESENT_PARAMETERS*);
-
 typedef HRESULT(APIENTRY* ResetFn)(LPDIRECT3DDEVICE9, D3DPRESENT_PARAMETERS*);
+typedef HRESULT(__stdcall* PresentFn)(IDirect3DDevice9* This, const RECT* pSourceRect, const RECT* pDestRect, HWND hDestWindowOverride, const RGNDATA* pDirtyRegion);
 
 #ifdef _WIN64
 #define GWL_WNDPROC GWLP_WNDPROC
@@ -23,8 +22,8 @@ typedef HRESULT(APIENTRY* ResetFn)(LPDIRECT3DDEVICE9, D3DPRESENT_PARAMETERS*);
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-EndScene oEndScene = NULL;
 ResetFn oReset = NULL;
+PresentFn oPresent = NULL;
 WNDPROC oWndProc;
 static HWND window = NULL;
 
@@ -40,8 +39,10 @@ void InitImGui(LPDIRECT3DDEVICE9 pDevice)
 }
 
 bool init = false;
-long __stdcall hkEndScene(LPDIRECT3DDEVICE9 pDevice)
+long __stdcall hkPresent(IDirect3DDevice9* pDevice, const RECT* pSourceRect, const RECT* pDestRect, HWND hDestWindowOverride, const RGNDATA* pDirtyRegion)
 {
+	if (GetKeyState(VK_F3) & 1) Twinkie.DoRender = !Twinkie.DoRender;
+
 	if (!init)
 	{
 		InitImGui(pDevice);
@@ -52,13 +53,13 @@ long __stdcall hkEndScene(LPDIRECT3DDEVICE9 pDevice)
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
-	Twinkie.Render();
+	if (Twinkie.DoRender) Twinkie.Render();
 
 	ImGui::EndFrame();
 	ImGui::Render();
 	ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
 
-	return oEndScene(pDevice);
+	return oPresent(pDevice, pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion);
 }
 
 long __stdcall hkReset(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pParams)
@@ -104,9 +105,8 @@ DWORD WINAPI MainThread(LPVOID lpReserved)
 	{
 		if (kiero::init(kiero::RenderType::D3D9) == kiero::Status::Success)
 		{
-			kiero::bind(42, (void**)&oEndScene, hkEndScene);
+			kiero::bind(17, (void**)&oPresent, hkPresent);
 			kiero::bind(16, (void**)&oReset, hkReset);
-
 			do
 				window = GetProcessWindow();
 			while (window == NULL);

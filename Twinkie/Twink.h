@@ -15,6 +15,8 @@ public:
 
 	ProcHandler Handler;
 
+    bool DoRender = true;
+
     bool EnableTrails = true;
     TM::GmVec3 TrailsColor = { 1,1,0 };
     float TrailsSpeed = 0.01f;
