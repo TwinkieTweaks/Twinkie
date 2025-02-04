@@ -1,121 +1,134 @@
-// dllmain.cpp : Defines the entry point for the DLL application.
-#include "pch.h"
-
 #include <iostream>
 #include "Twink.h"
 
-TM::GmVec3 HsvToRgb(TM::GmVec3 input)
+#include <Windows.h>
+#include <d3d9.h>
+//#include <d3dx9.h>
+#include "kiero/kiero.h"
+#include "kiero/minhook/include/MinHook.h"
+//#include "imgui-dx9/imgui.h"
+//#include "imgui-dx9/imgui_impl_win32.h"
+//#include "imgui-dx9/imgui_impl_dx9.h"
+#define WINDOW_NAME "Dear ImGui DirectX9 Example"
+typedef long(__stdcall* EndScene)(LPDIRECT3DDEVICE9);
+typedef LRESULT(CALLBACK* WNDPROC)(HWND, UINT, WPARAM, LPARAM);
+
+// using DxResetFn = HRESULT(APIENTRY)(LPDIRECT3DDEVICE9, D3DPRESENT_PARAMETERS*);
+
+typedef HRESULT(APIENTRY* ResetFn)(LPDIRECT3DDEVICE9, D3DPRESENT_PARAMETERS*);
+
+#ifdef _WIN64
+#define GWL_WNDPROC GWLP_WNDPROC
+#endif
+
+extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+EndScene oEndScene = NULL;
+ResetFn oReset = NULL;
+WNDPROC oWndProc;
+static HWND window = NULL;
+
+Twink Twinkie;
+
+void InitImGui(LPDIRECT3DDEVICE9 pDevice)
 {
-    float hh, p, q, t, ff;
-    long i;
-    TM::GmVec3 output;
-
-    if (input.y <= 0.0f) {
-        output.x = input.z;
-        output.y = input.z;
-        output.z = input.z;
-        return output;
-    }
-
-    hh = input.x;
-    if (hh >= 360.0) hh = 0.0f;
-    hh /= 60.0f;
-    i = (long)hh;
-    ff = hh - i;
-    p = input.z * (1.0f - input.y);
-    q = input.z * (1.0f - (input.y * ff));
-    t = input.z * (1.0f - (input.y * (1.0f - ff)));
-
-    switch (i) {
-    case 0:
-        output.x = input.z;
-        output.y = t;
-        output.z = p;
-        break;
-    case 1:
-        output.x = q;
-        output.y = input.z;
-        output.z = p;
-        break;
-    case 2:
-        output.x = p;
-        output.y = input.z;
-        output.z = t;
-        break;
-    case 3:
-        output.x = p;
-        output.y = q;
-        output.z = input.z;
-        break;
-    case 4:
-        output.x = t;
-        output.y = p;
-        output.z = input.z;
-        break;
-    case 5:
-    default:
-        output.x = input.z;
-        output.y = p;
-        output.z = q;
-        break;
-    }
-    return output;
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags = ImGuiConfigFlags_NoMouseCursorChange;
+	ImGui_ImplWin32_Init(window);
+	ImGui_ImplDX9_Init(pDevice);
 }
 
-void Setup(const HMODULE Instance)
+bool init = false;
+long __stdcall hkEndScene(LPDIRECT3DDEVICE9 pDevice)
 {
-    Twink Twinkie;
+	if (!init)
+	{
+		InitImGui(pDevice);
+		init = true;
+	}
 
-    while (!Twinkie.GetTrackmania())
-    {
-        continue;
-    }
+	ImGui_ImplDX9_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
 
-    if (Twinkie.GetTrackmania())
-    {
-        while (!GetKeyState(VK_F3) & 1)
-        {
-            static float Hue = 0;
-            Hue += 0.0001f;
-            if (Hue > 360)
-            {
-                Hue = 0;
-            }
-            TM::GmVec3 TrailColor = HsvToRgb(TM::GmVec3{ Hue, 1, 1 });
-            Twinkie.SetTrailColorRace(TrailColor);
-        }
-    }
+	Twinkie.Render();
 
-    FreeLibraryAndExitThread(Instance, 0);
+	ImGui::EndFrame();
+	ImGui::Render();
+	ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
+
+	return oEndScene(pDevice);
 }
 
-BOOL APIENTRY DllMain( HMODULE hModule,
-                       DWORD  ul_reason_for_call,
-                       LPVOID lpReserved
-                     )
+long __stdcall hkReset(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pParams)
 {
-    switch (ul_reason_for_call)
-    {
-    case DLL_PROCESS_ATTACH:
-    {
-        DisableThreadLibraryCalls(hModule);
+	ImGui_ImplDX9_InvalidateDeviceObjects();
+	const HRESULT result = oReset(pDevice, pParams);
+	ImGui_ImplDX9_CreateDeviceObjects();
 
-        const auto Thread = CreateThread(
-            nullptr,
-            0,
-            reinterpret_cast<LPTHREAD_START_ROUTINE>(Setup),
-            hModule,
-            0,
-            nullptr
-        );
-
-        if (Thread) CloseHandle(Thread);
-    }
-    case DLL_THREAD_ATTACH:
-    case DLL_THREAD_DETACH:
-    case DLL_PROCESS_DETACH:
-        break;
-    }
-    return TRUE;
+	return result;
 }
 
+LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+
+	if (true && ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
+		return true;
+
+	return CallWindowProc(oWndProc, hWnd, uMsg, wParam, lParam);
+}
+
+BOOL CALLBACK EnumWindowsCallback(HWND handle, LPARAM lParam)
+{
+	DWORD wndProcId;
+	GetWindowThreadProcessId(handle, &wndProcId);
+
+	if (GetCurrentProcessId() != wndProcId)
+		return TRUE; // skip to next window
+
+	window = handle;
+	return FALSE; // window found abort search
+}
+
+HWND GetProcessWindow()
+{
+	window = NULL;
+	EnumWindows(EnumWindowsCallback, NULL);
+	return window;
+}
+
+DWORD WINAPI MainThread(LPVOID lpReserved)
+{
+	bool attached = false;
+	do
+	{
+		if (kiero::init(kiero::RenderType::D3D9) == kiero::Status::Success)
+		{
+			kiero::bind(42, (void**)&oEndScene, hkEndScene);
+			kiero::bind(16, (void**)&oReset, hkReset);
+
+			do
+				window = GetProcessWindow();
+			while (window == NULL);
+			oWndProc = (WNDPROC)SetWindowLongPtr(window, GWL_WNDPROC, (LONG_PTR)WndProc);
+			attached = true;
+		}
+	} while (!attached);
+
+	return TRUE;
+}
+
+BOOL WINAPI DllMain(HMODULE hMod, DWORD dwReason, LPVOID lpReserved)
+{
+	switch (dwReason)
+	{
+	case DLL_PROCESS_ATTACH:
+		DisableThreadLibraryCalls(hMod);
+		CreateThread(nullptr, 0, MainThread, hMod, 0, nullptr);
+		break;
+	case DLL_PROCESS_DETACH:
+		kiero::shutdown();
+		break;
+	}
+	return TRUE;
+}

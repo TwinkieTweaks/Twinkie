@@ -3,6 +3,10 @@
 #include "TrackMania.h"
 #include "ProcHandler.h"
 
+#include "imgui-dx9/imgui.h"
+#include "imgui-dx9/imgui_impl_win32.h"
+#include "imgui-dx9/imgui_impl_dx9.h"
+
 class Twink
 {
 public:
@@ -10,6 +14,10 @@ public:
 	uintptr_t O_DX9DEVICE = 0xD70C00;
 
 	ProcHandler Handler;
+
+    bool EnableTrails = true;
+    TM::GmVec3 TrailsColor = { 1,1,0 };
+    float TrailsSpeed = 0.01f;
 
 	Twink(){}
 
@@ -87,4 +95,91 @@ public:
             }
         }
 	}
+
+    TM::GmVec3 HsvToRgb(TM::GmVec3 input)
+    {
+        float hh, p, q, t, ff;
+        long i;
+        TM::GmVec3 output;
+
+        if (input.y <= 0.0f) {
+            output.x = input.z;
+            output.y = input.z;
+            output.z = input.z;
+            return output;
+        }
+
+        hh = input.x;
+        if (hh >= 360.0) hh = 0.0f;
+        hh /= 60.0f;
+        i = (long)hh;
+        ff = hh - i;
+        p = input.z * (1.0f - input.y);
+        q = input.z * (1.0f - (input.y * ff));
+        t = input.z * (1.0f - (input.y * (1.0f - ff)));
+
+        switch (i) {
+        case 0:
+            output.x = input.z;
+            output.y = t;
+            output.z = p;
+            break;
+        case 1:
+            output.x = q;
+            output.y = input.z;
+            output.z = p;
+            break;
+        case 2:
+            output.x = p;
+            output.y = input.z;
+            output.z = t;
+            break;
+        case 3:
+            output.x = p;
+            output.y = q;
+            output.z = input.z;
+            break;
+        case 4:
+            output.x = t;
+            output.y = p;
+            output.z = input.z;
+            break;
+        case 5:
+        default:
+            output.x = input.z;
+            output.y = p;
+            output.z = q;
+            break;
+        }
+        return output;
+    }
+
+    void Render()
+    {
+        using namespace ImGui;
+
+        Begin("TwinkieTweaks");
+
+        Checkbox("Trails", &EnableTrails);
+
+        End();
+
+        if (EnableTrails)
+        {
+            Begin("Trails Testing");
+            
+            static float Hue = 0;
+            Hue += TrailsSpeed;
+            if (Hue > 360)
+            {
+                Hue = 0;
+            }
+            TrailsColor = HsvToRgb(TM::GmVec3{ Hue, 1, 1 });
+            SetTrailColorRace(TrailsColor);
+
+            SliderFloat("Speed", &TrailsSpeed, 0.f, 1.f);
+            
+            End();
+        }
+    }
 };
