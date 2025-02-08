@@ -31,6 +31,7 @@ Twink Twinkie;
 void InitImGui(LPDIRECT3DDEVICE9 pDevice)
 {
 	ImGui::CreateContext();
+	Twinkie.SetupImGuiStyle();
 	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigFlags = ImGuiConfigFlags_NoMouseCursorChange;
 	ImGui_ImplWin32_Init(window);
