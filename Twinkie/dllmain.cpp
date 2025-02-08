@@ -14,7 +14,6 @@ typedef long(__stdcall* EndScene)(LPDIRECT3DDEVICE9);
 typedef LRESULT(CALLBACK* WNDPROC)(HWND, UINT, WPARAM, LPARAM);
 
 typedef HRESULT(APIENTRY* ResetFn)(LPDIRECT3DDEVICE9, D3DPRESENT_PARAMETERS*);
-typedef HRESULT(__stdcall* PresentFn)(IDirect3DDevice9* This, const RECT* pSourceRect, const RECT* pDestRect, HWND hDestWindowOverride, const RGNDATA* pDirtyRegion);
 
 #ifdef _WIN64
 #define GWL_WNDPROC GWLP_WNDPROC
@@ -23,7 +22,7 @@ typedef HRESULT(__stdcall* PresentFn)(IDirect3DDevice9* This, const RECT* pSourc
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 ResetFn oReset = NULL;
-PresentFn oPresent = NULL;
+EndScene oEndScene = NULL;
 WNDPROC oWndProc;
 static HWND window = NULL;
 
@@ -39,9 +38,9 @@ void InitImGui(LPDIRECT3DDEVICE9 pDevice)
 }
 
 bool init = false;
-long __stdcall hkPresent(IDirect3DDevice9* pDevice, const RECT* pSourceRect, const RECT* pDestRect, HWND hDestWindowOverride, const RGNDATA* pDirtyRegion)
+long __stdcall hkEndScene(LPDIRECT3DDEVICE9 pDevice)
 {
-	if (GetKeyState(VK_F3) & 1) Twinkie.DoRender = !Twinkie.DoRender;
+	if (GetAsyncKeyState(VK_F3) & 1) Twinkie.DoRender = !Twinkie.DoRender;
 
 	if (!init)
 	{
@@ -49,17 +48,27 @@ long __stdcall hkPresent(IDirect3DDevice9* pDevice, const RECT* pSourceRect, con
 		init = true;
 	}
 
+	if (GetAsyncKeyState(VK_F3) & 1) // why does this work??????????????????????
+	{
+		MessageBox(
+			NULL,
+			L"OK",
+			L"OK " + Twinkie.DoRender,
+			MB_OK
+		);
+	}
+
 	ImGui_ImplDX9_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
-
+	
 	if (Twinkie.DoRender) Twinkie.Render();
 
 	ImGui::EndFrame();
 	ImGui::Render();
 	ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
 
-	return oPresent(pDevice, pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion);
+	return oEndScene(pDevice);
 }
 
 long __stdcall hkReset(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pParams)
@@ -105,8 +114,8 @@ DWORD WINAPI MainThread(LPVOID lpReserved)
 	{
 		if (kiero::init(kiero::RenderType::D3D9) == kiero::Status::Success)
 		{
-			kiero::bind(17, (void**)&oPresent, hkPresent);
-			kiero::bind(16, (void**)&oReset, hkReset);
+			kiero::bind(42, (void**)&oEndScene, hkEndScene);
+			// kiero::bind(16, (void**)&oReset, hkReset); // why is this not working
 			do
 				window = GetProcessWindow();
 			while (window == NULL);
