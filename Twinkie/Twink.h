@@ -2,6 +2,8 @@
 
 #include <string>
 #include <format>
+#include <iomanip>
+#include <sstream>
 
 #include "TrackMania.h"
 #include "ProcHandler.h"
@@ -15,6 +17,28 @@ struct PlayerInfo
     uintptr_t Player;
     uintptr_t Mobil;
     uintptr_t Vehicle;
+};
+
+struct VehicleInputs
+{
+    float fGas;
+    float fBrake;
+    float Steer;
+
+    bool get_Gas()
+    {
+        return fGas > 0.5f;
+    }
+
+    bool get_Brake()
+    {
+        return fBrake > 0.5f;
+    }
+
+    bool IsSteering()
+    {
+        return Steer != 0.f;
+    }
 };
 
 class Twink
@@ -37,7 +61,16 @@ public:
     bool EnableLog = true;
     std::string LogStr = "";
 
-	Twink(){}
+    bool EnableDashboard = true;
+    ImVec4 ColorSteer = ImVec4(0.976f, 0.737f, 0.008f, 1.f);
+    ImVec4 ColorAccel = ImVec4(0.f, 0.94f, 0.f, 1.f);
+    ImVec4 ColorBrake = ImVec4(0.94f, 0.f, 0.f, 1.f);
+
+	Twink()
+    {
+        PrintInternal("Twinkie for TrackMania Forever.");
+        if (GetTrackmania()) PrintInternal("Non-null CTrackMania, SUCCESS");
+    }
 
 	template <typename T>
 	T Read(uintptr_t Addr)
@@ -114,9 +147,29 @@ public:
         }
 	}
 
+    void SetTrails(bool Enabled)
+    {
+        PlayerInfo CurPlayerInfo = GetPlayerInfo();
+        if (CurPlayerInfo.Player)
+        {
+            Write<unsigned long>(Enabled ? 1 : 0, CurPlayerInfo.Player + 56);
+        }
+    }
+
+    void PrintInternal(const char* Str)
+    {
+        LogStr = LogStr + "[TWINK] " + Str + "\n";
+    }
+
     void Print(const char* Str)
     {
         LogStr = LogStr + "[LOG] " + Str + "\n";
+    }
+
+    template<typename... Args>
+    void PrintArgs(const char* Str, Args&&... args)
+    {
+        LogStr = LogStr + "[LOG] " + std::vformat(Str, std::make_format_args(args...)) + "\n";
     }
 
     void RenderLog()
@@ -167,6 +220,17 @@ public:
             }
         }
         return ReturnVal;
+    }
+
+    VehicleInputs GetInputInfo() 
+    { 
+        CurPlayerInfo = GetPlayerInfo();
+        return Read<VehicleInputs>(CurPlayerInfo.Vehicle + 80); 
+    }
+
+    VehicleInputs* GetInputInfoWrite()
+    {
+        return (VehicleInputs*)(CurPlayerInfo.Vehicle + 80);
     }
 
     unsigned long GetRaceTime(PlayerInfo CurPlayerInfo)
@@ -265,6 +329,15 @@ public:
         style.Colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.800000011920929f, 0.800000011920929f, 0.800000011920929f, 0.300000011920929f);
     }
 
+    template <typename T>
+    std::string ToHex(T Value) {
+        static_assert(std::is_integral<T>::value, "T must be an integral type");
+
+        std::stringstream oss;
+        oss << std::hex << std::uppercase << Value; // Apply hex formatting first
+        return "0x" + oss.str(); // Prepend "0x" separately
+    }
+
     TM::GmVec3 HsvToRgb(TM::GmVec3 input)
     {
         float hh, p, q, t, ff;
@@ -323,21 +396,31 @@ public:
         return output;
     }
 
+    bool IsPlaying()
+    {
+        return GetPlayerInfo().Vehicle;
+    }
+
     void Render()
     {
         using namespace ImGui;
 
-        static bool ShowThing = false;
-
-        static int OffsetPlayer = 0x44;
-        static int OffsetMobil = 0x44;
-        static int OffsetVehicle = 0x44;
+        CurPlayerInfo = GetPlayerInfo();
 
         Begin("TwinkieTweaks");
+
+        SeparatorText("Modules");
 
         Checkbox("Trails", &EnableTrails);
         Checkbox("Player Information", &EnablePlayerInfo);
         Checkbox("Logs", &EnableLog);
+        Checkbox("Dashboard", &EnableDashboard);
+
+        SeparatorText("Settings");
+
+        ColorEdit4("Dashboard: Steer", &ColorSteer.x);
+        ColorEdit4("Dashboard: Accel", &ColorAccel.x);
+        ColorEdit4("Dashboard: Brake", &ColorBrake.x);
 
         End();
 
@@ -361,6 +444,16 @@ public:
 
         if (EnablePlayerInfo)
         {
+            static bool ShowThing = false;
+
+            static int OffsetPlayer = 0x44;
+            static int OffsetMobil = 0x44;
+            static int OffsetVehicle = 0x44;
+
+            static int WritePlayer = 0;
+            static int WriteMobil = 0;
+            static int WriteVehicle = 0;
+
             Begin("Player Information");
 
             CurPlayerInfo = GetPlayerInfo();
@@ -371,42 +464,51 @@ public:
 
                 if (Button("Test logs"))
                 {
-                    Print("guh");
+                    Print("testing testing blabla");
                 }
 
                 Text("Address of Player: %x", CurPlayerInfo.Player);
                 SameLine();
-                std::string PlayerAddrStr = std::format("{}\n", CurPlayerInfo.Player);
+                std::string PlayerAddrStr = ToHex(CurPlayerInfo.Player);
                 if (Button("Copy##Player"))
                 {
                     SetClipboardText(PlayerAddrStr.c_str());
-                    Print("Copied to clipboard:");
-                    Print(PlayerAddrStr.c_str());
+                    PrintArgs("Copied to clipboard: {}", PlayerAddrStr.c_str());
                 }
 
                 Text("Address of Mobil: %x", CurPlayerInfo.Mobil);
                 SameLine();
-                std::string MobilAddrStr = std::format("{}\n", CurPlayerInfo.Mobil);
+                std::string MobilAddrStr = ToHex(CurPlayerInfo.Mobil);
                 if (Button("Copy##Mobil"))
                 {
                     SetClipboardText(MobilAddrStr.c_str());
-                    Print("Copied to clipboard:");
-                    Print(MobilAddrStr.c_str());
+                    PrintArgs("Copied to clipboard: {}", MobilAddrStr.c_str());
                 }
 
                 Text("Address of Vehicle: %x", CurPlayerInfo.Vehicle);
                 SameLine();
-                std::string VehicleAddrStr = std::format("{}\n", CurPlayerInfo.Vehicle);
+                std::string VehicleAddrStr = ToHex(CurPlayerInfo.Vehicle);
                 if (Button("Copy##Vehicle"))
                 {
                     SetClipboardText(VehicleAddrStr.c_str());
-                    Print("Copied to clipboard:");
-                    Print(VehicleAddrStr.c_str());
+                    PrintArgs("Copied to clipboard: {}", VehicleAddrStr.c_str());
                 }
 
                 SeparatorText("Race data");
 
                 if (CurPlayerInfo.Vehicle) Text("Time: %lu", GetRaceTime(CurPlayerInfo));
+                VehicleInputs InputInfo = Read<VehicleInputs>(CurPlayerInfo.Vehicle + 80);
+
+                Text("Steer: %f", InputInfo.Steer);
+                Text("Gas: %f", InputInfo.fGas);
+                Text("Brake: %f", InputInfo.fBrake);
+
+                Checkbox("Mediatracker enabled", (bool*)CurPlayerInfo.Player + 56); // no Read here, ImGui reads the value internally
+                auto MTClipIndex = Read<unsigned long>(CurPlayerInfo.Player + 72);
+                if (*((bool*)CurPlayerInfo.Player + 56))
+                {
+                    Text("Index of active mediatracker clip: %lu", Read<unsigned long>(CurPlayerInfo.Player + 72));
+                }
 
                 SeparatorText("Offset Testing");
 
@@ -414,23 +516,49 @@ public:
 
                 if (ShowThing)
                 {
+                    BeginChild("Offsets");
+
                     if (CurPlayerInfo.Player)
                     {
                         InputInt("PlayerOffset", &OffsetPlayer, 2);
                         Text("Value: %x", Read<unsigned long>(CurPlayerInfo.Player + OffsetPlayer));
+                        InputInt("PlayerWrite", &WritePlayer);
+                        SameLine();
+                        if (Button("Write##Player"))
+                        {
+                            Write<int>(WritePlayer, CurPlayerInfo.Player + OffsetPlayer);
+                        }
                     }
+
+                    Separator();
 
                     if (CurPlayerInfo.Mobil)
                     {
                         InputInt("MobilOffset", &OffsetMobil, 2);
                         Text("Value: %x", Read<unsigned long>(CurPlayerInfo.Mobil + OffsetMobil));
+                        InputInt("MobilWrite", &WriteMobil);
+                        SameLine();
+                        if (Button("Write##Mobil"))
+                        {
+                            Write<int>(WriteMobil, CurPlayerInfo.Mobil + OffsetMobil);
+                        }
                     }
+
+                    Separator();
 
                     if (CurPlayerInfo.Vehicle)
                     {
                         InputInt("VehicleOffset", &OffsetVehicle, 2);
                         Text("Value: %x", Read<unsigned long>(CurPlayerInfo.Vehicle + OffsetVehicle));
+                        InputInt("VehicleWrite", &WriteVehicle);
+                        SameLine();
+                        if (Button("Write##Vehicle"))
+                        {
+                            Write<int>(WriteVehicle, CurPlayerInfo.Vehicle + OffsetVehicle);
+                        }
                     }
+
+                    EndChild();
                 }
             }
             else
@@ -446,6 +574,60 @@ public:
             Begin("Logs");
             RenderLog();
             End();
+        }
+
+        if (EnableDashboard)
+        {
+            if (IsPlaying() and GetInputInfoWrite())
+            {
+                VehicleInputs InputInfo = GetInputInfo();
+                
+                PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+                PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+                Begin("Dashboard", nullptr, ImGuiWindowFlags_NoTitleBar);
+                PopStyleColor();
+                PopStyleVar();
+
+                auto UIDrawList = GetForegroundDrawList();
+                auto CursorPos = GetCursorScreenPos();
+
+                float WindowWidth = GetWindowWidth() / 3.f;
+                float WindowHeight = GetWindowHeight();
+
+                float Width = WindowWidth * -InputInfo.Steer;
+
+                float OffsettedWidth = abs(WindowWidth - Width);
+
+                auto TipSteer = ImVec2();
+
+                if (InputInfo.Steer < 0)
+                TipSteer = ImVec2(CursorPos.x + OffsettedWidth, CursorPos.y + WindowHeight / 2.f);
+                else if (InputInfo.Steer > 0)
+                TipSteer = ImVec2(CursorPos.x + WindowWidth * 2 - Width, CursorPos.y + WindowHeight / 2.f);
+                auto TipBgL = ImVec2(CursorPos.x, CursorPos.y + WindowHeight / 2.f);
+                auto TipBgR = ImVec2(CursorPos.x + GetWindowWidth(), CursorPos.y + WindowHeight / 2.f);
+
+                auto UpperL = ImVec2(CursorPos.x + WindowWidth, CursorPos.y);
+                auto LowerL = ImVec2(CursorPos.x + WindowWidth, CursorPos.y + WindowHeight);
+
+                auto UpperR = ImVec2(CursorPos.x + WindowWidth * 2, CursorPos.y);
+                auto LowerR = ImVec2(CursorPos.x + WindowWidth * 2, CursorPos.y + WindowHeight);
+
+                auto BottomCornerGas = ImVec2(CursorPos.x + WindowWidth * 2, CursorPos.y + WindowHeight / 2.f);
+                auto TopCornerBrake = ImVec2(CursorPos.x + WindowWidth, CursorPos.y + WindowHeight / 2.f);
+
+                UIDrawList->AddTriangleFilled(TipBgL, UpperL, LowerL, IM_COL32(255, 255, 255, 32));
+                UIDrawList->AddTriangleFilled(TipBgR, UpperR, LowerR, IM_COL32(255, 255, 255, 32));
+                if (InputInfo.Steer < 0)
+                UIDrawList->AddTriangleFilled(TipSteer, UpperL, LowerL, ColorConvertFloat4ToU32(ColorSteer));
+                else if (InputInfo.Steer > 0)
+                UIDrawList->AddTriangleFilled(TipSteer, UpperR, LowerR, ColorConvertFloat4ToU32(ColorSteer));
+
+                UIDrawList->AddRectFilled(ImVec2(UpperL.x + 6.f, UpperL.y), ImVec2(BottomCornerGas.x - 6.f, BottomCornerGas.y - 3.f), InputInfo.get_Gas() ? ColorConvertFloat4ToU32(ColorAccel) : IM_COL32(255, 255, 255, 32));
+                UIDrawList->AddRectFilled(ImVec2(TopCornerBrake.x + 6.f, TopCornerBrake.y + 3.f), ImVec2(LowerR.x - 6.f, LowerR.y), InputInfo.get_Brake() ? ColorConvertFloat4ToU32(ColorBrake) : IM_COL32(255, 255, 255, 32));
+
+                End();
+            }
         }
     }
 };
