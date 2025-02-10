@@ -575,13 +575,18 @@ public:
             RenderLog();
             End();
         }
+    }
+
+    void RenderAnyways()
+    {
+        using namespace ImGui;
 
         if (EnableDashboard)
         {
             if (IsPlaying() and GetInputInfoWrite())
             {
                 VehicleInputs InputInfo = GetInputInfo();
-                
+
                 PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
                 PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
                 Begin("Dashboard", nullptr, ImGuiWindowFlags_NoTitleBar);
@@ -601,9 +606,9 @@ public:
                 auto TipSteer = ImVec2();
 
                 if (InputInfo.Steer < 0)
-                TipSteer = ImVec2(CursorPos.x + OffsettedWidth, CursorPos.y + WindowHeight / 2.f);
+                    TipSteer = ImVec2(CursorPos.x + OffsettedWidth, CursorPos.y + WindowHeight / 2.f);
                 else if (InputInfo.Steer > 0)
-                TipSteer = ImVec2(CursorPos.x + WindowWidth * 2 - Width, CursorPos.y + WindowHeight / 2.f);
+                    TipSteer = ImVec2(CursorPos.x + WindowWidth * 2 - Width, CursorPos.y + WindowHeight / 2.f);
                 auto TipBgL = ImVec2(CursorPos.x, CursorPos.y + WindowHeight / 2.f);
                 auto TipBgR = ImVec2(CursorPos.x + GetWindowWidth(), CursorPos.y + WindowHeight / 2.f);
 
@@ -619,9 +624,9 @@ public:
                 UIDrawList->AddTriangleFilled(TipBgL, UpperL, LowerL, IM_COL32(255, 255, 255, 32));
                 UIDrawList->AddTriangleFilled(TipBgR, UpperR, LowerR, IM_COL32(255, 255, 255, 32));
                 if (InputInfo.Steer < 0)
-                UIDrawList->AddTriangleFilled(TipSteer, UpperL, LowerL, ColorConvertFloat4ToU32(ColorSteer));
+                    UIDrawList->AddTriangleFilled(TipSteer, UpperL, LowerL, ColorConvertFloat4ToU32(ColorSteer));
                 else if (InputInfo.Steer > 0)
-                UIDrawList->AddTriangleFilled(TipSteer, UpperR, LowerR, ColorConvertFloat4ToU32(ColorSteer));
+                    UIDrawList->AddTriangleFilled(TipSteer, UpperR, LowerR, ColorConvertFloat4ToU32(ColorSteer));
 
                 UIDrawList->AddRectFilled(ImVec2(UpperL.x + 6.f, UpperL.y), ImVec2(BottomCornerGas.x - 6.f, BottomCornerGas.y - 3.f), InputInfo.get_Gas() ? ColorConvertFloat4ToU32(ColorAccel) : IM_COL32(255, 255, 255, 32));
                 UIDrawList->AddRectFilled(ImVec2(TopCornerBrake.x + 6.f, TopCornerBrake.y + 3.f), ImVec2(LowerR.x - 6.f, LowerR.y), InputInfo.get_Brake() ? ColorConvertFloat4ToU32(ColorBrake) : IM_COL32(255, 255, 255, 32));

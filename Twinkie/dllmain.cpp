@@ -64,6 +64,7 @@ long __stdcall hkEndScene(LPDIRECT3DDEVICE9 pDevice)
 	ImGui::NewFrame();
 	
 	if (Twinkie.DoRender) Twinkie.Render();
+	Twinkie.RenderAnyways();
 
 	ImGui::EndFrame();
 	ImGui::Render();
@@ -77,6 +78,8 @@ long __stdcall hkReset(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pParams
 	ImGui_ImplDX9_InvalidateDeviceObjects();
 	const HRESULT result = oReset(pDevice, pParams);
 	ImGui_ImplDX9_CreateDeviceObjects();
+
+	Twinkie.Print("DX9Reset Called.");
 
 	return result;
 }
@@ -116,7 +119,7 @@ DWORD WINAPI MainThread(LPVOID lpReserved)
 		if (kiero::init(kiero::RenderType::D3D9) == kiero::Status::Success)
 		{
 			kiero::bind(42, (void**)&oEndScene, hkEndScene);
-			// kiero::bind(16, (void**)&oReset, hkReset); // why is this not working
+			// kiero::bind(16, (void**)&oReset, hkReset);
 			do
 				window = GetProcessWindow();
 			while (window == NULL);
