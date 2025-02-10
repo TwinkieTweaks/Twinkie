@@ -17,6 +17,7 @@ struct PlayerInfo
     uintptr_t Player;
     uintptr_t Mobil;
     uintptr_t Vehicle;
+    uintptr_t PlayerInfo;
 };
 
 struct VehicleInputs
@@ -69,7 +70,22 @@ public:
 	Twink()
     {
         PrintInternal("Twinkie for TrackMania Forever.");
-        if (GetTrackmania()) PrintInternal("Non-null CTrackMania, SUCCESS");
+        if (GetTrackmania()) PrintInternal("Non-null CTrackMania, SUCCESS.");
+        else 
+        { 
+            PrintError("Null CTrackMania, FAILURE"); PrintErrorArgs("Tried to poke: {}", ToHex(O_TRACKMANIA)); 
+        }
+    }
+
+    void ReInit()
+    {
+        PrintInternal("--------------------------------------------------");
+        PrintInternal("Twinkie for TrackMania Forever. (reinitialization)");
+        if (GetTrackmania()) PrintInternal("Non-null CTrackMania, SUCCESS.");
+        else
+        {
+            PrintError("Null CTrackMania, FAILURE"); PrintErrorArgs("Tried to poke: {}", ToHex(O_TRACKMANIA));
+        }
     }
 
 	template <typename T>
@@ -161,6 +177,11 @@ public:
         LogStr = LogStr + "[TWINK] " + Str + "\n";
     }
 
+    void PrintError(const char* Str)
+    {
+        LogStr = LogStr + "[ERR] " + Str + "\n";
+    }
+
     void Print(const char* Str)
     {
         LogStr = LogStr + "[LOG] " + Str + "\n";
@@ -172,6 +193,12 @@ public:
         LogStr = LogStr + "[LOG] " + std::vformat(Str, std::make_format_args(args...)) + "\n";
     }
 
+    template<typename... Args>
+    void PrintErrorArgs(const char* Str, Args&&... args)
+    {
+        LogStr = LogStr + "[ERR] " + std::vformat(Str, std::make_format_args(args...)) + "\n";
+    }
+
     void RenderLog()
     {
         ImGui::TextWrapped(LogStr.c_str());
@@ -179,7 +206,7 @@ public:
 
     PlayerInfo GetPlayerInfo()
     {
-        PlayerInfo ReturnVal{ 0,0,0 };
+        PlayerInfo ReturnVal{ 0,0,0,0 };
 
         auto trackmania = GetTrackmania();
 
@@ -201,6 +228,7 @@ public:
                     auto local_player_infos = Read<TM::CFastBuffer<uintptr_t>>(network + 0x2FC);
                     if (local_player_infos.Size >= 0)
                     {
+
                         player = Read<uintptr_t>(Read<uintptr_t>((unsigned long)local_player_infos.Ptr) + 0x238);
                     }
                 }
@@ -214,7 +242,7 @@ public:
                     auto scene_vehicle_car = Read<uintptr_t>(game_mobil + 0x14);
                     if (scene_vehicle_car)
                     {
-                        ReturnVal = {player, game_mobil, scene_vehicle_car};
+                        ReturnVal = {player, game_mobil, scene_vehicle_car, local_player_info};
                     }
                 }
             }
@@ -276,7 +304,7 @@ public:
 
         style.Colors[ImGuiCol_Text] = ImVec4(0.8588235378265381f, 0.929411768913269f, 0.886274516582489f, 1.0f);
         style.Colors[ImGuiCol_TextDisabled] = ImVec4(0.5215686559677124f, 0.5490196347236633f, 0.5333333611488342f, 1.0f);
-        style.Colors[ImGuiCol_WindowBg] = ImVec4(0.1294117718935013f, 0.1372549086809158f, 0.168627455830574f, 1.0f);
+        style.Colors[ImGuiCol_WindowBg] = ImVec4(0.1294117718935013f, 0.1372549086809158f, 0.168627455830574f, 0.8f);
         style.Colors[ImGuiCol_ChildBg] = ImVec4(0.1490196138620377f, 0.1568627506494522f, 0.1882352977991104f, 1.0f);
         style.Colors[ImGuiCol_PopupBg] = ImVec4(0.2000000029802322f, 0.2196078449487686f, 0.2666666805744171f, 1.0f);
         style.Colors[ImGuiCol_Border] = ImVec4(0.1372549086809158f, 0.1137254908680916f, 0.1333333402872086f, 1.0f);
@@ -401,10 +429,11 @@ public:
         return GetPlayerInfo().Vehicle;
     }
 
+    // Render() only renders when the GUI is active (Twink.DoRender)
+
     void Render()
     {
         using namespace ImGui;
-
         CurPlayerInfo = GetPlayerInfo();
 
         Begin("TwinkieTweaks");
@@ -449,14 +478,14 @@ public:
             static int OffsetPlayer = 0x44;
             static int OffsetMobil = 0x44;
             static int OffsetVehicle = 0x44;
+            static int OffsetPlayerInfo = 0x44;
 
             static int WritePlayer = 0;
             static int WriteMobil = 0;
             static int WriteVehicle = 0;
+            static int WritePlayerInfo = 0x44;
 
             Begin("Player Information");
-
-            CurPlayerInfo = GetPlayerInfo();
 
             if (CurPlayerInfo.Player)
             {
@@ -494,6 +523,15 @@ public:
                     PrintArgs("Copied to clipboard: {}", VehicleAddrStr.c_str());
                 }
 
+                Text("Address of PlayerInfo: %x", CurPlayerInfo.PlayerInfo);
+                SameLine();
+                std::string PlayerInfoAddrStr = ToHex(CurPlayerInfo.PlayerInfo);
+                if (Button("Copy##PlayerInfo"))
+                {
+                    SetClipboardText(PlayerInfoAddrStr.c_str());
+                    PrintArgs("Copied to clipboard: {}", PlayerInfoAddrStr.c_str());
+                }
+
                 SeparatorText("Race data");
 
                 if (CurPlayerInfo.Vehicle) Text("Time: %lu", GetRaceTime(CurPlayerInfo));
@@ -509,6 +547,19 @@ public:
                 {
                     Text("Index of active mediatracker clip: %lu", Read<unsigned long>(CurPlayerInfo.Player + 72));
                 }
+
+                BeginDisabled();
+                Checkbox("Free wheeling", (bool*)CurPlayerInfo.Vehicle + 1548);
+                Checkbox("Turbo", (bool*)CurPlayerInfo.Vehicle + 948);
+                EndDisabled();
+
+                //TM::GmVec3 VehicleForces = Read<TM::GmVec3>(CurPlayerInfo.Vehicle + 2072);
+                //DragFloat3("Forces", &VehicleForces.x);
+
+                //TM::GmVec3 VehicleSpeed = Read<TM::GmVec3>(CurPlayerInfo.Vehicle + 2084);
+                //DragFloat3("LinearSpeed", &VehicleSpeed.x);
+
+                //DragFloat("RealSpeed", (float*)CurPlayerInfo.Vehicle + 1096);
 
                 SeparatorText("Offset Testing");
 
@@ -558,6 +609,18 @@ public:
                         }
                     }
 
+                    if (CurPlayerInfo.PlayerInfo)
+                    {
+                        InputInt("PlayerInfoOffset", &OffsetPlayerInfo, 2);
+                        Text("Value: %x", Read<unsigned long>(CurPlayerInfo.PlayerInfo + OffsetPlayerInfo));
+                        InputInt("PlayerInfoWrite", &WritePlayerInfo);
+                        SameLine();
+                        if (Button("Write##PlayerInfo"))
+                        {
+                            Write<int>(WritePlayerInfo, CurPlayerInfo.PlayerInfo + OffsetPlayerInfo);
+                        }
+                    }
+
                     EndChild();
                 }
             }
@@ -577,9 +640,12 @@ public:
         }
     }
 
+    // RenderAnyways() always gets called regardless of the current GUI state
+
     void RenderAnyways()
     {
         using namespace ImGui;
+        CurPlayerInfo = GetPlayerInfo();
 
         if (EnableDashboard)
         {

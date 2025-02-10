@@ -21,6 +21,11 @@ typedef HRESULT(APIENTRY* ResetFn)(LPDIRECT3DDEVICE9, D3DPRESENT_PARAMETERS*);
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
+extern "C" __declspec(dllexport) int Bla() // TODO: Remove when modloader updates
+{
+	return 1;
+}
+
 ResetFn oReset = NULL;
 EndScene oEndScene = NULL;
 WNDPROC oWndProc;
@@ -113,6 +118,15 @@ HWND GetProcessWindow()
 
 DWORD WINAPI MainThread(LPVOID lpReserved)
 {
+	// BEGIN: Modloader
+	while (!Twinkie.GetTrackmania())
+	{
+		Sleep(1);
+	}
+
+	Twinkie.ReInit();
+	// END: Modloader
+
 	bool attached = false;
 	do
 	{
