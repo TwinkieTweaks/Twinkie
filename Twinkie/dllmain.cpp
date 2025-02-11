@@ -13,7 +13,7 @@
 typedef long(__stdcall* EndScene)(LPDIRECT3DDEVICE9);
 typedef LRESULT(CALLBACK* WNDPROC)(HWND, UINT, WPARAM, LPARAM);
 
-typedef HRESULT(APIENTRY* ResetFn)(LPDIRECT3DDEVICE9, D3DPRESENT_PARAMETERS*);
+using ResetFn = HRESULT(APIENTRY*)(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pPresentationParameters);
 
 #ifdef _WIN64
 #define GWL_WNDPROC GWLP_WNDPROC
@@ -41,6 +41,7 @@ void InitImGui(LPDIRECT3DDEVICE9 pDevice)
 	io.ConfigFlags = ImGuiConfigFlags_NoMouseCursorChange;
 	ImGui_ImplWin32_Init(window);
 	ImGui_ImplDX9_Init(pDevice);
+	ImGui_ImplDX9_CreateDeviceObjects();
 }
 
 bool init = false;
@@ -52,16 +53,6 @@ long __stdcall hkEndScene(LPDIRECT3DDEVICE9 pDevice)
 	{
 		InitImGui(pDevice);
 		init = true;
-	}
-
-	if (GetAsyncKeyState(VK_F3) & 1) // why does this work??????????????????????
-	{
-		MessageBox(
-			NULL,
-			L"OK",
-			L"OK " + Twinkie.DoRender,
-			MB_OK
-		);
 	}
 
 	ImGui_ImplDX9_NewFrame();
@@ -83,8 +74,6 @@ long __stdcall hkReset(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pParams
 	ImGui_ImplDX9_InvalidateDeviceObjects();
 	const HRESULT result = oReset(pDevice, pParams);
 	ImGui_ImplDX9_CreateDeviceObjects();
-
-	Twinkie.Print("DX9Reset Called.");
 
 	return result;
 }

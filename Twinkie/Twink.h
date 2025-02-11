@@ -45,6 +45,8 @@ struct VehicleInputs
 class Twink
 {
 public:
+    HMODULE LibraryHandle;
+
 	uintptr_t O_TRACKMANIA = 0xD6A2A4;
 	uintptr_t O_DX9DEVICE = 0xD70C00;
 
@@ -69,18 +71,18 @@ public:
 
 	Twink()
     {
-        PrintInternal("Twinkie for TrackMania Forever.");
-        if (GetTrackmania()) PrintInternal("Non-null CTrackMania, SUCCESS.");
-        else 
-        { 
-            PrintError("Null CTrackMania, FAILURE"); PrintErrorArgs("Tried to poke: {}", ToHex(O_TRACKMANIA)); 
-        }
+        //PrintInternal("Twinkie for TrackMania Forever.");
+        //if (GetTrackmania()) PrintInternal("Non-null CTrackMania, SUCCESS.");
+        //else 
+        //{ 
+        //    PrintError("Null CTrackMania, FAILURE"); PrintErrorArgs("Tried to poke: {}", ToHex(O_TRACKMANIA)); 
+        //}
     }
 
     void ReInit()
     {
-        PrintInternal("--------------------------------------------------");
-        PrintInternal("Twinkie for TrackMania Forever. (reinitialization)");
+        PrintInternal(":3c");
+        PrintInternal("Twinkie for TrackMania Forever.");
         if (GetTrackmania()) PrintInternal("Non-null CTrackMania, SUCCESS.");
         else
         {
@@ -228,7 +230,7 @@ public:
                     auto local_player_infos = Read<TM::CFastBuffer<uintptr_t>>(network + 0x2FC);
                     if (local_player_infos.Size >= 0)
                     {
-
+                        local_player_info = (unsigned long)local_player_infos.Ptr;
                         player = Read<uintptr_t>(Read<uintptr_t>((unsigned long)local_player_infos.Ptr) + 0x238);
                     }
                 }
@@ -261,9 +263,15 @@ public:
         return (VehicleInputs*)(CurPlayerInfo.Vehicle + 80);
     }
 
-    unsigned long GetRaceTime(PlayerInfo CurPlayerInfo)
+    long GetRaceTime(PlayerInfo CurPlayerInfo)
     {
-        return Read<unsigned long>(CurPlayerInfo.Player + 0x44) - 2600;
+        auto RaceTime = Read<unsigned long>(CurPlayerInfo.Player + 0x44);
+        auto Offset = Read<unsigned long>(CurPlayerInfo.Vehicle + 0x5D0);
+        if (RaceTime != 0 and Offset <= RaceTime)
+        {
+            return RaceTime - Offset; // 0x5D0 contains the racetime offset
+        }
+        return -1;
     }
 
     void SetupImGuiStyle()
@@ -534,7 +542,8 @@ public:
 
                 SeparatorText("Race data");
 
-                if (CurPlayerInfo.Vehicle) Text("Time: %lu", GetRaceTime(CurPlayerInfo));
+                Text("Time: %lu", GetRaceTime(CurPlayerInfo));
+
                 VehicleInputs InputInfo = Read<VehicleInputs>(CurPlayerInfo.Vehicle + 80);
 
                 Text("Steer: %f", InputInfo.Steer);
@@ -651,11 +660,19 @@ public:
         {
             if (IsPlaying() and GetInputInfoWrite())
             {
+                static bool IsPrevHovered = false;
                 VehicleInputs InputInfo = GetInputInfo();
 
                 PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
                 PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-                Begin("Dashboard", nullptr, ImGuiWindowFlags_NoTitleBar);
+
+                int DashboardWindowFlags = ImGuiWindowFlags_NoTitleBar;
+                if (!IsPrevHovered) DashboardWindowFlags |= ImGuiWindowFlags_NoResize;
+
+                Begin("Dashboard", nullptr, DashboardWindowFlags);
+
+                IsPrevHovered = IsWindowHovered();
+
                 PopStyleColor();
                 PopStyleVar();
 
