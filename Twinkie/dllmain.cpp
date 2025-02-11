@@ -3,21 +3,13 @@
 
 #include <Windows.h>
 #include <d3d9.h>
-//#include <d3dx9.h>
+
 #include "kiero/kiero.h"
 #include "kiero/minhook/include/MinHook.h"
-//#include "imgui-dx9/imgui.h"
-//#include "imgui-dx9/imgui_impl_win32.h"
-//#include "imgui-dx9/imgui_impl_dx9.h"
-#define WINDOW_NAME "Dear ImGui DirectX9 Example"
+
 typedef long(__stdcall* EndScene)(LPDIRECT3DDEVICE9);
 typedef LRESULT(CALLBACK* WNDPROC)(HWND, UINT, WPARAM, LPARAM);
-
 using ResetFn = HRESULT(APIENTRY*)(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pPresentationParameters);
-
-#ifdef _WIN64
-#define GWL_WNDPROC GWLP_WNDPROC
-#endif
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -69,11 +61,11 @@ long __stdcall hkEndScene(LPDIRECT3DDEVICE9 pDevice)
 	return oEndScene(pDevice);
 }
 
-long __stdcall hkReset(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pParams)
-{
-	ImGui_ImplDX9_InvalidateDeviceObjects();
+long __stdcall hkReset(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pParams) // WHY ISN'T THIS WORKING i'm gonna kill hylis
+{                                                                                 // might end up killing myself with him tbh...
+	// ImGui_ImplDX9_InvalidateDeviceObjects();
 	const HRESULT result = oReset(pDevice, pParams);
-	ImGui_ImplDX9_CreateDeviceObjects();
+	// ImGui_ImplDX9_CreateDeviceObjects();
 
 	return result;
 }
@@ -122,7 +114,7 @@ DWORD WINAPI MainThread(LPVOID lpReserved)
 		if (kiero::init(kiero::RenderType::D3D9) == kiero::Status::Success)
 		{
 			kiero::bind(42, (void**)&oEndScene, hkEndScene);
-			// kiero::bind(16, (void**)&oReset, hkReset);
+			// kiero::bind(16, (void**)&oReset, hkReset); // FUCK YOU NADEO I'M GONNA USE AN RPG ON YOUR HQ I'M ON A PLANE TO PARIS YOU BETTER NOT RESIST
 			do
 				window = GetProcessWindow();
 			while (window == NULL);

@@ -18,6 +18,7 @@ struct PlayerInfo
     uintptr_t Mobil;
     uintptr_t Vehicle;
     uintptr_t PlayerInfo;
+    uintptr_t TrackmaniaRace;
 };
 
 struct VehicleInputs
@@ -45,7 +46,7 @@ struct VehicleInputs
 class Twink
 {
 public:
-    HMODULE LibraryHandle;
+    HMODULE LibraryHandle = NULL;
 
 	uintptr_t O_TRACKMANIA = 0xD6A2A4;
 	uintptr_t O_DX9DEVICE = 0xD70C00;
@@ -208,7 +209,7 @@ public:
 
     PlayerInfo GetPlayerInfo()
     {
-        PlayerInfo ReturnVal{ 0,0,0,0 };
+        PlayerInfo ReturnVal{ 0,0,0,0,0 };
 
         auto trackmania = GetTrackmania();
 
@@ -244,7 +245,7 @@ public:
                     auto scene_vehicle_car = Read<uintptr_t>(game_mobil + 0x14);
                     if (scene_vehicle_car)
                     {
-                        ReturnVal = {player, game_mobil, scene_vehicle_car, local_player_info};
+                        ReturnVal = {player, game_mobil, scene_vehicle_car, local_player_info, race};
                     }
                 }
             }
@@ -483,15 +484,17 @@ public:
         {
             static bool ShowThing = false;
 
-            static int OffsetPlayer = 0x44;
-            static int OffsetMobil = 0x44;
-            static int OffsetVehicle = 0x44;
-            static int OffsetPlayerInfo = 0x44;
+            static int OffsetPlayer = 0;
+            static int OffsetMobil = 0;
+            static int OffsetVehicle = 0;
+            static int OffsetPlayerInfo = 0;
+            static int OffsetTrackmaniaRace = 0;
 
             static int WritePlayer = 0;
             static int WriteMobil = 0;
             static int WriteVehicle = 0;
-            static int WritePlayerInfo = 0x44;
+            static int WritePlayerInfo = 0;
+            static int WriteTrackmaniaRace = 0;
 
             Begin("Player Information");
 
@@ -618,6 +621,8 @@ public:
                         }
                     }
 
+                    Separator();
+
                     if (CurPlayerInfo.PlayerInfo)
                     {
                         InputInt("PlayerInfoOffset", &OffsetPlayerInfo, 2);
@@ -627,6 +632,20 @@ public:
                         if (Button("Write##PlayerInfo"))
                         {
                             Write<int>(WritePlayerInfo, CurPlayerInfo.PlayerInfo + OffsetPlayerInfo);
+                        }
+                    }
+
+                    Separator();
+
+                    if (CurPlayerInfo.TrackmaniaRace)
+                    {
+                        InputInt("TrackmaniaRaceOffset", &OffsetTrackmaniaRace, 2);
+                        Text("Value: %x", Read<unsigned long>(CurPlayerInfo.TrackmaniaRace + OffsetTrackmaniaRace));
+                        InputInt("TrackmaniaRaceWrite", &WriteTrackmaniaRace);
+                        SameLine();
+                        if (Button("Write##TrackmaniaRace"))
+                        {
+                            Write<int>(WriteTrackmaniaRace, CurPlayerInfo.TrackmaniaRace + OffsetTrackmaniaRace);
                         }
                     }
 
