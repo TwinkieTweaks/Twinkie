@@ -166,6 +166,7 @@
     <ClInclude Include="ProcHandler.h" />
     <ClInclude Include="TrackMania.h" />
     <ClInclude Include="Twink.h" />
+    <ClInclude Include="Version.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />

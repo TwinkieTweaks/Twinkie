@@ -7,6 +7,7 @@
 
 #include "TrackMania.h"
 #include "ProcHandler.h"
+#include "Version.h"
 
 #include "imgui-dx9/imgui.h"
 #include "imgui-dx9/imgui_impl_win32.h"
@@ -53,6 +54,8 @@ public:
 
 	ProcHandler Handler;
 
+    Versioning Versions;
+
     bool DoRender = true;
 
     bool EnableTrails = false;
@@ -67,8 +70,11 @@ public:
 
     bool EnableDashboard = true;
     ImVec4 ColorSteer = ImVec4(0.976f, 0.737f, 0.008f, 1.f);
+    ImVec4 ColorSteerI = ImVec4(1.f, 1.f, 1.f, 0.5f);
     ImVec4 ColorAccel = ImVec4(0.f, 0.94f, 0.f, 1.f);
+    ImVec4 ColorAccelI = ImVec4(1.f, 1.f, 1.f, 0.5f);
     ImVec4 ColorBrake = ImVec4(0.94f, 0.f, 0.f, 1.f);
+    ImVec4 ColorBrakeI = ImVec4(1.f, 1.f, 1.f, 0.5f);
 
 	Twink()
     {
@@ -83,7 +89,7 @@ public:
     void ReInit()
     {
         PrintInternal(":3c");
-        PrintInternal("Twinkie for TrackMania Forever.");
+        PrintInternalArgs("Twinkie for TrackMania Forever. Version {}", Versions.TwinkieVer);
         if (GetTrackmania()) PrintInternal("Non-null CTrackMania, SUCCESS.");
         else
         {
@@ -200,6 +206,12 @@ public:
     void PrintErrorArgs(const char* Str, Args&&... args)
     {
         LogStr = LogStr + "[ERR] " + std::vformat(Str, std::make_format_args(args...)) + "\n";
+    }
+
+    template<typename... Args>
+    void PrintInternalArgs(const char* Str, Args&&... args)
+    {
+        LogStr = LogStr + "[TWINK] " + std::vformat(Str, std::make_format_args(args...)) + "\n";
     }
 
     void RenderLog()
@@ -457,8 +469,11 @@ public:
         SeparatorText("Settings");
 
         ColorEdit4("Dashboard: Steer", &ColorSteer.x);
+        ColorEdit4("Dashboard: Steer inactive",  &ColorSteerI.x);
         ColorEdit4("Dashboard: Accel", &ColorAccel.x);
+        ColorEdit4("Dashboard: Accel inactive",  &ColorAccelI.x);
         ColorEdit4("Dashboard: Brake", &ColorBrake.x);
+        ColorEdit4("Dashboard: Brake inactive",  &ColorBrakeI.x);
 
         End();
 
@@ -723,15 +738,15 @@ public:
                 auto BottomCornerGas = ImVec2(CursorPos.x + WindowWidth * 2, CursorPos.y + WindowHeight / 2.f);
                 auto TopCornerBrake = ImVec2(CursorPos.x + WindowWidth, CursorPos.y + WindowHeight / 2.f);
 
-                UIDrawList->AddTriangleFilled(TipBgL, UpperL, LowerL, IM_COL32(255, 255, 255, 32));
-                UIDrawList->AddTriangleFilled(TipBgR, UpperR, LowerR, IM_COL32(255, 255, 255, 32));
+                UIDrawList->AddTriangleFilled(TipBgL, UpperL, LowerL, ColorConvertFloat4ToU32(ColorSteerI));
+                UIDrawList->AddTriangleFilled(TipBgR, UpperR, LowerR, ColorConvertFloat4ToU32(ColorSteerI));
                 if (InputInfo.Steer < 0)
                     UIDrawList->AddTriangleFilled(TipSteer, UpperL, LowerL, ColorConvertFloat4ToU32(ColorSteer));
                 else if (InputInfo.Steer > 0)
                     UIDrawList->AddTriangleFilled(TipSteer, UpperR, LowerR, ColorConvertFloat4ToU32(ColorSteer));
 
-                UIDrawList->AddRectFilled(ImVec2(UpperL.x + 6.f, UpperL.y), ImVec2(BottomCornerGas.x - 6.f, BottomCornerGas.y - 3.f), InputInfo.get_Gas() ? ColorConvertFloat4ToU32(ColorAccel) : IM_COL32(255, 255, 255, 32));
-                UIDrawList->AddRectFilled(ImVec2(TopCornerBrake.x + 6.f, TopCornerBrake.y + 3.f), ImVec2(LowerR.x - 6.f, LowerR.y), InputInfo.get_Brake() ? ColorConvertFloat4ToU32(ColorBrake) : IM_COL32(255, 255, 255, 32));
+                UIDrawList->AddRectFilled(ImVec2(UpperL.x + 6.f, UpperL.y), ImVec2(BottomCornerGas.x - 6.f, BottomCornerGas.y - 3.f), InputInfo.get_Gas() ? ColorConvertFloat4ToU32(ColorAccel) : ColorConvertFloat4ToU32(ColorAccelI));
+                UIDrawList->AddRectFilled(ImVec2(TopCornerBrake.x + 6.f, TopCornerBrake.y + 3.f), ImVec2(LowerR.x - 6.f, LowerR.y), InputInfo.get_Brake() ? ColorConvertFloat4ToU32(ColorBrake) : ColorConvertFloat4ToU32(ColorBrakeI));
 
                 End();
             }
