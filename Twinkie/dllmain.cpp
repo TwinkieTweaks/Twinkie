@@ -1,5 +1,7 @@
 #include <iostream>
 #include "Twink.h"
+#include "imgui-dx9/imgui_impl_dx9.h"
+#include "imgui-dx9/imgui_impl_win32.h"
 
 #include <Windows.h>
 #include <d3d9.h>
@@ -26,7 +28,7 @@ static HWND window = NULL;
 
 Twink Twinkie;
 
-void InitImGui(LPDIRECT3DDEVICE9 pDevice)
+static void InitImGui(LPDIRECT3DDEVICE9 pDevice)
 {
 	ImGui::CreateContext();
 	Twinkie.SetupImGuiStyle();
@@ -37,7 +39,7 @@ void InitImGui(LPDIRECT3DDEVICE9 pDevice)
 }
 
 bool init = false;
-long __stdcall hkEndScene(LPDIRECT3DDEVICE9 pDevice)
+static long __stdcall hkEndScene(LPDIRECT3DDEVICE9 pDevice)
 {
 	static const void* RetAddr = _ReturnAddress();
 
@@ -70,7 +72,7 @@ long __stdcall hkEndScene(LPDIRECT3DDEVICE9 pDevice)
 	return oEndScene(pDevice);
 }
 
-long __stdcall hkReset(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pParams)
+static long __stdcall hkReset(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pParams)
 {
 	ImGui_ImplDX9_InvalidateDeviceObjects();
 	const HRESULT result = oReset(pDevice, pParams);
@@ -78,7 +80,7 @@ long __stdcall hkReset(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pParams
 	return result;
 }
 
-LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+static LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 
 	if ((bool)ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
 		return true;
@@ -86,7 +88,7 @@ LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	return CallWindowProc(oWndProc, hWnd, uMsg, wParam, lParam);
 }
 
-BOOL CALLBACK EnumWindowsCallback(HWND handle, LPARAM lParam)
+static BOOL CALLBACK EnumWindowsCallback(HWND handle, LPARAM lParam)
 {
 	DWORD wndProcId;
 	GetWindowThreadProcessId(handle, &wndProcId);
@@ -98,14 +100,14 @@ BOOL CALLBACK EnumWindowsCallback(HWND handle, LPARAM lParam)
 	return FALSE; // window found abort search
 }
 
-HWND GetProcessWindow()
+static HWND GetProcessWindow()
 {
 	window = NULL;
 	EnumWindows(EnumWindowsCallback, NULL);
 	return window;
 }
 
-DWORD WINAPI MainThread(LPVOID lpReserved)
+static DWORD WINAPI MainThread(LPVOID lpReserved)
 {
 	// BEGIN: Modloader
 	while (!Twinkie.GetTrackmania())
@@ -134,7 +136,7 @@ DWORD WINAPI MainThread(LPVOID lpReserved)
 	return TRUE;
 }
 
-BOOL WINAPI DllMain(HMODULE hMod, DWORD dwReason, LPVOID lpReserved)
+static BOOL WINAPI DllMain(HMODULE hMod, DWORD dwReason, LPVOID lpReserved)
 {
 	switch (dwReason)
 	{

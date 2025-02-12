@@ -162,9 +162,11 @@
     <ClInclude Include="kiero\minhook\src\hde\table64.h" />
     <ClInclude Include="kiero\minhook\src\trampoline.h" />
     <ClInclude Include="minhook\buffer.h" />
+    <ClInclude Include="mINI\ini.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="ProcHandler.h" />
     <ClInclude Include="Release\Settings.h" />
+    <ClInclude Include="Settings.h" />
     <ClInclude Include="TrackMania.h" />
     <ClInclude Include="Twink.h" />
     <ClInclude Include="Version.h" />

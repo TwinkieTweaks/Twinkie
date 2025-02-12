@@ -8,10 +8,11 @@
 #include "TrackMania.h"
 #include "ProcHandler.h"
 #include "Version.h"
+#include "Settings.h"
 
 #include "imgui-dx9/imgui.h"
-#include "imgui-dx9/imgui_impl_win32.h"
-#include "imgui-dx9/imgui_impl_dx9.h"
+
+#define SettingBool(value) (bool*)(DSetting[std::string("enabledashboard")].Value)
 
 struct PlayerInfo
 {
@@ -28,17 +29,17 @@ struct VehicleInputs
     float fBrake;
     float Steer;
 
-    bool get_Gas()
+    bool get_Gas() const
     {
         return fGas > 0.5f;
     }
 
-    bool get_Brake()
+    bool get_Brake() const
     {
         return fBrake > 0.5f;
     }
 
-    bool IsSteering()
+    bool IsSteering() const
     {
         return Steer != 0.f;
     }
@@ -55,6 +56,8 @@ public:
 	ProcHandler Handler;
 
     Versioning Versions;
+
+    SettingMgr* Settings = nullptr;
 
     bool DoRender = true;
 
@@ -93,8 +96,37 @@ public:
         if (GetTrackmania()) PrintInternal("Non-null CTrackMania, SUCCESS.");
         else
         {
-            PrintError("Null CTrackMania, FAILURE"); PrintErrorArgs("Tried to poke: {}", ToHex(O_TRACKMANIA));
+            PrintError("Null CTrackMania, FAILURE"); 
+            PrintErrorArgs("Tried to poke: {}", ToHex(O_TRACKMANIA));
         }
+
+        Settings = new SettingMgr();
+        SettingMgr DSetting = *Settings;
+        if (Settings->Reason == NoPopulation)
+        {
+            PrintInternal("Settings loaded.");
+            Print("loading example");
+            auto SettingED = DSetting["enabledashboard"];
+            if (SettingED)
+            {
+                Print("Setting OK");
+                if ((bool*)SettingED.Value)
+                {
+                    Print("Value OK");
+                    EnableDashboard = *(bool*)SettingED.Value;
+                }
+            }
+        }
+        else
+        {
+            PrintErrorArgs("Settings not loaded, reason {}", (int)Settings->Reason);
+        }
+    }
+
+    ~Twink()
+    {
+        delete Settings;
+        Settings = nullptr;
     }
 
 	template <typename T>
@@ -214,7 +246,7 @@ public:
         LogStr = LogStr + "[TWINK] " + std::vformat(Str, std::make_format_args(args...)) + "\n";
     }
 
-    void RenderLog()
+    void RenderLog() const
     {
         ImGui::TextWrapped(LogStr.c_str());
     }
@@ -391,7 +423,7 @@ public:
     {
         float hh, p, q, t, ff;
         long i;
-        TM::GmVec3 output;
+        TM::GmVec3 output{0.f, 0.f, 0.f};
 
         if (input.y <= 0.0f) {
             output.x = input.z;
@@ -458,7 +490,7 @@ public:
 
         Begin("TwinkieTweaks");
 
-        SeparatorText("Modules");
+        /*SeparatorText("Modules");
 
         Checkbox("Trails", &EnableTrails);
         Checkbox("Player Information", &EnablePlayerInfo);
@@ -472,7 +504,9 @@ public:
         ColorEdit4("Dashboard: Accel", &ColorAccel.x);
         ColorEdit4("Dashboard: Accel inactive",  &ColorAccelI.x);
         ColorEdit4("Dashboard: Brake", &ColorBrake.x);
-        ColorEdit4("Dashboard: Brake inactive",  &ColorBrakeI.x);
+        ColorEdit4("Dashboard: Brake inactive",  &ColorBrakeI.x);*/
+
+        Settings->Render();
 
         End();
 
