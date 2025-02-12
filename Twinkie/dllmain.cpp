@@ -3,6 +3,7 @@
 
 #include <Windows.h>
 #include <d3d9.h>
+#include <intrin.h>
 
 #include "kiero/kiero.h"
 #include "kiero/minhook/include/MinHook.h"
@@ -33,12 +34,20 @@ void InitImGui(LPDIRECT3DDEVICE9 pDevice)
 	io.ConfigFlags = ImGuiConfigFlags_NoMouseCursorChange;
 	ImGui_ImplWin32_Init(window);
 	ImGui_ImplDX9_Init(pDevice);
-	ImGui_ImplDX9_CreateDeviceObjects();
 }
 
 bool init = false;
 long __stdcall hkEndScene(LPDIRECT3DDEVICE9 pDevice)
 {
+	static const void* RetAddr = _ReturnAddress();
+
+	auto OgRet = oEndScene(pDevice);
+
+	if (_ReturnAddress() == RetAddr)
+	{
+		return OgRet;
+	}
+
 	if (GetAsyncKeyState(VK_F3) & 1) Twinkie.DoRender = !Twinkie.DoRender;
 
 	if (!init)
@@ -61,18 +70,17 @@ long __stdcall hkEndScene(LPDIRECT3DDEVICE9 pDevice)
 	return oEndScene(pDevice);
 }
 
-long __stdcall hkReset(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pParams) // WHY ISN'T THIS WORKING i'm gonna kill hylis
-{                                                                                 // might end up killing myself with him tbh...
-	// ImGui_ImplDX9_InvalidateDeviceObjects();
+long __stdcall hkReset(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pParams)
+{
+	ImGui_ImplDX9_InvalidateDeviceObjects();
 	const HRESULT result = oReset(pDevice, pParams);
-	// ImGui_ImplDX9_CreateDeviceObjects();
-
+	ImGui_ImplDX9_CreateDeviceObjects();
 	return result;
 }
 
 LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 
-	if (true && ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
+	if ((bool)ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
 		return true;
 
 	return CallWindowProc(oWndProc, hWnd, uMsg, wParam, lParam);
@@ -113,8 +121,8 @@ DWORD WINAPI MainThread(LPVOID lpReserved)
 	{
 		if (kiero::init(kiero::RenderType::D3D9) == kiero::Status::Success)
 		{
+			kiero::bind(16, (void**)&oReset, hkReset);
 			kiero::bind(42, (void**)&oEndScene, hkEndScene);
-			// kiero::bind(16, (void**)&oReset, hkReset); // FUCK YOU NADEO I'M GONNA USE AN RPG ON YOUR HQ I'M ON A PLANE TO PARIS YOU BETTER NOT RESIST
 			do
 				window = GetProcessWindow();
 			while (window == NULL);
