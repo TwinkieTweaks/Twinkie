@@ -113,7 +113,7 @@ DWORD WINAPI MainThread(LPVOID lpReserved)
 		Sleep(1);
 	}
 
-	Twinkie.ReInit();
+	Twinkie.Init();
 	// END: Modloader
 
 	bool attached = false;

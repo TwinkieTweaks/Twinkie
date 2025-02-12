@@ -86,7 +86,7 @@ public:
         //}
     }
 
-    void ReInit()
+    void Init()
     {
         PrintInternal(":3c");
         PrintInternalArgs("Twinkie for TrackMania Forever. Version {}", Versions.TwinkieVer);
@@ -451,7 +451,6 @@ public:
     }
 
     // Render() only renders when the GUI is active (Twink.DoRender)
-
     void Render()
     {
         using namespace ImGui;
@@ -497,7 +496,7 @@ public:
 
         if (EnablePlayerInfo)
         {
-            static bool ShowThing = false;
+            static bool ShowOffsetTesting = false;
 
             static int OffsetPlayer = 0;
             static int OffsetMobil = 0;
@@ -580,19 +579,11 @@ public:
                 Checkbox("Turbo", (bool*)CurPlayerInfo.Vehicle + 948);
                 EndDisabled();
 
-                //TM::GmVec3 VehicleForces = Read<TM::GmVec3>(CurPlayerInfo.Vehicle + 2072);
-                //DragFloat3("Forces", &VehicleForces.x);
-
-                //TM::GmVec3 VehicleSpeed = Read<TM::GmVec3>(CurPlayerInfo.Vehicle + 2084);
-                //DragFloat3("LinearSpeed", &VehicleSpeed.x);
-
-                //DragFloat("RealSpeed", (float*)CurPlayerInfo.Vehicle + 1096);
-
                 SeparatorText("Offset Testing");
 
-                Checkbox("Show", &ShowThing);
+                Checkbox("Show", &ShowOffsetTesting);
 
-                if (ShowThing)
+                if (ShowOffsetTesting)
                 {
                     BeginChild("Offsets");
 
@@ -701,7 +692,6 @@ public:
                 PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 
                 int DashboardWindowFlags = ImGuiWindowFlags_NoTitleBar;
-                if (!IsPrevHovered) DashboardWindowFlags |= ImGuiWindowFlags_NoResize;
 
                 Begin("Dashboard", nullptr, DashboardWindowFlags);
 
@@ -710,7 +700,7 @@ public:
                 PopStyleColor();
                 PopStyleVar();
 
-                auto UIDrawList = GetForegroundDrawList();
+                auto UIDrawList = GetWindowDrawList();
                 auto CursorPos = GetCursorScreenPos();
 
                 float WindowWidth = GetWindowWidth() / 3.f;
@@ -738,12 +728,18 @@ public:
                 auto BottomCornerGas = ImVec2(CursorPos.x + WindowWidth * 2, CursorPos.y + WindowHeight / 2.f);
                 auto TopCornerBrake = ImVec2(CursorPos.x + WindowWidth, CursorPos.y + WindowHeight / 2.f);
 
-                UIDrawList->AddTriangleFilled(TipBgL, UpperL, LowerL, ColorConvertFloat4ToU32(ColorSteerI));
-                UIDrawList->AddTriangleFilled(TipBgR, UpperR, LowerR, ColorConvertFloat4ToU32(ColorSteerI));
+                UIDrawList->AddTriangleFilled(UpperR, LowerR, TipBgR, ColorConvertFloat4ToU32(ColorSteerI)); // right one (no AA)
+                UIDrawList->AddTriangleFilled(TipBgL, UpperL, LowerL, ColorConvertFloat4ToU32(ColorSteerI)); // left one (AA)
                 if (InputInfo.Steer < 0)
+                {
                     UIDrawList->AddTriangleFilled(TipSteer, UpperL, LowerL, ColorConvertFloat4ToU32(ColorSteer));
+                    Print("render 1");
+                }
                 else if (InputInfo.Steer > 0)
+                {
                     UIDrawList->AddTriangleFilled(TipSteer, UpperR, LowerR, ColorConvertFloat4ToU32(ColorSteer));
+                    Print("render 2");
+                }
 
                 UIDrawList->AddRectFilled(ImVec2(UpperL.x + 6.f, UpperL.y), ImVec2(BottomCornerGas.x - 6.f, BottomCornerGas.y - 3.f), InputInfo.get_Gas() ? ColorConvertFloat4ToU32(ColorAccel) : ColorConvertFloat4ToU32(ColorAccelI));
                 UIDrawList->AddRectFilled(ImVec2(TopCornerBrake.x + 6.f, TopCornerBrake.y + 3.f), ImVec2(LowerR.x - 6.f, LowerR.y), InputInfo.get_Brake() ? ColorConvertFloat4ToU32(ColorBrake) : ColorConvertFloat4ToU32(ColorBrakeI));

@@ -164,6 +164,7 @@
     <ClInclude Include="minhook\buffer.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="ProcHandler.h" />
+    <ClInclude Include="Release\Settings.h" />
     <ClInclude Include="TrackMania.h" />
     <ClInclude Include="Twink.h" />
     <ClInclude Include="Version.h" />
