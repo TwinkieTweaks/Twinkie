@@ -568,6 +568,7 @@ public:
                 Text("Gas: %f", InputInfo.fGas);
                 Text("Brake: %f", InputInfo.fBrake);
 
+                BeginDisabled();
                 Checkbox("Mediatracker enabled", (bool*)CurPlayerInfo.Player + 56); // no Read here, ImGui reads the value internally
                 auto MTClipIndex = Read<unsigned long>(CurPlayerInfo.Player + 72);
                 if (*((bool*)CurPlayerInfo.Player + 56))
@@ -575,7 +576,6 @@ public:
                     Text("Index of active mediatracker clip: %lu", Read<unsigned long>(CurPlayerInfo.Player + 72));
                 }
 
-                BeginDisabled();
                 Checkbox("Free wheeling", (bool*)CurPlayerInfo.Vehicle + 1548);
                 Checkbox("Turbo", (bool*)CurPlayerInfo.Vehicle + 948);
                 EndDisabled();
