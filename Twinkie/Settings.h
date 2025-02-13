@@ -1,6 +1,7 @@
 #pragma once
 
 #include <typeinfo>
+#include <map>
 #include <string>
 #include <vector>
 #include "imgui-dx9/imgui.h"
@@ -10,13 +11,14 @@ class Setting
 {
 public:
 	std::string Name = "";
-	void* Value = nullptr;
+	std::string Type = "";
+	bool bValue = 0;
+	ImVec4 v4Value = {};
 	bool IsValid = false;
 
-	Setting(std::string pName, void* pValue)
+	Setting(std::string pName)
 	{
 		Name = pName;
-		Value = pValue;
 		IsValid = true;
 	}
 
@@ -37,47 +39,6 @@ public:
 
 	Tab(std::string pName) { Name = pName; }
 
-	void AddSetting(std::string SettingName, void* SettingValue)
-	{
-		Settings.push_back(Setting(SettingName, SettingValue));
-	}
-
-	void* GetSetting(std::string SettingName)
-	{
-		for (auto& SettingV : Settings)
-		{
-			if (SettingV.Name == SettingName)
-			{
-				return SettingV.Value;
-			}
-		}
-		return nullptr;
-	}
-
-	template <typename T>
-	T* GetSetting(std::string SettingName)
-	{
-		for (auto& SettingV : Settings)
-		{
-			if (SettingV.Name == SettingName)
-			{
-				return (T*)SettingV.Value;
-			}
-		}
-		return nullptr;
-	}
-	
-	void SetSetting(std::string SettingName, void* SettingValue)
-	{
-		for (auto& SettingV : Settings)
-		{
-			if (SettingV.Name == SettingName)
-			{
-				SettingV.Value = SettingValue;
-			}
-		}
-	}
-
 	Setting& operator[](unsigned int rhs)
 	{
 		return Settings[rhs];
@@ -85,7 +46,7 @@ public:
 
 	Setting& operator[](std::string rhs)
 	{
-		Setting SettingR("", nullptr);
+		Setting SettingR("");
 		for (auto& SettingV : Settings)
 		{
 			if (SettingV.Name == rhs)
@@ -97,7 +58,7 @@ public:
 		return SettingR;
 	}
 
-	void Render()
+	void Render(std::string Name, std::map<std::string, std::string>& VarToName)
 	{
 		using namespace ImGui;
 
@@ -105,15 +66,14 @@ public:
 
 		for (auto& SettingV : Settings)
 		{
-			const char* CName = SettingV.Name.c_str();
-			void* Val = SettingV.Value;
-			if (typeid(SettingV.Value) == typeid(bool*))
+			const char* CName = VarToName[SettingV.Name].c_str();
+			if (SettingV.Type == "bool")
 			{
-				Checkbox(CName, (bool*)Val);
+				Checkbox(CName, &SettingV.bValue);
 			}
-			else if (typeid(SettingV.Value) == typeid(ImVec4*))
+			else if (SettingV.Type == "vec4")
 			{
-				ColorEdit4(CName, (float*)Val);
+				ColorEdit4(CName, (float*)&SettingV.v4Value);
 			}
 			else
 			{
@@ -128,7 +88,7 @@ public:
 enum PopulationReason
 {
 	NoPopulation = 0,
-	UnableToRead = 1,
+	FileNotReady = 1,
 	NoTwinkieSec = 2,
 	NoVersionSec = 3,
 	VersionNot3C = 4,
@@ -139,8 +99,13 @@ class SettingMgr
 {
 public:
 	std::vector<Tab> Tabs{};
+	std::vector<bool> OpenTabs{};
 	mINI::INIFile IniFile = mINI::INIFile("Twinkie.ini");
 	mINI::INIStructure IniStruct;
+
+	std::map<std::string, std::string> VarToName{};
+	std::map<std::string, std::string> SecToName{};
+
 	PopulationReason Reason = NoPopulation;
 
 	SettingMgr()
@@ -148,35 +113,31 @@ public:
 		// check if our INI file is valid
 		if (!IniFile.read(IniStruct))
 		{
-			PopulateIniStruct();
-			Reason = UnableToRead;
+			Reason = FileNotReady;
 			return;
 		}
 
 		if (!IniStruct.has("Twinkie"))
 		{
-			PopulateIniStruct();
 			Reason = NoTwinkieSec;
 			return;
 		}
 
 		if (!IniStruct["Twinkie"].has("Version"))
 		{
-			PopulateIniStruct();
 			Reason = NoVersionSec;
 			return;
 		}
 
 		if (IniStruct["Twinkie"]["Version"] != ":3c")
 		{
-			PopulateIniStruct();
 			Reason = VersionNot3C;
 			return;
 		}
 
 		// ini file is valid, time to load stuffs
 
-		std::unordered_map<std::string, std::string> NameToType{};
+		std::map<std::string, std::string> NameToType{};
 
 		for (auto& Section : IniStruct)
 		{
@@ -184,32 +145,51 @@ public:
 			{
 				for (auto& Value : Section.second)
 				{
-					static int Idx = 0;
 					NameToType[Value.first] = Value.second;
-					Idx++;
 				}
 			}
 		}
 
 		for (auto& Section : IniStruct)
 		{
-			// Section here is a std::pair<std::string, INIMap>
+			if (Section.first == "vnames")
+			{
+				for (auto& Value : Section.second)
+				{
+					VarToName[Value.first] = Value.second;
+				}
+			}
+		}
+
+		for (auto& Section : IniStruct)
+		{
+			if (Section.first == "cnames")
+			{
+				for (auto& Value : Section.second)
+				{
+					SecToName[Value.first] = Value.second;
+				}
+			}
+		}
+
+		for (auto& Section : IniStruct)
+		{
+			// Section here is a std::pair<std::string, std::pair<std::string, std::string>>
 			// first gets the str
 			// second gets the section itself
 
-			if (Section.first == "twinkie") continue;
+			if (!IsSecUsable(Section.first)) continue;
 
 			Tab NewTab = Tab(Section.first);
 
-			for (auto& Value : Section.second)
+			for (auto& Value : NameToType)
 			{
-				Setting NewSetting = Setting(Value.first, nullptr);
+				Setting NewSetting = Setting(Value.first);
 
 				if (!NameToType.contains(NewSetting.Name))
 				{
 					if (NewSetting.Name.find(".") == std::string::npos)
 					{
-						PopulateIniStruct();
 						Reason = TypeNotFound;
 						return;
 					}
@@ -217,7 +197,6 @@ public:
 					{
 						if (!NameToType.contains(NewSetting.Name + ".x"))
 						{
-							PopulateIniStruct();
 							Reason = TypeNotFound;
 							return;
 						}
@@ -228,18 +207,46 @@ public:
 
 				if (Type == "bool")
 				{
-					NewSetting.Value = new bool{Value.second == "true" ? true : false};
+					NewSetting.bValue = Section.second.get(NewSetting.Name) == "true" ? true : false;
 				}
 				else if (Type == "vec4")
 				{
-					NewSetting.Value = new ImVec4{}; // TODO
+					NewSetting.v4Value.x = atof(Section.second.get(NewSetting.Name + ".x").c_str());
+					NewSetting.v4Value.y = atof(Section.second.get(NewSetting.Name + ".y").c_str());
+					NewSetting.v4Value.z = atof(Section.second.get(NewSetting.Name + ".z").c_str());
+					NewSetting.v4Value.w = atof(Section.second.get(NewSetting.Name + ".w").c_str());
 				}
+
+				NewSetting.Type = Type;
 
 				NewTab.Settings.push_back(NewSetting);
 			}
 
+			NewTab.Name = Section.first;
+
 			Tabs.push_back(NewTab);
 		}
+
+		for (auto& TabV : Tabs)
+		{
+			static int Idx = 0;
+			if (Idx == 0)
+			{
+				OpenTabs.push_back(true);
+			}
+			OpenTabs.push_back(false);
+			Idx++;
+		}
+	}
+
+	Setting& Index(unsigned int TabIdx, unsigned int SettingIdx)
+	{
+		return Tabs[TabIdx].Settings[SettingIdx];
+	}
+
+	bool IsSecUsable(std::string Name)
+	{
+		return !(Name == "twinkie" or Name == "types" or Name == "vnames" or Name == "cnames");
 	}
 
 	void PopulateIniStruct()
@@ -248,23 +255,25 @@ public:
 
 		for (auto& TabV : Tabs)
 		{
+			IniStruct["cnames"][TabV.Name] = SecToName[TabV.Name];
 			for (auto& SettingV : TabV.Settings)
 			{
-				if (typeid(SettingV.Value) == typeid(bool*))
+				IniStruct["vnames"][SettingV.Name] = VarToName[SettingV.Name];
+				if (SettingV.Type == "bool")
 				{
-					IniStruct[TabV.Name][SettingV.Name] = *(bool*)SettingV.Value ? "true" : "false";
+					IniStruct[TabV.Name][SettingV.Name] = SettingV.bValue ? "true" : "false";
 
-					IniStruct["Types"][SettingV.Name] = "bool";
+					IniStruct["types"][SettingV.Name] = "bool";
 				}
-				else if (typeid(SettingV.Value) == typeid(ImVec4*))
+				else if (SettingV.Type == "vec4")
 				{
-					float xv = ((ImVec4*)SettingV.Value)->x;
+					float xv = SettingV.v4Value.x;
 					std::string x = std::to_string(xv);
-					float yv = ((ImVec4*)SettingV.Value)->y;
+					float yv = SettingV.v4Value.y;
 					std::string y = std::to_string(yv);
-					float zv = ((ImVec4*)SettingV.Value)->z;
+					float zv = SettingV.v4Value.z;
 					std::string z = std::to_string(zv);
-					float wv = ((ImVec4*)SettingV.Value)->w;
+					float wv = SettingV.v4Value.w;
 					std::string w = std::to_string(wv);
 
 					IniStruct[TabV.Name][SettingV.Name + ".x"] = x;
@@ -272,7 +281,7 @@ public:
 					IniStruct[TabV.Name][SettingV.Name + ".z"] = z;
 					IniStruct[TabV.Name][SettingV.Name + ".w"] = w;
 
-					IniStruct["Types"][SettingV.Name] = "vec4";
+					IniStruct["types"][SettingV.Name] = "vec4";
 				}
 				else
 				{
@@ -284,26 +293,29 @@ public:
 		IniFile.generate(IniStruct, true);
 	}
 
-	~SettingMgr()
-	{
-		for (auto& TabV : Tabs)
-		{
-			for (auto& SettingV : TabV.Settings)
-			{
-				delete SettingV.Value;
-				SettingV.Value = nullptr;
-			}
-		}
-	}
-
 	Setting& operator[](std::string rhs)
 	{
-		Setting SettingR("", nullptr);
+		Setting SettingR("");
 		for (auto& TabV : Tabs)
 		{
 			if (TabV[rhs])
 			{
 				return TabV[rhs];
+			}
+		}
+		SettingR.IsValid = false;
+		return SettingR;
+	}
+
+	Setting Get(std::string Name, std::string Type)
+	{
+		Setting SettingR("");
+		for (auto& TabV : Tabs)
+		{
+			if (TabV[Name])
+			{
+				if (TabV[Name].Type == Type)
+					return TabV[Name];
 			}
 		}
 		SettingR.IsValid = false;
@@ -318,7 +330,9 @@ public:
 
 		for (auto& TabV : Tabs)
 		{
-			TabV.Render();
+			if (!IsSecUsable(TabV.Name))
+				continue;
+			TabV.Render(SecToName[TabV.Name], VarToName);
 		}
 
 		EndTabBar();
