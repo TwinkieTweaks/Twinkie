@@ -16,10 +16,12 @@ using ResetFn = HRESULT(APIENTRY*)(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMET
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
+#ifdef BUILD_TMMF
 extern "C" __declspec(dllexport) int Bla() // TODO: Remove when modloader updates
 {
 	return 1;
 }
+#endif
 
 ResetFn oReset = NULL;
 EndScene oEndScene = NULL;
@@ -109,14 +111,17 @@ static HWND GetProcessWindow()
 
 static DWORD WINAPI MainThread(LPVOID lpReserved)
 {
-	// BEGIN: Modloader
+#ifdef BUILD_TMMF
+	unsigned long MillisWaited = 0;
 	while (!Twinkie.GetTrackmania())
 	{
+		if (MillisWaited > 5000) break;
 		Sleep(1);
+		MillisWaited++;
 	}
+#endif
 
 	Twinkie.Init();
-	// END: Modloader
 
 	bool attached = false;
 	do

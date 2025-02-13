@@ -66,14 +66,14 @@ public:
 
 		for (auto& SettingV : Settings)
 		{
-			const char* CName = VarToName[SettingV.Name].c_str();
+			std::string CName = VarToName[SettingV.Name];
 			if (SettingV.Type == "bool")
 			{
-				Checkbox(CName, &SettingV.bValue);
+				Checkbox(CName.c_str(), &SettingV.bValue);
 			}
 			else if (SettingV.Type == "vec4")
 			{
-				ColorEdit4(CName, (float*)&SettingV.v4Value);
+				ColorEdit4(CName.c_str(), (float*)&SettingV.v4Value);
 			}
 			else
 			{
@@ -225,17 +225,6 @@ public:
 			NewTab.Name = Section.first;
 
 			Tabs.push_back(NewTab);
-		}
-
-		for (auto& TabV : Tabs)
-		{
-			static int Idx = 0;
-			if (Idx == 0)
-			{
-				OpenTabs.push_back(true);
-			}
-			OpenTabs.push_back(false);
-			Idx++;
 		}
 	}
 

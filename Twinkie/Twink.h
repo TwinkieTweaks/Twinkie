@@ -4,6 +4,7 @@
 #include <format>
 #include <iomanip>
 #include <sstream>
+#include <set>
 
 #include "TrackMania.h"
 #include "ProcHandler.h"
@@ -12,8 +13,6 @@
 
 #include "imgui-dx9/imgui.h"
 
-#define SettingBool(value) (bool*)(DSetting[std::string("enabledashboard")].Value)
-
 struct PlayerInfo
 {
     uintptr_t Player;
@@ -21,6 +20,20 @@ struct PlayerInfo
     uintptr_t Vehicle;
     uintptr_t PlayerInfo;
     uintptr_t TrackmaniaRace;
+};
+
+enum TMF
+{
+    Nations,
+    United,
+    Modded,
+    Unk
+};
+
+struct CheckpointSplit
+{
+    unsigned int Time;
+    unsigned int _Pad;
 };
 
 struct VehicleInputs
@@ -50,12 +63,18 @@ class Twink
 public:
     HMODULE LibraryHandle = NULL;
 
-	uintptr_t O_TRACKMANIA = 0xD6A2A4;
-	uintptr_t O_DX9DEVICE = 0xD70C00;
+	uintptr_t O_TRACKMANIA_UNITED = 0xD6A2A4;
+    uintptr_t O_TRACKMANIA_NATIONS = 0xD68C44;
+
+    uintptr_t O_CMDCOREBUFF_UNITED = 0xD731E0;
 
 	ProcHandler Handler;
     Versioning Versions;
+    
     SettingMgr Settings;
+    std::set<std::string> Reasons{};
+
+    TMF ForeverType = Unk;
 
     bool DoRender = true;
 
@@ -79,15 +98,23 @@ public:
 
 	Twink(){}
 
-    void InitSettings()
+    void InitSettings(std::string Reason)
     {
+        if (Reasons.find(Reason) != Reasons.end())
+        {
+            PrintInternal("Reason repeated.");
+            return;
+        }
+        PrintInternalArgs("Initializing settings, with given reason: {}", Reason);
+        Reasons.insert(Reason);
+
         // DASHBOARD
         Settings.Tabs.push_back(Tab("dashboard"));
 
         Settings.Tabs[0].Settings.push_back(Setting("enabledashboard"));
         Settings.Index(0, 0).Type = "bool";
         Settings.Index(0, 0).bValue = EnableDashboard;
-        Settings.VarToName["enabledashboard"] = "Enable";
+        Settings.VarToName["enabledashboard"] = "Enable##Dashboard";
 
         Settings.Tabs[0].Settings.push_back(Setting("colorsteer"));
         Settings.Index(0, 1).Type = "vec4";
@@ -121,34 +148,22 @@ public:
 
         Settings.SecToName["dashboard"] = "Dashboard";
         // DASHBOARD
-
-        // PLAYERINFO
-        Settings.Tabs.push_back(Tab("playerinfo"));
-
-        Settings.Tabs[1].Settings.push_back(Setting("enableplayerinfo"));
-        Settings.Index(1, 0).Type = "bool";
-        Settings.Index(1, 0).bValue = EnablePlayerInfo;
-        Settings.VarToName["enableplayerinfo"] = "Enable";
-
-        Settings.SecToName["playerinfo"] = "PlayerInfo";
-        // PLAYERINFO
     }
 
     void Init()
     {
+        GetTrackmania();
         PrintInternal(":3c");
-        PrintInternalArgs("Twinkie for TrackMania Forever. Version {}", Versions.TwinkieVer);
+        PrintInternalArgs("Twinkie for {}. Version {}", ForeverType == Nations ? "TrackMania Nations" : (ForeverType == United ? "TrackMania United" : "TrackMania Forever (not specified)"), Versions.TwinkieVer);
         if (GetTrackmania()) PrintInternal("Non-null CTrackMania, SUCCESS.");
         else
         {
             PrintError("Null CTrackMania, FAILURE");
-            PrintErrorArgs("Tried to poke: {}", ToHex(O_TRACKMANIA));
         }
 
         if (Settings.Reason == NoPopulation)
         {
             PrintInternal("Settings loaded.");
-            PrintArgs("Loaded tabs: {}", Settings.Tabs.size());
         }
         else if (Settings.Reason == FileNotReady)
         {
@@ -161,13 +176,14 @@ public:
                 PrintErrorArgs("Something went wrong when parsing settings file. ERR{}", (int)Settings.Reason);
                 PrintError("Remaking file.");
             }
-            InitSettings();
+            InitSettings("InitRemake");
             Settings.PopulateIniStruct();
         }
         else
         {
             PrintErrorArgs("Settings not loaded, reason {}", (int)Settings.Reason);
         }
+        PrintArgs("Loaded tabs: {}", Settings.Tabs.size());
     }
 
     ~Twink()
@@ -200,55 +216,24 @@ public:
         return Read<uintptr_t>(Read<uintptr_t>(this_) + index * 4);
     }
 
+    float GetSimulationTime()
+    {
+        uintptr_t Adapter = Read<uintptr_t>(O_CMDCOREBUFF_UNITED + 160);
+        if (Adapter)
+        {
+            return Read<float>(Adapter + 2);
+        }
+        return -1.f;
+    }
+
 	uintptr_t GetTrackmania()
 	{
-		return Handler.Read<uintptr_t>(O_TRACKMANIA);
-	}
-	uintptr_t GetDX9Device()
-	{
-		return Handler.Read<uintptr_t>(O_DX9DEVICE);
-	}
+        uintptr_t TMNF = Handler.Read<uintptr_t>(O_TRACKMANIA_NATIONS);
+        uintptr_t TMUF = Handler.Read<uintptr_t>(O_TRACKMANIA_UNITED);
 
-	void SetTrailColorRace(TM::GmVec3 TrailColor)
-	{
-        auto trackmania = GetTrackmania();
+        ForeverType = TMNF ? Nations : (TMUF ? United : Unk);
 
-        auto race = Read<uintptr_t>(trackmania + 0x454);
-        if (race)
-        {
-            uintptr_t player = 0;
-
-            auto local_player_info = Read<uintptr_t>(race + 0x330);
-            if (local_player_info)
-            {
-                player = Read<uintptr_t>(local_player_info + 0x238);
-            }
-            else
-            {
-                auto network = Read<uintptr_t>(trackmania + 0x12C);
-                if (network)
-                {
-                    auto local_player_infos = Read<TM::CFastBuffer<uintptr_t>>(network + 0x2FC);
-                    if (local_player_infos.Size >= 0)
-                    {
-                        player = Read<uintptr_t>(Read<uintptr_t>((unsigned long)local_player_infos.Ptr) + 0x238);
-                    }
-                }
-            }
-
-            if (player)
-            {
-                auto game_mobil = Read<uintptr_t>(player + 0x28);
-                if (game_mobil)
-                {
-                    auto scene_vehicle_car = Read<uintptr_t>(game_mobil + 0x14);
-                    if (scene_vehicle_car)
-                    {
-                        Write<TM::GmVec3>(TrailColor, scene_vehicle_car + 0xA8 + 0x20);
-                    }
-                }
-            }
-        }
+        return TMUF ? TMUF : (TMNF ? TMNF : 0);
 	}
 
     void SetTrails(bool Enabled)
@@ -462,8 +447,8 @@ public:
         static_assert(std::is_integral<T>::value, "T must be an integral type");
 
         std::stringstream oss;
-        oss << std::hex << std::uppercase << Value; // Apply hex formatting first
-        return "0x" + oss.str(); // Prepend "0x" separately
+        oss << std::hex << std::uppercase << Value;
+        return "0x" + oss.str();
     }
 
     TM::GmVec3 HsvToRgb(TM::GmVec3 input)
@@ -536,7 +521,7 @@ public:
             auto& S_EnableDashboard = Settings["enabledashboard"];
             if (!S_EnableDashboard)
             {
-                InitSettings();
+                InitSettings("InvalidOption1");
                 return;
             }
             EnableDashboard = S_EnableDashboard.bValue;
@@ -544,7 +529,7 @@ public:
             auto& S_DSteer = Settings["colorsteer"];
             if (!S_DSteer)
             {
-                InitSettings();
+                InitSettings("InvalidOption1");
                 return;
             }
             ColorSteer = S_DSteer.v4Value;
@@ -552,7 +537,7 @@ public:
             auto& S_DSteerI = Settings["colorsteeri"];
             if (!S_DSteerI)
             {
-                InitSettings();
+                InitSettings("InvalidOption1");
                 return;
             }
             ColorSteerI = S_DSteerI.v4Value;
@@ -560,7 +545,7 @@ public:
             auto& S_DBrake = Settings["colorbrake"];
             if (!S_DBrake)
             {
-                InitSettings();
+                InitSettings("InvalidOption2");
                 return;
             }
             ColorBrake = S_DBrake.v4Value;
@@ -568,15 +553,15 @@ public:
             auto& S_DBrakeI = Settings["colorbrakei"];
             if (!S_DBrakeI)
             {
-                InitSettings();
+                InitSettings("InvalidOption3");
                 return;
             }
             ColorBrakeI = S_DBrakeI.v4Value;
 
             auto& S_DAccel = Settings["coloraccel"];
-            if (S_DAccel)
+            if (!S_DAccel)
             {
-                InitSettings();
+                InitSettings("InvalidOption4");
                 return;
             }
             ColorAccel = S_DAccel.v4Value;
@@ -584,10 +569,17 @@ public:
             auto& S_DAccelI = Settings["coloracceli"];
             if (!S_DAccelI)
             {
-                InitSettings();
+                InitSettings("InvalidOption5");
                 return;
             }
             ColorAccelI = S_DAccelI.v4Value;
+
+            //auto& S_PEnable = Settings["enableplayerinfo"];
+            //if (!S_PEnable)
+            //{
+            //    InitSettings("InvalidOption6");
+            //    return;
+            //}
         }
     }
 
