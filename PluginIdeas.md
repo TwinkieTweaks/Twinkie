@@ -1,0 +1,4 @@
+- No-respawn timer (requires RE splits)
+- Tweaker (too hard imo)
+- Split Speeds (requires RE splits)
+- Hunting Stats (steal code from bulbtoys :3)
