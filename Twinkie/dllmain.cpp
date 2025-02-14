@@ -7,9 +7,6 @@
 #include <d3d9.h>
 #include <intrin.h>
 
-#include "kiero/kiero.h"
-#include "kiero/minhook/include/MinHook.h"
-
 typedef long(__stdcall* EndScene)(LPDIRECT3DDEVICE9);
 typedef LRESULT(CALLBACK* WNDPROC)(HWND, UINT, WPARAM, LPARAM);
 using ResetFn = HRESULT(APIENTRY*)(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pPresentationParameters);
@@ -109,27 +106,40 @@ static HWND GetProcessWindow()
 
 static DWORD WINAPI MainThread(LPVOID lpReserved)
 {
-	// BEGIN: Modloader
+#ifdef TT_EXTERNAL_CONSOLE
+	AllocConsole();
+	freopen_s((FILE**)stdout, "CONOUT$", "w", stdout);
+#endif
+
+#ifdef BUILD_TMMC
 	while (!Twinkie.GetTrackmania())
 	{
 		Sleep(1);
 	}
+#endif
 
 	Twinkie.Init();
-	// END: Modloader
 
 	bool attached = false;
 	do
 	{
+		Twinkie.PrintInternal("Hooking DX9...");
 		if (kiero::init(kiero::RenderType::D3D9) == kiero::Status::Success)
 		{
+			Twinkie.PrintInternal("kiero initialized");
 			kiero::bind(16, (void**)&oReset, hkReset);
-			kiero::bind(42, (void**)&oEndScene, hkEndScene);
+			Twinkie.DX9HookStatus = kiero::bind(42, (void**)&oEndScene, hkEndScene);
+			Twinkie.PrintInternalArgs("kiero status: {}", (int)Twinkie.DX9HookStatus);
 			do
 				window = GetProcessWindow();
 			while (window == NULL);
 			oWndProc = (WNDPROC)SetWindowLongPtr(window, GWL_WNDPROC, (LONG_PTR)WndProc);
 			attached = true;
+		}
+		else
+		{
+			Twinkie.PrintError("Error when hooking DX9.");
+			Twinkie.PrintErrorArgs("kiero status: {}", (int)Twinkie.DX9HookStatus);
 		}
 	} while (!attached);
 

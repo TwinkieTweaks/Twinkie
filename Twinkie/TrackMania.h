@@ -31,4 +31,12 @@ namespace TM
 		GmVec3 z;
 		GmVec3 t;
 	};
+
+	enum GameType
+	{
+		United,
+		Nations,
+		Modded,
+		Unk
+	};
 }

@@ -6,13 +6,16 @@
 #include <sstream>
 
 #include "TrackMania.h"
-#include "ProcHandler.h"
 #include "Version.h"
-#include "Settings.h"
 
 #include "imgui-dx9/imgui.h"
 
-#define SettingBool(value) (bool*)(DSetting[std::string("enabledashboard")].Value)
+#include "kiero/kiero.h"
+#include "kiero/minhook/include/MinHook.h"
+
+// #define TT_EXTERNAL_CONSOLE
+#define BUILD_UNITED
+// #define BUILD_NATIONS
 
 struct PlayerInfo
 {
@@ -50,18 +53,23 @@ class Twink
 public:
     HMODULE LibraryHandle = NULL;
 
-	uintptr_t O_TRACKMANIA = 0xD6A2A4;
-	uintptr_t O_DX9DEVICE = 0xD70C00;
+	// uintptr_t O_CTRACKMANIA_UNITED = 0xD6A2A4;
+    // uintptr_t O_CTRACKMANIA_NATIONS = 0xD68C44;
 
-	ProcHandler Handler;
+#ifdef BUILD_UNITED
+    uintptr_t O_CTRACKMANIA = 0xD6A2A4;
+    TM::GameType TMType = TM::GameType::United;
+#endif
+#ifdef BUILD_NATIONS
+    uintptr_t O_CTRACKMANIA = 0xD68C44;
+    TM::GameType TMType = TM::GameType::Nations;
+#endif
+
     Versioning Versions;
-    SettingMgr Settings;
 
     bool DoRender = true;
-
-    bool EnableTrails = false;
-    TM::GmVec3 TrailsColor = { 1,1,0 };
-    float TrailsSpeed = 0.01f;
+    bool IsDivorced = false;
+    bool WantDivorce = false;
 
     bool EnablePlayerInfo = true;
     PlayerInfo CurPlayerInfo = {};
@@ -77,220 +85,94 @@ public:
     ImVec4 ColorBrake = ImVec4(0.94f, 0.f, 0.f, 1.f);
     ImVec4 ColorBrakeI = ImVec4(1.f, 1.f, 1.f, 0.5f);
 
+    kiero::Status::Enum DX9HookStatus = kiero::Status::UnknownError;
+
 	Twink(){}
-
-    void InitSettings()
-    {
-        // DASHBOARD
-        Settings.Tabs.push_back(Tab("dashboard"));
-
-        Settings.Tabs[0].Settings.push_back(Setting("enabledashboard"));
-        Settings.Index(0, 0).Type = "bool";
-        Settings.Index(0, 0).bValue = EnableDashboard;
-        Settings.VarToName["enabledashboard"] = "Enable";
-
-        Settings.Tabs[0].Settings.push_back(Setting("colorsteer"));
-        Settings.Index(0, 1).Type = "vec4";
-        Settings.Index(0, 1).v4Value = ColorSteer;
-        Settings.VarToName["colorsteer"] = "Steer color";
-
-        Settings.Tabs[0].Settings.push_back(Setting("colorbrake"));
-        Settings.Index(0, 2).Type = "vec4";
-        Settings.Index(0, 2).v4Value = ColorBrake;
-        Settings.VarToName["colorbrake"] = "Brake color";
-
-        Settings.Tabs[0].Settings.push_back(Setting("coloraccel"));
-        Settings.Index(0, 3).Type = "vec4";
-        Settings.Index(0, 3).v4Value = ColorAccel;
-        Settings.VarToName["coloraccel"] = "Acceleration color";
-
-        Settings.Tabs[0].Settings.push_back(Setting("colorsteeri"));
-        Settings.Index(0, 4).Type = "vec4";
-        Settings.Index(0, 4).v4Value = ColorSteerI;
-        Settings.VarToName["colorsteeri"] = "Steer color (inactive)";
-
-        Settings.Tabs[0].Settings.push_back(Setting("colorbrakei"));
-        Settings.Index(0, 5).Type = "vec4";
-        Settings.Index(0, 5).v4Value = ColorBrakeI;
-        Settings.VarToName["colorbrakei"] = "Brake color (inactive)";
-
-        Settings.Tabs[0].Settings.push_back(Setting("coloracceli"));
-        Settings.Index(0, 6).Type = "vec4";
-        Settings.Index(0, 6).v4Value = ColorAccelI;
-        Settings.VarToName["coloracceli"] = "Acceleration color (inactive)";
-
-        Settings.SecToName["dashboard"] = "Dashboard";
-        // DASHBOARD
-
-        // PLAYERINFO
-        Settings.Tabs.push_back(Tab("playerinfo"));
-
-        Settings.Tabs[1].Settings.push_back(Setting("enableplayerinfo"));
-        Settings.Index(1, 0).Type = "bool";
-        Settings.Index(1, 0).bValue = EnablePlayerInfo;
-        Settings.VarToName["enableplayerinfo"] = "Enable";
-
-        Settings.SecToName["playerinfo"] = "PlayerInfo";
-        // PLAYERINFO
-    }
 
     void Init()
     {
+        using namespace TM;
+
         PrintInternal(":3c");
-        PrintInternalArgs("Twinkie for TrackMania Forever. Version {}", Versions.TwinkieVer);
-        if (GetTrackmania()) PrintInternal("Non-null CTrackMania, SUCCESS.");
-        else
+        PrintInternalArgs("Twinkie for TrackMania{} Forever. Version {}", TMType == TM::GameType::Nations ? " Nations" : (TMType == TM::GameType::United ? " United" : ""), Versions.TwinkieVer);
+    
+        if (GetTrackmania())
         {
-            PrintError("Null CTrackMania, FAILURE");
-            PrintErrorArgs("Tried to poke: {}", ToHex(O_TRACKMANIA));
-        }
-
-        if (Settings.Reason == NoPopulation)
-        {
-            PrintInternal("Settings loaded.");
-            PrintArgs("Loaded tabs: {}", Settings.Tabs.size());
-        }
-        else if (Settings.Reason == FileNotReady)
-        {
-            if (Settings.Reason == FileNotReady)
-            {
-                PrintInternal("No settings file found. Creating one...");
-            }
-            else
-            {
-                PrintErrorArgs("Something went wrong when parsing settings file. ERR{}", (int)Settings.Reason);
-                PrintError("Remaking file.");
-            }
-            InitSettings();
-            Settings.PopulateIniStruct();
+            PrintInternal("Non-null CTrackMania.");
         }
         else
         {
-            PrintErrorArgs("Settings not loaded, reason {}", (int)Settings.Reason);
+            PrintError("Null CTrackMania.");
+            PrintErrorArgs("Tried to poke: {}", O_CTRACKMANIA);
         }
     }
 
-    ~Twink()
+    template <typename T>
+    T Read(uintptr_t Addr)
     {
-        Settings.PopulateIniStruct();
-        Settings.IniFile.write(Settings.IniStruct, true);
+        return *reinterpret_cast<T*>(Addr);
     }
 
-	template <typename T>
-	T Read(uintptr_t Addr)
-	{
-		return Handler.Read<T>(Addr);
-	}
-
-    template <int index>
-    inline uintptr_t PtrVirtual(uintptr_t this_)
+    template <typename T>
+    void Write(T Value, uintptr_t Addr)
     {
-        return Read<uintptr_t>(this_) + index * 4;
-    }
-
-	template <typename T>
-	void Write(T Value, uintptr_t Addr)
-	{
-		Handler.Write<T>(Value, Addr);
-	}
-
-    template <int index>
-    inline uintptr_t Virtual(uintptr_t this_)
-    {
-        return Read<uintptr_t>(Read<uintptr_t>(this_) + index * 4);
+        *reinterpret_cast<T*>(Addr) = Value;
     }
 
 	uintptr_t GetTrackmania()
 	{
-		return Handler.Read<uintptr_t>(O_TRACKMANIA);
+        return Read <uintptr_t>(O_CTRACKMANIA);
 	}
-	uintptr_t GetDX9Device()
-	{
-		return Handler.Read<uintptr_t>(O_DX9DEVICE);
-	}
-
-	void SetTrailColorRace(TM::GmVec3 TrailColor)
-	{
-        auto trackmania = GetTrackmania();
-
-        auto race = Read<uintptr_t>(trackmania + 0x454);
-        if (race)
-        {
-            uintptr_t player = 0;
-
-            auto local_player_info = Read<uintptr_t>(race + 0x330);
-            if (local_player_info)
-            {
-                player = Read<uintptr_t>(local_player_info + 0x238);
-            }
-            else
-            {
-                auto network = Read<uintptr_t>(trackmania + 0x12C);
-                if (network)
-                {
-                    auto local_player_infos = Read<TM::CFastBuffer<uintptr_t>>(network + 0x2FC);
-                    if (local_player_infos.Size >= 0)
-                    {
-                        player = Read<uintptr_t>(Read<uintptr_t>((unsigned long)local_player_infos.Ptr) + 0x238);
-                    }
-                }
-            }
-
-            if (player)
-            {
-                auto game_mobil = Read<uintptr_t>(player + 0x28);
-                if (game_mobil)
-                {
-                    auto scene_vehicle_car = Read<uintptr_t>(game_mobil + 0x14);
-                    if (scene_vehicle_car)
-                    {
-                        Write<TM::GmVec3>(TrailColor, scene_vehicle_car + 0xA8 + 0x20);
-                    }
-                }
-            }
-        }
-	}
-
-    void SetTrails(bool Enabled)
-    {
-        PlayerInfo CurPlayerInfo = GetPlayerInfo();
-        if (CurPlayerInfo.Player)
-        {
-            Write<unsigned long>(Enabled ? 1 : 0, CurPlayerInfo.Player + 56);
-        }
-    }
 
     void PrintInternal(const char* Str)
     {
         LogStr = LogStr + "[TWINK] " + Str + "\n";
+#ifdef TT_EXTERNAL_CONSOLE
+        std::cout << "[TWINK] " << Str << "\n";
+#endif
     }
 
     void PrintError(const char* Str)
     {
         LogStr = LogStr + "[ERR] " + Str + "\n";
+#ifdef TT_EXTERNAL_CONSOLE
+        std::cout << "[ERR] " << Str << "\n";
+#endif
     }
 
     void Print(const char* Str)
     {
         LogStr = LogStr + "[LOG] " + Str + "\n";
+#ifdef TT_EXTERNAL_CONSOLE
+        std::cout << "[LOG] " << Str << "\n";
+#endif
     }
 
     template<typename... Args>
     void PrintArgs(const char* Str, Args&&... args)
     {
         LogStr = LogStr + "[LOG] " + std::vformat(Str, std::make_format_args(args...)) + "\n";
+#ifdef TT_EXTERNAL_CONSOLE
+        std::cout << "[LOG] " + std::vformat(Str, std::make_format_args(args...)) + "\n";
+#endif
     }
 
     template<typename... Args>
     void PrintErrorArgs(const char* Str, Args&&... args)
     {
         LogStr = LogStr + "[ERR] " + std::vformat(Str, std::make_format_args(args...)) + "\n";
+#ifdef TT_EXTERNAL_CONSOLE
+        std::cout << "[ERR] " + std::vformat(Str, std::make_format_args(args...)) + "\n";
+#endif
     }
 
     template<typename... Args>
     void PrintInternalArgs(const char* Str, Args&&... args)
     {
         LogStr = LogStr + "[TWINK] " + std::vformat(Str, std::make_format_args(args...)) + "\n";
+#ifdef TT_EXTERNAL_CONSOLE
+        std::cout << "[TWINK] " + std::vformat(Str, std::make_format_args(args...)) + "\n";
+#endif
     }
 
     void RenderLog() const
@@ -528,242 +410,6 @@ public:
     {
         return GetPlayerInfo().Vehicle;
     }
-    
-    void UpdateSettings()
-    {
-        if (Settings.Reason == NoPopulation)
-        {
-            auto& S_EnableDashboard = Settings["enabledashboard"];
-            if (!S_EnableDashboard)
-            {
-                InitSettings();
-                return;
-            }
-            EnableDashboard = S_EnableDashboard.bValue;
-
-            auto& S_DSteer = Settings["colorsteer"];
-            if (!S_DSteer)
-            {
-                InitSettings();
-                return;
-            }
-            ColorSteer = S_DSteer.v4Value;
-
-            auto& S_DSteerI = Settings["colorsteeri"];
-            if (!S_DSteerI)
-            {
-                InitSettings();
-                return;
-            }
-            ColorSteerI = S_DSteerI.v4Value;
-
-            auto& S_DBrake = Settings["colorbrake"];
-            if (!S_DBrake)
-            {
-                InitSettings();
-                return;
-            }
-            ColorBrake = S_DBrake.v4Value;
-
-            auto& S_DBrakeI = Settings["colorbrakei"];
-            if (!S_DBrakeI)
-            {
-                InitSettings();
-                return;
-            }
-            ColorBrakeI = S_DBrakeI.v4Value;
-
-            auto& S_DAccel = Settings["coloraccel"];
-            if (S_DAccel)
-            {
-                InitSettings();
-                return;
-            }
-            ColorAccel = S_DAccel.v4Value;
-
-            auto& S_DAccelI = Settings["coloracceli"];
-            if (!S_DAccelI)
-            {
-                InitSettings();
-                return;
-            }
-            ColorAccelI = S_DAccelI.v4Value;
-        }
-    }
-
-    void RenderPlayerInfo()
-    {
-        using namespace ImGui;
-
-        static bool ShowOffsetTesting = false;
-
-        static int OffsetPlayer = 0;
-        static int OffsetMobil = 0;
-        static int OffsetVehicle = 0;
-        static int OffsetPlayerInfo = 0;
-        static int OffsetTrackmaniaRace = 0;
-
-        static int WritePlayer = 0;
-        static int WriteMobil = 0;
-        static int WriteVehicle = 0;
-        static int WritePlayerInfo = 0;
-        static int WriteTrackmaniaRace = 0;
-
-        Begin("Player Information");
-
-        if (CurPlayerInfo.Player)
-        {
-            SeparatorText("Player Information");
-
-            if (Button("Test logs"))
-            {
-                Print("testing testing blabla");
-            }
-
-            Text("Address of Player: %x", CurPlayerInfo.Player);
-            SameLine();
-            std::string PlayerAddrStr = ToHex(CurPlayerInfo.Player);
-            if (Button("Copy##Player"))
-            {
-                SetClipboardText(PlayerAddrStr.c_str());
-                PrintArgs("Copied to clipboard: {}", PlayerAddrStr.c_str());
-            }
-
-            Text("Address of Mobil: %x", CurPlayerInfo.Mobil);
-            SameLine();
-            std::string MobilAddrStr = ToHex(CurPlayerInfo.Mobil);
-            if (Button("Copy##Mobil"))
-            {
-                SetClipboardText(MobilAddrStr.c_str());
-                PrintArgs("Copied to clipboard: {}", MobilAddrStr.c_str());
-            }
-
-            Text("Address of Vehicle: %x", CurPlayerInfo.Vehicle);
-            SameLine();
-            std::string VehicleAddrStr = ToHex(CurPlayerInfo.Vehicle);
-            if (Button("Copy##Vehicle"))
-            {
-                SetClipboardText(VehicleAddrStr.c_str());
-                PrintArgs("Copied to clipboard: {}", VehicleAddrStr.c_str());
-            }
-
-            Text("Address of PlayerInfo: %x", CurPlayerInfo.PlayerInfo);
-            SameLine();
-            std::string PlayerInfoAddrStr = ToHex(CurPlayerInfo.PlayerInfo);
-            if (Button("Copy##PlayerInfo"))
-            {
-                SetClipboardText(PlayerInfoAddrStr.c_str());
-                PrintArgs("Copied to clipboard: {}", PlayerInfoAddrStr.c_str());
-            }
-
-            SeparatorText("Race data");
-
-            Text("Time: %lu", GetRaceTime(CurPlayerInfo));
-
-            VehicleInputs InputInfo = Read<VehicleInputs>(CurPlayerInfo.Vehicle + 80);
-
-            Text("Steer: %f", InputInfo.Steer);
-            Text("Gas: %f", InputInfo.fGas);
-            Text("Brake: %f", InputInfo.fBrake);
-
-            BeginDisabled();
-            Checkbox("Mediatracker enabled", (bool*)CurPlayerInfo.Player + 56); // no Read here, ImGui reads the value internally
-            auto MTClipIndex = Read<unsigned long>(CurPlayerInfo.Player + 72);
-            if (*((bool*)CurPlayerInfo.Player + 56))
-            {
-                Text("Index of active mediatracker clip: %lu", Read<unsigned long>(CurPlayerInfo.Player + 72));
-            }
-
-            Checkbox("Free wheeling", (bool*)CurPlayerInfo.Vehicle + 1548);
-            Checkbox("Turbo", (bool*)CurPlayerInfo.Vehicle + 948);
-            EndDisabled();
-
-            SeparatorText("Offset Testing");
-
-            Checkbox("Show", &ShowOffsetTesting);
-
-            if (ShowOffsetTesting)
-            {
-                BeginChild("Offsets");
-
-                if (CurPlayerInfo.Player)
-                {
-                    InputInt("PlayerOffset", &OffsetPlayer, 2);
-                    Text("Value: %x", Read<unsigned long>(CurPlayerInfo.Player + OffsetPlayer));
-                    InputInt("PlayerWrite", &WritePlayer);
-                    SameLine();
-                    if (Button("Write##Player"))
-                    {
-                        Write<int>(WritePlayer, CurPlayerInfo.Player + OffsetPlayer);
-                    }
-                }
-
-                Separator();
-
-                if (CurPlayerInfo.Mobil)
-                {
-                    InputInt("MobilOffset", &OffsetMobil, 2);
-                    Text("Value: %x", Read<unsigned long>(CurPlayerInfo.Mobil + OffsetMobil));
-                    InputInt("MobilWrite", &WriteMobil);
-                    SameLine();
-                    if (Button("Write##Mobil"))
-                    {
-                        Write<int>(WriteMobil, CurPlayerInfo.Mobil + OffsetMobil);
-                    }
-                }
-
-                Separator();
-
-                if (CurPlayerInfo.Vehicle)
-                {
-                    InputInt("VehicleOffset", &OffsetVehicle, 2);
-                    Text("Value: %x", Read<unsigned long>(CurPlayerInfo.Vehicle + OffsetVehicle));
-                    InputInt("VehicleWrite", &WriteVehicle);
-                    SameLine();
-                    if (Button("Write##Vehicle"))
-                    {
-                        Write<int>(WriteVehicle, CurPlayerInfo.Vehicle + OffsetVehicle);
-                    }
-                }
-
-                Separator();
-
-                if (CurPlayerInfo.PlayerInfo)
-                {
-                    InputInt("PlayerInfoOffset", &OffsetPlayerInfo, 2);
-                    Text("Value: %x", Read<unsigned long>(CurPlayerInfo.PlayerInfo + OffsetPlayerInfo));
-                    InputInt("PlayerInfoWrite", &WritePlayerInfo);
-                    SameLine();
-                    if (Button("Write##PlayerInfo"))
-                    {
-                        Write<int>(WritePlayerInfo, CurPlayerInfo.PlayerInfo + OffsetPlayerInfo);
-                    }
-                }
-
-                Separator();
-
-                if (CurPlayerInfo.TrackmaniaRace)
-                {
-                    InputInt("TrackmaniaRaceOffset", &OffsetTrackmaniaRace, 2);
-                    Text("Value: %x", Read<unsigned long>(CurPlayerInfo.TrackmaniaRace + OffsetTrackmaniaRace));
-                    InputInt("TrackmaniaRaceWrite", &WriteTrackmaniaRace);
-                    SameLine();
-                    if (Button("Write##TrackmaniaRace"))
-                    {
-                        Write<int>(WriteTrackmaniaRace, CurPlayerInfo.TrackmaniaRace + OffsetTrackmaniaRace);
-                    }
-                }
-
-                EndChild();
-            }
-        }
-        else
-        {
-            Text("Not playing.");
-        }
-
-        End();
-    }
 
     // Render() only renders when the GUI is active (Twink.DoRender)
     void Render()
@@ -771,16 +417,195 @@ public:
         using namespace ImGui;
         CurPlayerInfo = GetPlayerInfo();
 
-        Begin("TwinkieTweaks");
+        Begin("Twinkie");
 
-        UpdateSettings();
-        Settings.Render();
+        SeparatorText("Modules");
+
+        Checkbox("Player Information", &EnablePlayerInfo);
+        Checkbox("Logs", &EnableLog);
+        Checkbox("Dashboard", &EnableDashboard);
+
+        SeparatorText("Dashboard");
+
+        ColorEdit4("Steer", &ColorSteer.x);
+        ColorEdit4("Steer inactive", &ColorSteerI.x);
+        ColorEdit4("Accel", &ColorAccel.x);
+        ColorEdit4("Accel inactive", &ColorAccelI.x);
+        ColorEdit4("Brake", &ColorBrake.x);
+        ColorEdit4("Brake inactive", &ColorBrakeI.x);
 
         End();
 
         if (EnablePlayerInfo)
         {
-            RenderPlayerInfo();
+            static bool ShowOffsetTesting = false;
+
+            static int OffsetPlayer = 0;
+            static int OffsetMobil = 0;
+            static int OffsetVehicle = 0;
+            static int OffsetPlayerInfo = 0;
+            static int OffsetTrackmaniaRace = 0;
+
+            static int WritePlayer = 0;
+            static int WriteMobil = 0;
+            static int WriteVehicle = 0;
+            static int WritePlayerInfo = 0;
+            static int WriteTrackmaniaRace = 0;
+
+            Begin("Player Information");
+
+            if (CurPlayerInfo.Player)
+            {
+                SeparatorText("Player Information");
+
+                if (Button("Test logs"))
+                {
+                    Print("testing testing blabla");
+                }
+
+                Text("Address of Player: %x", CurPlayerInfo.Player);
+                SameLine();
+                std::string PlayerAddrStr = ToHex(CurPlayerInfo.Player);
+                if (Button("Copy##Player"))
+                {
+                    SetClipboardText(PlayerAddrStr.c_str());
+                    PrintArgs("Copied to clipboard: {}", PlayerAddrStr.c_str());
+                }
+
+                Text("Address of Mobil: %x", CurPlayerInfo.Mobil);
+                SameLine();
+                std::string MobilAddrStr = ToHex(CurPlayerInfo.Mobil);
+                if (Button("Copy##Mobil"))
+                {
+                    SetClipboardText(MobilAddrStr.c_str());
+                    PrintArgs("Copied to clipboard: {}", MobilAddrStr.c_str());
+                }
+
+                Text("Address of Vehicle: %x", CurPlayerInfo.Vehicle);
+                SameLine();
+                std::string VehicleAddrStr = ToHex(CurPlayerInfo.Vehicle);
+                if (Button("Copy##Vehicle"))
+                {
+                    SetClipboardText(VehicleAddrStr.c_str());
+                    PrintArgs("Copied to clipboard: {}", VehicleAddrStr.c_str());
+                }
+
+                Text("Address of PlayerInfo: %x", CurPlayerInfo.PlayerInfo);
+                SameLine();
+                std::string PlayerInfoAddrStr = ToHex(CurPlayerInfo.PlayerInfo);
+                if (Button("Copy##PlayerInfo"))
+                {
+                    SetClipboardText(PlayerInfoAddrStr.c_str());
+                    PrintArgs("Copied to clipboard: {}", PlayerInfoAddrStr.c_str());
+                }
+
+                SeparatorText("Race data");
+
+                Text("Time: %lu", GetRaceTime(CurPlayerInfo));
+
+                VehicleInputs InputInfo = Read<VehicleInputs>(CurPlayerInfo.Vehicle + 80);
+
+                Text("Steer: %f", InputInfo.Steer);
+                Text("Gas: %f", InputInfo.fGas);
+                Text("Brake: %f", InputInfo.fBrake);
+
+                BeginDisabled();
+                Checkbox("Mediatracker enabled", (bool*)CurPlayerInfo.Player + 56); // no Read here, ImGui reads the value internally
+                auto MTClipIndex = Read<unsigned long>(CurPlayerInfo.Player + 72);
+                if (*((bool*)CurPlayerInfo.Player + 56))
+                {
+                    Text("Index of active mediatracker clip: %lu", Read<unsigned long>(CurPlayerInfo.Player + 72));
+                }
+
+                Checkbox("Free wheeling", (bool*)CurPlayerInfo.Vehicle + 1548);
+                Checkbox("Turbo", (bool*)CurPlayerInfo.Vehicle + 948);
+                EndDisabled();
+
+                SeparatorText("Offset Testing");
+
+                Checkbox("Show", &ShowOffsetTesting);
+
+                if (ShowOffsetTesting)
+                {
+                    BeginChild("Offsets");
+
+                    if (CurPlayerInfo.Player)
+                    {
+                        InputInt("PlayerOffset", &OffsetPlayer, 2);
+                        Text("Value: %x", Read<unsigned long>(CurPlayerInfo.Player + OffsetPlayer));
+                        InputInt("PlayerWrite", &WritePlayer);
+                        SameLine();
+                        if (Button("Write##Player"))
+                        {
+                            Write<int>(WritePlayer, CurPlayerInfo.Player + OffsetPlayer);
+                        }
+                    }
+
+                    Separator();
+
+                    if (CurPlayerInfo.Mobil)
+                    {
+                        InputInt("MobilOffset", &OffsetMobil, 2);
+                        Text("Value: %x", Read<unsigned long>(CurPlayerInfo.Mobil + OffsetMobil));
+                        InputInt("MobilWrite", &WriteMobil);
+                        SameLine();
+                        if (Button("Write##Mobil"))
+                        {
+                            Write<int>(WriteMobil, CurPlayerInfo.Mobil + OffsetMobil);
+                        }
+                    }
+
+                    Separator();
+
+                    if (CurPlayerInfo.Vehicle)
+                    {
+                        InputInt("VehicleOffset", &OffsetVehicle, 2);
+                        Text("Value: %x", Read<unsigned long>(CurPlayerInfo.Vehicle + OffsetVehicle));
+                        InputInt("VehicleWrite", &WriteVehicle);
+                        SameLine();
+                        if (Button("Write##Vehicle"))
+                        {
+                            Write<int>(WriteVehicle, CurPlayerInfo.Vehicle + OffsetVehicle);
+                        }
+                    }
+
+                    Separator();
+
+                    if (CurPlayerInfo.PlayerInfo)
+                    {
+                        InputInt("PlayerInfoOffset", &OffsetPlayerInfo, 2);
+                        Text("Value: %x", Read<unsigned long>(CurPlayerInfo.PlayerInfo + OffsetPlayerInfo));
+                        InputInt("PlayerInfoWrite", &WritePlayerInfo);
+                        SameLine();
+                        if (Button("Write##PlayerInfo"))
+                        {
+                            Write<int>(WritePlayerInfo, CurPlayerInfo.PlayerInfo + OffsetPlayerInfo);
+                        }
+                    }
+
+                    Separator();
+
+                    if (CurPlayerInfo.TrackmaniaRace)
+                    {
+                        InputInt("TrackmaniaRaceOffset", &OffsetTrackmaniaRace, 2);
+                        Text("Value: %x", Read<unsigned long>(CurPlayerInfo.TrackmaniaRace + OffsetTrackmaniaRace));
+                        InputInt("TrackmaniaRaceWrite", &WriteTrackmaniaRace);
+                        SameLine();
+                        if (Button("Write##TrackmaniaRace"))
+                        {
+                            Write<int>(WriteTrackmaniaRace, CurPlayerInfo.TrackmaniaRace + OffsetTrackmaniaRace);
+                        }
+                    }
+
+                    EndChild();
+                }
+            }
+            else
+            {
+                Text("Not playing.");
+            }
+
+            End();
         }
 
         if (EnableLog)
@@ -792,6 +617,7 @@ public:
     }
 
     // RenderAnyways() always gets called regardless of the current GUI state
+
     void RenderAnyways()
     {
         using namespace ImGui;
@@ -849,10 +675,12 @@ public:
                 if (InputInfo.Steer < 0)
                 {
                     UIDrawList->AddTriangleFilled(TipSteer, UpperL, LowerL, ColorConvertFloat4ToU32(ColorSteer));
+                    Print("render 1");
                 }
                 else if (InputInfo.Steer > 0)
                 {
                     UIDrawList->AddTriangleFilled(TipSteer, UpperR, LowerR, ColorConvertFloat4ToU32(ColorSteer));
+                    Print("render 2");
                 }
 
                 UIDrawList->AddRectFilled(ImVec2(UpperL.x + 6.f, UpperL.y), ImVec2(BottomCornerGas.x - 6.f, BottomCornerGas.y - 3.f), InputInfo.get_Gas() ? ColorConvertFloat4ToU32(ColorAccel) : ColorConvertFloat4ToU32(ColorAccelI));
