@@ -14,10 +14,12 @@ using PresentFn = long(__stdcall*)(LPDIRECT3DDEVICE9 pDevice, LPVOID, LPVOID, HW
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
+#ifdef BUILD_TMMC
 extern "C" __declspec(dllexport) int Bla() // TODO: Remove when modloader updates
 {
 	return 1;
 }
+#endif
 
 ResetFn oReset = NULL;
 // EndScene oEndScene = NULL;
@@ -38,39 +40,6 @@ static void InitImGui(LPDIRECT3DDEVICE9 pDevice)
 }
 
 bool init = false;
-//static long __stdcall hkEndScene(LPDIRECT3DDEVICE9 pDevice)
-//{
-//	static const void* RetAddr = _ReturnAddress();
-//
-//	auto OgRet = oEndScene(pDevice);
-//
-//	if (_ReturnAddress() == RetAddr)
-//	{
-//		return OgRet;
-//	}
-//
-//	if (GetAsyncKeyState(VK_F3) & 1) Twinkie.DoRender = !Twinkie.DoRender;
-//
-//	if (!init)
-//	{
-//		InitImGui(pDevice);
-//		init = true;
-//	}
-//
-//	ImGui_ImplDX9_NewFrame();
-//	ImGui_ImplWin32_NewFrame();
-//	ImGui::NewFrame();
-//	
-//	if (Twinkie.DoRender) Twinkie.Render();
-//	Twinkie.RenderAnyways();
-//
-//	ImGui::EndFrame();
-//	ImGui::Render();
-//	ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
-//
-//	return oEndScene(pDevice);
-//}
-
 static long __stdcall hkReset(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pParams)
 {
 	ImGui_ImplDX9_InvalidateDeviceObjects();
