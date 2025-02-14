@@ -7,9 +7,10 @@
 #include <d3d9.h>
 #include <intrin.h>
 
-typedef long(__stdcall* EndScene)(LPDIRECT3DDEVICE9);
+// typedef long(__stdcall* EndScene)(LPDIRECT3DDEVICE9);
 typedef LRESULT(CALLBACK* WNDPROC)(HWND, UINT, WPARAM, LPARAM);
 using ResetFn = HRESULT(APIENTRY*)(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pPresentationParameters);
+using PresentFn = long(__stdcall*)(LPDIRECT3DDEVICE9 pDevice, LPVOID, LPVOID, HWND, LPVOID);
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -19,7 +20,8 @@ extern "C" __declspec(dllexport) int Bla() // TODO: Remove when modloader update
 }
 
 ResetFn oReset = NULL;
-EndScene oEndScene = NULL;
+// EndScene oEndScene = NULL;
+PresentFn oPresent = NULL;
 WNDPROC oWndProc;
 static HWND window = NULL;
 
@@ -36,17 +38,49 @@ static void InitImGui(LPDIRECT3DDEVICE9 pDevice)
 }
 
 bool init = false;
-static long __stdcall hkEndScene(LPDIRECT3DDEVICE9 pDevice)
+//static long __stdcall hkEndScene(LPDIRECT3DDEVICE9 pDevice)
+//{
+//	static const void* RetAddr = _ReturnAddress();
+//
+//	auto OgRet = oEndScene(pDevice);
+//
+//	if (_ReturnAddress() == RetAddr)
+//	{
+//		return OgRet;
+//	}
+//
+//	if (GetAsyncKeyState(VK_F3) & 1) Twinkie.DoRender = !Twinkie.DoRender;
+//
+//	if (!init)
+//	{
+//		InitImGui(pDevice);
+//		init = true;
+//	}
+//
+//	ImGui_ImplDX9_NewFrame();
+//	ImGui_ImplWin32_NewFrame();
+//	ImGui::NewFrame();
+//	
+//	if (Twinkie.DoRender) Twinkie.Render();
+//	Twinkie.RenderAnyways();
+//
+//	ImGui::EndFrame();
+//	ImGui::Render();
+//	ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
+//
+//	return oEndScene(pDevice);
+//}
+
+static long __stdcall hkReset(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pParams)
 {
-	static const void* RetAddr = _ReturnAddress();
+	ImGui_ImplDX9_InvalidateDeviceObjects();
+	const HRESULT result = oReset(pDevice, pParams);
+	ImGui_ImplDX9_CreateDeviceObjects();
+	return result; 
+}
 
-	auto OgRet = oEndScene(pDevice);
-
-	if (_ReturnAddress() == RetAddr)
-	{
-		return OgRet;
-	}
-
+static long __stdcall hkPresent(LPDIRECT3DDEVICE9 pDevice, LPVOID A, LPVOID B, HWND C, LPVOID D)
+{
 	if (GetAsyncKeyState(VK_F3) & 1) Twinkie.DoRender = !Twinkie.DoRender;
 
 	if (!init)
@@ -58,7 +92,7 @@ static long __stdcall hkEndScene(LPDIRECT3DDEVICE9 pDevice)
 	ImGui_ImplDX9_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
-	
+
 	if (Twinkie.DoRender) Twinkie.Render();
 	Twinkie.RenderAnyways();
 
@@ -66,15 +100,7 @@ static long __stdcall hkEndScene(LPDIRECT3DDEVICE9 pDevice)
 	ImGui::Render();
 	ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
 
-	return oEndScene(pDevice);
-}
-
-static long __stdcall hkReset(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pParams)
-{
-	ImGui_ImplDX9_InvalidateDeviceObjects();
-	const HRESULT result = oReset(pDevice, pParams);
-	ImGui_ImplDX9_CreateDeviceObjects();
-	return result; 
+	return oPresent(pDevice, A, B, C, D);
 }
 
 static LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
@@ -128,7 +154,7 @@ static DWORD WINAPI MainThread(LPVOID lpReserved)
 		{
 			Twinkie.PrintInternal("kiero initialized");
 			kiero::bind(16, (void**)&oReset, hkReset);
-			Twinkie.DX9HookStatus = kiero::bind(42, (void**)&oEndScene, hkEndScene);
+			Twinkie.DX9HookStatus = kiero::bind(17, (void**)&oPresent, hkPresent);
 			Twinkie.PrintInternalArgs("kiero status: {}", (int)Twinkie.DX9HookStatus);
 			do
 				window = GetProcessWindow();

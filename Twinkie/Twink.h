@@ -13,9 +13,12 @@
 #include "kiero/kiero.h"
 #include "kiero/minhook/include/MinHook.h"
 
-// #define TT_EXTERNAL_CONSOLE
 #define BUILD_UNITED
 // #define BUILD_NATIONS
+
+#ifdef BUILD_NATIONS
+#define TT_EXTERNAL_CONSOLE
+#endif
 
 struct PlayerInfo
 {
