@@ -10,3 +10,4 @@ Twinkie is a QOL modification for TrackMania Forever, currently featuring only 1
 
 # Screenshots
 ![image](https://github.com/user-attachments/assets/1b549e7e-3f0f-4f8c-8be9-a1042f3cd302)
+![image](https://github.com/user-attachments/assets/b3b7e3b0-a864-4ccf-87b1-9df07201ebe4)
