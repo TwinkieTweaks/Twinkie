@@ -9,4 +9,4 @@ Twinkie is a QOL modification for TrackMania Forever, currently featuring only 1
 - Full Modloader support
 
 # Gallery
-![image](https://github.com/user-attachments/assets/eb555ec6-9cd4-4ef4-8df3-e632492fcebf)
+![image](https://github.com/user-attachments/assets/2c66bf0c-747e-4cd3-9a6b-4eebf208c023)
