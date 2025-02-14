@@ -13,8 +13,8 @@
 #include "kiero/kiero.h"
 #include "kiero/minhook/include/MinHook.h"
 
-#define BUILD_UNITED
-// #define BUILD_NATIONS
+// #define BUILD_UNITED
+#define BUILD_NATIONS
 
 struct PlayerInfo
 {
@@ -67,13 +67,11 @@ public:
     Versioning Versions;
 
     bool DoRender = true;
-    bool IsDivorced = false;
-    bool WantDivorce = false;
 
-    bool EnablePlayerInfo = true;
+    bool EnablePlayerInfo = false;
     PlayerInfo CurPlayerInfo = {};
 
-    bool EnableLog = true;
+    bool EnableLog = false;
     std::string LogStr = "";
 
     bool EnableDashboard = false;
@@ -83,6 +81,10 @@ public:
     ImVec4 ColorAccelI = ImVec4(1.f, 1.f, 1.f, 0.5f);
     ImVec4 ColorBrake = ImVec4(0.94f, 0.f, 0.f, 1.f);
     ImVec4 ColorBrakeI = ImVec4(1.f, 1.f, 1.f, 0.5f);
+
+    bool EnableAboutWindow = false;
+
+    bool EnableSettings = false;
 
     kiero::Status::Enum DX9HookStatus = kiero::Status::UnknownError;
 
@@ -174,9 +176,14 @@ public:
 #endif
     }
 
-    void RenderLog() const
+    void RenderLog()
     {
-        ImGui::TextWrapped(LogStr.c_str());
+        using namespace ImGui;
+        if (Begin("Logs", &EnableLog))
+        {
+            TextWrapped(LogStr.c_str());
+        }
+        End();
     }
 
     PlayerInfo GetPlayerInfo()
@@ -410,213 +417,330 @@ public:
         return GetPlayerInfo().Vehicle;
     }
 
+    void RenderAboutWindow()
+    {
+        using namespace ImGui;
+
+        if (Begin("About Twinkie", &EnableAboutWindow))
+        {
+            Text(std::format("Twinkie for TrackMania{} Forever. Version {}", TMType == TM::GameType::Nations ? " Nations" : (TMType == TM::GameType::United ? " United" : ""), Versions.TwinkieVer).c_str());
+            Text("Made with love by jailman. <3");
+        }
+        End();
+    }
+
+    void RenderPlayerInfo()
+    {
+        using namespace ImGui;
+        static bool ShowOffsetTesting = false;
+
+        static int OffsetPlayer = 0;
+        static int OffsetMobil = 0;
+        static int OffsetVehicle = 0;
+        static int OffsetPlayerInfo = 0;
+        static int OffsetTrackmaniaRace = 0;
+
+        static int WritePlayer = 0;
+        static int WriteMobil = 0;
+        static int WriteVehicle = 0;
+        static int WritePlayerInfo = 0;
+        static int WriteTrackmaniaRace = 0;
+
+        Begin("Player Information", &EnablePlayerInfo);
+
+        if (CurPlayerInfo.Player)
+        {
+            SeparatorText("Player Information");
+
+            Text("Address of Player: %x", CurPlayerInfo.Player);
+            SameLine();
+            std::string PlayerAddrStr = ToHex(CurPlayerInfo.Player);
+            if (Button("Copy##Player"))
+            {
+                SetClipboardText(PlayerAddrStr.c_str());
+                PrintArgs("Copied to clipboard: {}", PlayerAddrStr.c_str());
+            }
+
+            Text("Address of Mobil: %x", CurPlayerInfo.Mobil);
+            SameLine();
+            std::string MobilAddrStr = ToHex(CurPlayerInfo.Mobil);
+            if (Button("Copy##Mobil"))
+            {
+                SetClipboardText(MobilAddrStr.c_str());
+                PrintArgs("Copied to clipboard: {}", MobilAddrStr.c_str());
+            }
+
+            Text("Address of Vehicle: %x", CurPlayerInfo.Vehicle);
+            SameLine();
+            std::string VehicleAddrStr = ToHex(CurPlayerInfo.Vehicle);
+            if (Button("Copy##Vehicle"))
+            {
+                SetClipboardText(VehicleAddrStr.c_str());
+                PrintArgs("Copied to clipboard: {}", VehicleAddrStr.c_str());
+            }
+
+            Text("Address of PlayerInfo: %x", CurPlayerInfo.PlayerInfo);
+            SameLine();
+            std::string PlayerInfoAddrStr = ToHex(CurPlayerInfo.PlayerInfo);
+            if (Button("Copy##PlayerInfo"))
+            {
+                SetClipboardText(PlayerInfoAddrStr.c_str());
+                PrintArgs("Copied to clipboard: {}", PlayerInfoAddrStr.c_str());
+            }
+
+            SeparatorText("Race data");
+
+            Text("Time: %lu", GetRaceTime(CurPlayerInfo));
+
+            VehicleInputs InputInfo = Read<VehicleInputs>(CurPlayerInfo.Vehicle + 80);
+
+            Text("Steer: %f", InputInfo.Steer);
+            Text("Gas: %f", InputInfo.fGas);
+            Text("Brake: %f", InputInfo.fBrake);
+
+            BeginDisabled();
+            Checkbox("Mediatracker enabled", (bool*)CurPlayerInfo.Player + 56); // no Read here, ImGui reads the value internally
+            auto MTClipIndex = Read<unsigned long>(CurPlayerInfo.Player + 72);
+            if (*((bool*)CurPlayerInfo.Player + 56))
+            {
+                Text("Index of active mediatracker clip: %lu", Read<unsigned long>(CurPlayerInfo.Player + 72));
+            }
+
+            Checkbox("Free wheeling", (bool*)CurPlayerInfo.Vehicle + 1548);
+            Checkbox("Turbo", (bool*)CurPlayerInfo.Vehicle + 948);
+            EndDisabled();
+
+            SeparatorText("Offset Testing");
+
+            Checkbox("Show", &ShowOffsetTesting);
+
+            if (ShowOffsetTesting)
+            {
+                BeginChild("Offsets");
+
+                if (CurPlayerInfo.Player)
+                {
+                    InputInt("PlayerOffset", &OffsetPlayer, 2);
+                    Text("Value: %x", Read<unsigned long>(CurPlayerInfo.Player + OffsetPlayer));
+                    InputInt("PlayerWrite", &WritePlayer);
+                    SameLine();
+                    if (Button("Write##Player"))
+                    {
+                        Write<int>(WritePlayer, CurPlayerInfo.Player + OffsetPlayer);
+                    }
+                }
+
+                Separator();
+
+                if (CurPlayerInfo.Mobil)
+                {
+                    InputInt("MobilOffset", &OffsetMobil, 2);
+                    Text("Value: %x", Read<unsigned long>(CurPlayerInfo.Mobil + OffsetMobil));
+                    InputInt("MobilWrite", &WriteMobil);
+                    SameLine();
+                    if (Button("Write##Mobil"))
+                    {
+                        Write<int>(WriteMobil, CurPlayerInfo.Mobil + OffsetMobil);
+                    }
+                }
+
+                Separator();
+
+                if (CurPlayerInfo.Vehicle)
+                {
+                    InputInt("VehicleOffset", &OffsetVehicle, 2);
+                    Text("Value: %x", Read<unsigned long>(CurPlayerInfo.Vehicle + OffsetVehicle));
+                    InputInt("VehicleWrite", &WriteVehicle);
+                    SameLine();
+                    if (Button("Write##Vehicle"))
+                    {
+                        Write<int>(WriteVehicle, CurPlayerInfo.Vehicle + OffsetVehicle);
+                    }
+                }
+
+                Separator();
+
+                if (CurPlayerInfo.PlayerInfo)
+                {
+                    InputInt("PlayerInfoOffset", &OffsetPlayerInfo, 2);
+                    Text("Value: %x", Read<unsigned long>(CurPlayerInfo.PlayerInfo + OffsetPlayerInfo));
+                    InputInt("PlayerInfoWrite", &WritePlayerInfo);
+                    SameLine();
+                    if (Button("Write##PlayerInfo"))
+                    {
+                        Write<int>(WritePlayerInfo, CurPlayerInfo.PlayerInfo + OffsetPlayerInfo);
+                    }
+                }
+
+                Separator();
+
+                if (CurPlayerInfo.TrackmaniaRace)
+                {
+                    InputInt("TrackmaniaRaceOffset", &OffsetTrackmaniaRace, 2);
+                    Text("Value: %x", Read<unsigned long>(CurPlayerInfo.TrackmaniaRace + OffsetTrackmaniaRace));
+                    InputInt("TrackmaniaRaceWrite", &WriteTrackmaniaRace);
+                    SameLine();
+                    if (Button("Write##TrackmaniaRace"))
+                    {
+                        Write<int>(WriteTrackmaniaRace, CurPlayerInfo.TrackmaniaRace + OffsetTrackmaniaRace);
+                    }
+                }
+
+                EndChild();
+            }
+        }
+        else
+        {
+            Text("Not playing.");
+        }
+
+        End();
+    }
+
+    void RenderDashboard()
+    {
+        using namespace ImGui;
+        if (IsPlaying() and GetInputInfoWrite())
+        {
+            static bool IsPrevHovered = false;
+            VehicleInputs InputInfo = GetInputInfo();
+
+            PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+            PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+
+            int DashboardWindowFlags = ImGuiWindowFlags_NoTitleBar;
+
+            Begin("Dashboard", nullptr, DashboardWindowFlags);
+
+            IsPrevHovered = IsWindowHovered();
+
+            PopStyleColor();
+            PopStyleVar();
+
+            auto UIDrawList = GetWindowDrawList();
+            auto CursorPos = GetCursorScreenPos();
+
+            float WindowWidth = GetWindowWidth() / 3.f;
+            float WindowHeight = GetWindowHeight();
+
+            float Width = WindowWidth * -InputInfo.Steer;
+
+            float OffsettedWidth = abs(WindowWidth - Width);
+
+            auto TipSteer = ImVec2();
+
+            if (InputInfo.Steer < 0)
+                TipSteer = ImVec2(CursorPos.x + OffsettedWidth, CursorPos.y + WindowHeight / 2.f);
+            else if (InputInfo.Steer > 0)
+                TipSteer = ImVec2(CursorPos.x + WindowWidth * 2 - Width, CursorPos.y + WindowHeight / 2.f);
+            auto TipBgL = ImVec2(CursorPos.x, CursorPos.y + WindowHeight / 2.f);
+            auto TipBgR = ImVec2(CursorPos.x + GetWindowWidth(), CursorPos.y + WindowHeight / 2.f);
+
+            auto UpperL = ImVec2(CursorPos.x + WindowWidth, CursorPos.y);
+            auto LowerL = ImVec2(CursorPos.x + WindowWidth, CursorPos.y + WindowHeight);
+
+            auto UpperR = ImVec2(CursorPos.x + WindowWidth * 2, CursorPos.y);
+            auto LowerR = ImVec2(CursorPos.x + WindowWidth * 2, CursorPos.y + WindowHeight);
+
+            auto BottomCornerGas = ImVec2(CursorPos.x + WindowWidth * 2, CursorPos.y + WindowHeight / 2.f);
+            auto TopCornerBrake = ImVec2(CursorPos.x + WindowWidth, CursorPos.y + WindowHeight / 2.f);
+
+            UIDrawList->AddTriangleFilled(UpperR, LowerR, TipBgR, ColorConvertFloat4ToU32(ColorSteerI)); // right one (no AA)
+            UIDrawList->AddTriangleFilled(TipBgL, UpperL, LowerL, ColorConvertFloat4ToU32(ColorSteerI)); // left one (AA)
+            if (InputInfo.Steer < 0)
+                UIDrawList->AddTriangleFilled(TipSteer, UpperL, LowerL, ColorConvertFloat4ToU32(ColorSteer));
+            else if (InputInfo.Steer > 0)
+                UIDrawList->AddTriangleFilled(TipSteer, UpperR, LowerR, ColorConvertFloat4ToU32(ColorSteer));
+
+            UIDrawList->AddRectFilled(ImVec2(UpperL.x + 6.f, UpperL.y), ImVec2(BottomCornerGas.x - 6.f, BottomCornerGas.y - 3.f), InputInfo.get_Gas() ? ColorConvertFloat4ToU32(ColorAccel) : ColorConvertFloat4ToU32(ColorAccelI));
+            UIDrawList->AddRectFilled(ImVec2(TopCornerBrake.x + 6.f, TopCornerBrake.y + 3.f), ImVec2(LowerR.x - 6.f, LowerR.y), InputInfo.get_Brake() ? ColorConvertFloat4ToU32(ColorBrake) : ColorConvertFloat4ToU32(ColorBrakeI));
+
+            End();
+        }
+    }
+
+    void RenderSettings()
+    {
+        using namespace ImGui;
+        if (Begin("Settings", &EnableSettings))
+        {
+            BeginTabBar("##SettingsTabBar");
+            if (BeginTabItem("Dashboard"))
+            {
+                ColorEdit4("Steering", &ColorSteer.x);
+                ColorEdit4("Acceleration", &ColorAccel.x);
+                ColorEdit4("Brake", &ColorBrake.x);
+                ColorEdit4("Steering (inactive)", &ColorSteerI.x);
+                ColorEdit4("Acceleration (inactive)", &ColorAccelI.x);
+                ColorEdit4("Brake (inactive)", &ColorBrakeI.x);
+
+                EndTabItem();
+            }
+            EndTabBar();
+        }
+        End();
+    }
+
     // Render() only renders when the GUI is active (Twink.DoRender)
     void Render()
     {
         using namespace ImGui;
         CurPlayerInfo = GetPlayerInfo();
 
-        Begin("Twinkie");
-
-        SeparatorText("Modules");
-
-        Checkbox("Player Information", &EnablePlayerInfo);
-        Checkbox("Logs", &EnableLog);
-        Checkbox("Dashboard", &EnableDashboard);
-
-        SeparatorText("Dashboard");
-
-        ColorEdit4("Steer", &ColorSteer.x);
-        ColorEdit4("Steer inactive", &ColorSteerI.x);
-        ColorEdit4("Accel", &ColorAccel.x);
-        ColorEdit4("Accel inactive", &ColorAccelI.x);
-        ColorEdit4("Brake", &ColorBrake.x);
-        ColorEdit4("Brake inactive", &ColorBrakeI.x);
-
-        End();
+        if (BeginMainMenuBar()) {
+            if (BeginMenu("Twinkie")) {
+                if (MenuItem("About", "", EnableAboutWindow))
+                {
+                    EnableAboutWindow = !EnableAboutWindow;
+                }
+                if (MenuItem("Settings", "", EnableSettings))
+                {
+                    EnableSettings = !EnableSettings;
+                }
+                Separator();
+                if (MenuItem("Dashboard", "", EnableDashboard))
+                {
+                    EnableDashboard = !EnableDashboard;
+                }
+                ImGui::EndMenu();
+            }
+            if (BeginMenu("Debug"))
+            {
+                if (MenuItem("Logs", "", EnableLog))
+                {
+                    EnableLog = !EnableLog;
+                }
+                if (MenuItem("PlayerInformation", "", EnablePlayerInfo))
+                {
+                    EnablePlayerInfo = !EnablePlayerInfo;
+                }
+                ImGui::EndMenu();
+            }
+            EndMainMenuBar();
+        }
 
         if (EnablePlayerInfo)
         {
-            static bool ShowOffsetTesting = false;
-
-            static int OffsetPlayer = 0;
-            static int OffsetMobil = 0;
-            static int OffsetVehicle = 0;
-            static int OffsetPlayerInfo = 0;
-            static int OffsetTrackmaniaRace = 0;
-
-            static int WritePlayer = 0;
-            static int WriteMobil = 0;
-            static int WriteVehicle = 0;
-            static int WritePlayerInfo = 0;
-            static int WriteTrackmaniaRace = 0;
-
-            Begin("Player Information");
-
-            if (CurPlayerInfo.Player)
-            {
-                SeparatorText("Player Information");
-
-                if (Button("Test logs"))
-                {
-                    Print("testing testing blabla");
-                }
-
-                Text("Address of Player: %x", CurPlayerInfo.Player);
-                SameLine();
-                std::string PlayerAddrStr = ToHex(CurPlayerInfo.Player);
-                if (Button("Copy##Player"))
-                {
-                    SetClipboardText(PlayerAddrStr.c_str());
-                    PrintArgs("Copied to clipboard: {}", PlayerAddrStr.c_str());
-                }
-
-                Text("Address of Mobil: %x", CurPlayerInfo.Mobil);
-                SameLine();
-                std::string MobilAddrStr = ToHex(CurPlayerInfo.Mobil);
-                if (Button("Copy##Mobil"))
-                {
-                    SetClipboardText(MobilAddrStr.c_str());
-                    PrintArgs("Copied to clipboard: {}", MobilAddrStr.c_str());
-                }
-
-                Text("Address of Vehicle: %x", CurPlayerInfo.Vehicle);
-                SameLine();
-                std::string VehicleAddrStr = ToHex(CurPlayerInfo.Vehicle);
-                if (Button("Copy##Vehicle"))
-                {
-                    SetClipboardText(VehicleAddrStr.c_str());
-                    PrintArgs("Copied to clipboard: {}", VehicleAddrStr.c_str());
-                }
-
-                Text("Address of PlayerInfo: %x", CurPlayerInfo.PlayerInfo);
-                SameLine();
-                std::string PlayerInfoAddrStr = ToHex(CurPlayerInfo.PlayerInfo);
-                if (Button("Copy##PlayerInfo"))
-                {
-                    SetClipboardText(PlayerInfoAddrStr.c_str());
-                    PrintArgs("Copied to clipboard: {}", PlayerInfoAddrStr.c_str());
-                }
-
-                SeparatorText("Race data");
-
-                Text("Time: %lu", GetRaceTime(CurPlayerInfo));
-
-                VehicleInputs InputInfo = Read<VehicleInputs>(CurPlayerInfo.Vehicle + 80);
-
-                Text("Steer: %f", InputInfo.Steer);
-                Text("Gas: %f", InputInfo.fGas);
-                Text("Brake: %f", InputInfo.fBrake);
-
-                BeginDisabled();
-                Checkbox("Mediatracker enabled", (bool*)CurPlayerInfo.Player + 56); // no Read here, ImGui reads the value internally
-                auto MTClipIndex = Read<unsigned long>(CurPlayerInfo.Player + 72);
-                if (*((bool*)CurPlayerInfo.Player + 56))
-                {
-                    Text("Index of active mediatracker clip: %lu", Read<unsigned long>(CurPlayerInfo.Player + 72));
-                }
-
-                Checkbox("Free wheeling", (bool*)CurPlayerInfo.Vehicle + 1548);
-                Checkbox("Turbo", (bool*)CurPlayerInfo.Vehicle + 948);
-                EndDisabled();
-
-                SeparatorText("Offset Testing");
-
-                Checkbox("Show", &ShowOffsetTesting);
-
-                if (ShowOffsetTesting)
-                {
-                    BeginChild("Offsets");
-
-                    if (CurPlayerInfo.Player)
-                    {
-                        InputInt("PlayerOffset", &OffsetPlayer, 2);
-                        Text("Value: %x", Read<unsigned long>(CurPlayerInfo.Player + OffsetPlayer));
-                        InputInt("PlayerWrite", &WritePlayer);
-                        SameLine();
-                        if (Button("Write##Player"))
-                        {
-                            Write<int>(WritePlayer, CurPlayerInfo.Player + OffsetPlayer);
-                        }
-                    }
-
-                    Separator();
-
-                    if (CurPlayerInfo.Mobil)
-                    {
-                        InputInt("MobilOffset", &OffsetMobil, 2);
-                        Text("Value: %x", Read<unsigned long>(CurPlayerInfo.Mobil + OffsetMobil));
-                        InputInt("MobilWrite", &WriteMobil);
-                        SameLine();
-                        if (Button("Write##Mobil"))
-                        {
-                            Write<int>(WriteMobil, CurPlayerInfo.Mobil + OffsetMobil);
-                        }
-                    }
-
-                    Separator();
-
-                    if (CurPlayerInfo.Vehicle)
-                    {
-                        InputInt("VehicleOffset", &OffsetVehicle, 2);
-                        Text("Value: %x", Read<unsigned long>(CurPlayerInfo.Vehicle + OffsetVehicle));
-                        InputInt("VehicleWrite", &WriteVehicle);
-                        SameLine();
-                        if (Button("Write##Vehicle"))
-                        {
-                            Write<int>(WriteVehicle, CurPlayerInfo.Vehicle + OffsetVehicle);
-                        }
-                    }
-
-                    Separator();
-
-                    if (CurPlayerInfo.PlayerInfo)
-                    {
-                        InputInt("PlayerInfoOffset", &OffsetPlayerInfo, 2);
-                        Text("Value: %x", Read<unsigned long>(CurPlayerInfo.PlayerInfo + OffsetPlayerInfo));
-                        InputInt("PlayerInfoWrite", &WritePlayerInfo);
-                        SameLine();
-                        if (Button("Write##PlayerInfo"))
-                        {
-                            Write<int>(WritePlayerInfo, CurPlayerInfo.PlayerInfo + OffsetPlayerInfo);
-                        }
-                    }
-
-                    Separator();
-
-                    if (CurPlayerInfo.TrackmaniaRace)
-                    {
-                        InputInt("TrackmaniaRaceOffset", &OffsetTrackmaniaRace, 2);
-                        Text("Value: %x", Read<unsigned long>(CurPlayerInfo.TrackmaniaRace + OffsetTrackmaniaRace));
-                        InputInt("TrackmaniaRaceWrite", &WriteTrackmaniaRace);
-                        SameLine();
-                        if (Button("Write##TrackmaniaRace"))
-                        {
-                            Write<int>(WriteTrackmaniaRace, CurPlayerInfo.TrackmaniaRace + OffsetTrackmaniaRace);
-                        }
-                    }
-
-                    EndChild();
-                }
-            }
-            else
-            {
-                Text("Not playing.");
-            }
-
-            End();
+            RenderPlayerInfo();
         }
 
         if (EnableLog)
         {
-            Begin("Logs");
             RenderLog();
-            End();
+        }
+
+        if (EnableAboutWindow)
+        {
+            RenderAboutWindow();
+        }
+
+        if (EnableSettings)
+        {
+            RenderSettings();
         }
     }
 
     // RenderAnyways() always gets called regardless of the current GUI state
-
     void RenderAnyways()
     {
         using namespace ImGui;
@@ -624,63 +748,7 @@ public:
 
         if (EnableDashboard)
         {
-            if (IsPlaying() and GetInputInfoWrite())
-            {
-                static bool IsPrevHovered = false;
-                VehicleInputs InputInfo = GetInputInfo();
-
-                PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-                PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-
-                int DashboardWindowFlags = ImGuiWindowFlags_NoTitleBar;
-
-                Begin("Dashboard", nullptr, DashboardWindowFlags);
-
-                IsPrevHovered = IsWindowHovered();
-
-                PopStyleColor();
-                PopStyleVar();
-
-                auto UIDrawList = GetWindowDrawList();
-                auto CursorPos = GetCursorScreenPos();
-
-                float WindowWidth = GetWindowWidth() / 3.f;
-                float WindowHeight = GetWindowHeight();
-
-                float Width = WindowWidth * -InputInfo.Steer;
-
-                float OffsettedWidth = abs(WindowWidth - Width);
-
-                auto TipSteer = ImVec2();
-
-                if (InputInfo.Steer < 0)
-                    TipSteer = ImVec2(CursorPos.x + OffsettedWidth, CursorPos.y + WindowHeight / 2.f);
-                else if (InputInfo.Steer > 0)
-                    TipSteer = ImVec2(CursorPos.x + WindowWidth * 2 - Width, CursorPos.y + WindowHeight / 2.f);
-                auto TipBgL = ImVec2(CursorPos.x, CursorPos.y + WindowHeight / 2.f);
-                auto TipBgR = ImVec2(CursorPos.x + GetWindowWidth(), CursorPos.y + WindowHeight / 2.f);
-
-                auto UpperL = ImVec2(CursorPos.x + WindowWidth, CursorPos.y);
-                auto LowerL = ImVec2(CursorPos.x + WindowWidth, CursorPos.y + WindowHeight);
-
-                auto UpperR = ImVec2(CursorPos.x + WindowWidth * 2, CursorPos.y);
-                auto LowerR = ImVec2(CursorPos.x + WindowWidth * 2, CursorPos.y + WindowHeight);
-
-                auto BottomCornerGas = ImVec2(CursorPos.x + WindowWidth * 2, CursorPos.y + WindowHeight / 2.f);
-                auto TopCornerBrake = ImVec2(CursorPos.x + WindowWidth, CursorPos.y + WindowHeight / 2.f);
-
-                UIDrawList->AddTriangleFilled(UpperR, LowerR, TipBgR, ColorConvertFloat4ToU32(ColorSteerI)); // right one (no AA)
-                UIDrawList->AddTriangleFilled(TipBgL, UpperL, LowerL, ColorConvertFloat4ToU32(ColorSteerI)); // left one (AA)
-                if (InputInfo.Steer < 0)
-                    UIDrawList->AddTriangleFilled(TipSteer, UpperL, LowerL, ColorConvertFloat4ToU32(ColorSteer));
-                else if (InputInfo.Steer > 0)
-                    UIDrawList->AddTriangleFilled(TipSteer, UpperR, LowerR, ColorConvertFloat4ToU32(ColorSteer));
-
-                UIDrawList->AddRectFilled(ImVec2(UpperL.x + 6.f, UpperL.y), ImVec2(BottomCornerGas.x - 6.f, BottomCornerGas.y - 3.f), InputInfo.get_Gas() ? ColorConvertFloat4ToU32(ColorAccel) : ColorConvertFloat4ToU32(ColorAccelI));
-                UIDrawList->AddRectFilled(ImVec2(TopCornerBrake.x + 6.f, TopCornerBrake.y + 3.f), ImVec2(LowerR.x - 6.f, LowerR.y), InputInfo.get_Brake() ? ColorConvertFloat4ToU32(ColorBrake) : ColorConvertFloat4ToU32(ColorBrakeI));
-
-                End();
-            }
+            RenderDashboard();
         }
     }
 };
