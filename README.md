@@ -3,8 +3,7 @@ Twinkie is a QOL modification for TrackMania Forever, currently featuring only 1
 
 # TODO (from most viable to least)
 - Add saving settings as .ini file
-- Implement no-respawn timer
-- Implement render distance customization
+- Port some openplanet plugins
 - Export as ASI instead of DLL for easier debugging
 - ~~Hook `Present` instead of `EndScene`, as TMF uses `EndScene` for lightmap calculations~~
 - Full Modloader support
