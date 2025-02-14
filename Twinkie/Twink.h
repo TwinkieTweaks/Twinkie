@@ -16,10 +16,6 @@
 #define BUILD_UNITED
 // #define BUILD_NATIONS
 
-#ifdef BUILD_NATIONS
-#define TT_EXTERNAL_CONSOLE
-#endif
-
 struct PlayerInfo
 {
     uintptr_t Player;

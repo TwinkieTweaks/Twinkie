@@ -3,7 +3,7 @@
 class Versioning
 {
 public:
-	const char* TwinkieVer = "v0.0.3";
+	const char* TwinkieVer = "v1.0.0";
 
 	Versioning() {}
 };
