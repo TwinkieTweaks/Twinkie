@@ -1,4 +1,4 @@
-- No-respawn timer (requires RE splits)
+- ~~No-respawn timer (requires RE splits)~~ too useless for TMF because no flying respawns
 - Tweaker (too hard imo)
-- Split Speeds (requires RE splits)
+- Split Speeds (requires RE splits) <-- CURRENTLY WORKING ON THIS
 - Hunting Stats (steal code from bulbtoys :3)
