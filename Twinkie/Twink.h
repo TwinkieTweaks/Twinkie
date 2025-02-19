@@ -17,8 +17,8 @@
 #include "kiero/minhook/include/MinHook.h"
 
 // #define BUILD_DEBUG
-#define BUILD_UNITED
-// #define BUILD_NATIONS
+// #define BUILD_UNITED
+#define BUILD_NATIONS
 // #define BUILD_TMMC
 
 struct ChallengeInfo
