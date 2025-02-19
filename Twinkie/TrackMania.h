@@ -39,4 +39,11 @@ namespace TM
 		Modded,
 		Unk
 	};
+
+	enum RaceState
+	{
+		Playing = 0,
+		Finished = 1,
+		Paused = 0xf
+	};
 }

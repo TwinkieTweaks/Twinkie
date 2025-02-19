@@ -4,17 +4,30 @@
 #include <format>
 #include <iomanip>
 #include <sstream>
+#include <vector>
+#include <chrono>
 
 #include "TrackMania.h"
 #include "Version.h"
+#include "SettingMgr.h"
 
 #include "imgui-dx9/imgui.h"
 
 #include "kiero/kiero.h"
 #include "kiero/minhook/include/MinHook.h"
 
-// #define BUILD_UNITED
-#define BUILD_NATIONS
+// #define BUILD_DEBUG
+#define BUILD_UNITED
+// #define BUILD_NATIONS
+// #define BUILD_TMMC
+
+struct ChallengeInfo
+{
+    unsigned int AuthorTime;
+    unsigned int GoldTime;
+    unsigned int SilverTime;
+    unsigned int BronzeTime;
+};
 
 struct PlayerInfo
 {
@@ -50,25 +63,24 @@ struct VehicleInputs
 class Twink
 {
 public:
-    HMODULE LibraryHandle = NULL;
-
 	// uintptr_t O_CTRACKMANIA_UNITED = 0xD6A2A4;
     // uintptr_t O_CTRACKMANIA_NATIONS = 0xD68C44;
 
 #ifdef BUILD_UNITED
-    uintptr_t O_CTRACKMANIA = 0xD6A2A4;
+    uintptr_t O_CTRACKMANIA = 0x96A2A4;
     TM::GameType TMType = TM::GameType::United;
 #endif
 #ifdef BUILD_NATIONS
-    uintptr_t O_CTRACKMANIA = 0xD68C44;
+    uintptr_t O_CTRACKMANIA = 0x968C44;
     TM::GameType TMType = TM::GameType::Nations;
 #endif
 
     Versioning Versions;
 
     bool DoRender = true;
-
+#ifdef BUILD_DEBUG
     bool EnablePlayerInfo = false;
+#endif
     PlayerInfo CurPlayerInfo = {};
 
     bool EnableLog = false;
@@ -86,9 +98,65 @@ public:
 
     bool EnableSettings = false;
 
+    bool EnableSplitSpeeds = false;
+
+    bool EnableMedals = false;
+
+    ImFont* KanitFont16 = nullptr;
+    ImFont* KanitFont48 = nullptr;
+
     kiero::Status::Enum DX9HookStatus = kiero::Status::UnknownError;
 
-	Twink(){}
+    SettingMgr Settings;
+
+    void SaveSettings()
+    {
+        Settings["Dashboard"]["Steer color"].Set(ColorSteer);
+        Settings["Dashboard"]["Brake color"].Set(ColorBrake);
+        Settings["Dashboard"]["Acceleration color"].Set(ColorAccel);
+
+        Settings["Dashboard"]["Steer color (inactive)"].Set(ColorSteerI);
+        Settings["Dashboard"]["Brake color (inactive)"].Set(ColorBrakeI);
+        Settings["Dashboard"]["Acceleration color (inactive)"].Set(ColorAccelI);
+
+        Settings.Save();
+    }
+
+	Twink()
+    {
+        if (Settings.Status == -1)
+        {
+            SaveSettings();
+        }
+    }
+
+    ~Twink()
+    {
+        SaveSettings();
+    }
+
+    void InitFonts(ImGuiIO& ImIo)
+    {
+        KanitFont16 = ImIo.Fonts->AddFontFromFileTTF("Twinkie\\Fonts\\Kanit.ttf", 16.f);
+        if (KanitFont16)
+        {
+            PrintInternal("Font \"Kanit16\" initialized.");
+        }
+        else
+        {
+            PrintError("Font \"Kanit16\" not initialized.");
+        }
+
+        KanitFont48 = ImIo.Fonts->AddFontFromFileTTF("Twinkie\\Fonts\\Kanit.ttf", 48.f);
+        if (KanitFont48)
+        {
+            PrintInternal("Font \"Kanit48\" initialized.");
+        }
+        else
+        {
+            PrintError("Font \"Kanit48\" not initialized. SplitSpeeds extension is not available.");
+        }
+    }
 
     void Init()
     {
@@ -104,8 +172,10 @@ public:
         else
         {
             PrintError("Null CTrackMania.");
-            PrintErrorArgs("Tried to poke: {}", O_CTRACKMANIA);
+            PrintErrorArgs("Tried to poke: {}", GetExeBaseAddr() + O_CTRACKMANIA);
         }
+
+        PrintInternalArgs("SettingMgr status: {}", Settings.Status);
     }
 
     template <typename T>
@@ -120,9 +190,14 @@ public:
         *reinterpret_cast<T*>(Addr) = Value;
     }
 
+    uintptr_t GetExeBaseAddr()
+    {
+        return (unsigned long)GetModuleHandle(NULL);
+    }
+
 	uintptr_t GetTrackmania()
 	{
-        return Read <uintptr_t>(O_CTRACKMANIA);
+        return Read<uintptr_t>(GetExeBaseAddr() + O_CTRACKMANIA);
 	}
 
     void PrintInternal(const char* Str)
@@ -186,50 +261,72 @@ public:
         End();
     }
 
+    ChallengeInfo GetChallengeInfo()
+    {
+        ChallengeInfo InfoStruct{0,0,0,0};
+
+        auto GameApp = GetTrackmania();
+        auto Challenge = Read<uintptr_t>(GameApp + 0x198);
+
+        if (Challenge)
+        {
+            auto ChallengeParameters = Read<uintptr_t>(Challenge + 0xb4);
+            if (ChallengeParameters)
+            {
+                InfoStruct.AuthorTime = Read<unsigned int>(ChallengeParameters + 0x20);
+                InfoStruct.GoldTime = Read<unsigned int>(ChallengeParameters + 0x1c);
+                InfoStruct.SilverTime = Read<unsigned int>(ChallengeParameters + 0x18);
+                InfoStruct.BronzeTime = Read<unsigned int>(ChallengeParameters + 0x14);
+            }
+        }
+
+        return InfoStruct;
+    }
+
     PlayerInfo GetPlayerInfo()
     {
-        PlayerInfo ReturnVal{ 0,0,0,0,0 };
+        PlayerInfo InfoStruct{ 0,0,0,0,0 };
 
-        auto trackmania = GetTrackmania();
+        auto GameApp = GetTrackmania();
 
-        auto race = Read<uintptr_t>(trackmania + 0x454);
-        if (race)
+        auto Race = Read<uintptr_t>(GameApp + 0x454);
+        if (Race)
         {
-            uintptr_t player = 0;
+            uintptr_t Player = 0;
 
-            auto local_player_info = Read<uintptr_t>(race + 0x330);
-            if (local_player_info)
+            auto PlayerInfoNod = Read<uintptr_t>(Race + 0x330);
+            if (PlayerInfoNod)
             {
-                player = Read<uintptr_t>(local_player_info + 0x238);
+                Player = Read<uintptr_t>(PlayerInfoNod + 0x238);
             }
             else
             {
-                auto network = Read<uintptr_t>(trackmania + 0x12C);
-                if (network)
+                auto Network = Read<uintptr_t>(GameApp + 0x12C);
+                if (Network)
                 {
-                    auto local_player_infos = Read<TM::CFastBuffer<uintptr_t>>(network + 0x2FC);
-                    if (local_player_infos.Size >= 0)
+                    auto PlayerInfoBuffer = Read<TM::CFastBuffer<uintptr_t>>(Network + 0x2FC);
+                    if (PlayerInfoBuffer.Size >= 0)
                     {
-                        local_player_info = (unsigned long)local_player_infos.Ptr;
-                        player = Read<uintptr_t>(Read<uintptr_t>((unsigned long)local_player_infos.Ptr) + 0x238);
+                        PlayerInfoNod = (unsigned long)PlayerInfoBuffer.Ptr;
+                        Player = Read<uintptr_t>(Read<uintptr_t>((unsigned long)PlayerInfoBuffer.Ptr) + 0x238);
                     }
                 }
             }
 
-            if (player)
+            if (Player)
             {
-                auto game_mobil = Read<uintptr_t>(player + 0x28);
-                if (game_mobil)
+                auto Mobil = Read<uintptr_t>(Player + 0x28);
+                if (Mobil)
                 {
-                    auto scene_vehicle_car = Read<uintptr_t>(game_mobil + 0x14);
-                    if (scene_vehicle_car)
+                    auto Vehicle = Read<uintptr_t>(Mobil + 0x14);
+                    if (Vehicle)
                     {
-                        ReturnVal = {player, game_mobil, scene_vehicle_car, local_player_info, race};
+                        InfoStruct = {Player, Mobil, Vehicle, PlayerInfoNod, Race};
                     }
                 }
             }
         }
-        return ReturnVal;
+        return InfoStruct;
     }
 
     VehicleInputs GetInputInfo() 
@@ -243,15 +340,30 @@ public:
         return (VehicleInputs*)(CurPlayerInfo.Vehicle + 80);
     }
 
-    long GetRaceTime(PlayerInfo CurPlayerInfo)
+    uintptr_t GetChallenge()
+    {
+        return Read<uintptr_t>(GetTrackmania() + 0x198);
+    }
+
+    long GetRaceTime()
     {
         auto RaceTime = Read<unsigned long>(CurPlayerInfo.Player + 0x44);
         auto Offset = Read<unsigned long>(CurPlayerInfo.Vehicle + 0x5D0);
         if (RaceTime != 0 and Offset <= RaceTime)
         {
-            return RaceTime - Offset; // 0x5D0 contains the racetime offset
+            return RaceTime - Offset;
         }
+
+        // technically, the racetime is unsigned
+        // but unless someone takes ~24 days to finish a run
+        // this shouldn't be an issue
         return -1;
+    }
+
+    int GetDisplaySpeed()
+    {
+        uintptr_t Struct = Read<uintptr_t>(CurPlayerInfo.PlayerInfo);
+        return Read<int>(Struct + 0x340);
     }
 
     void SetupImGuiStyle()
@@ -293,7 +405,7 @@ public:
         style.Colors[ImGuiCol_Text] = ImVec4(0.8588235378265381f, 0.929411768913269f, 0.886274516582489f, 1.0f);
         style.Colors[ImGuiCol_TextDisabled] = ImVec4(0.5215686559677124f, 0.5490196347236633f, 0.5333333611488342f, 1.0f);
         style.Colors[ImGuiCol_WindowBg] = ImVec4(0.1294117718935013f, 0.1372549086809158f, 0.168627455830574f, 0.8f);
-        style.Colors[ImGuiCol_ChildBg] = ImVec4(0.1490196138620377f, 0.1568627506494522f, 0.1882352977991104f, 1.0f);
+        style.Colors[ImGuiCol_ChildBg] = ImVec4(0.1490196138620377f, 0.1568627506494522f, 0.1882352977991104f, 0.8f);
         style.Colors[ImGuiCol_PopupBg] = ImVec4(0.2000000029802322f, 0.2196078449487686f, 0.2666666805744171f, 1.0f);
         style.Colors[ImGuiCol_Border] = ImVec4(0.1372549086809158f, 0.1137254908680916f, 0.1333333402872086f, 1.0f);
         style.Colors[ImGuiCol_BorderShadow] = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
@@ -347,74 +459,36 @@ public:
 
     template <typename T>
     std::string ToHex(T Value) {
+        // imma be honest ChatGPT wrote this shit
+        // idk why but std::hex just doesn't like working with me
+        // someone must've           HEXED ME LMAOAMOAMAOMOA,AK;AA;AA;;SM,A;OSMD;ASJKFOIUPOIERY9WRQOJGKSFJIKILLED17PEOPLEAIJDFNAOSGHAI
         static_assert(std::is_integral<T>::value, "T must be an integral type");
 
         std::stringstream oss;
-        oss << std::hex << std::uppercase << Value; // Apply hex formatting first
-        return "0x" + oss.str(); // Prepend "0x" separately
+        oss << std::hex << std::uppercase << Value;
+        return "0x" + oss.str();
     }
 
-    TM::GmVec3 HsvToRgb(TM::GmVec3 input)
+    long GetCurrentCheckpoint()
     {
-        float hh, p, q, t, ff;
-        long i;
-        TM::GmVec3 output{0.f, 0.f, 0.f};
-
-        if (input.y <= 0.0f) {
-            output.x = input.z;
-            output.y = input.z;
-            output.z = input.z;
-            return output;
-        }
-
-        hh = input.x;
-        if (hh >= 360.0) hh = 0.0f;
-        hh /= 60.0f;
-        i = (long)hh;
-        ff = hh - i;
-        p = input.z * (1.0f - input.y);
-        q = input.z * (1.0f - (input.y * ff));
-        t = input.z * (1.0f - (input.y * (1.0f - ff)));
-
-        switch (i) {
-        case 0:
-            output.x = input.z;
-            output.y = t;
-            output.z = p;
-            break;
-        case 1:
-            output.x = q;
-            output.y = input.z;
-            output.z = p;
-            break;
-        case 2:
-            output.x = p;
-            output.y = input.z;
-            output.z = t;
-            break;
-        case 3:
-            output.x = p;
-            output.y = q;
-            output.z = input.z;
-            break;
-        case 4:
-            output.x = t;
-            output.y = p;
-            output.z = input.z;
-            break;
-        case 5:
-        default:
-            output.x = input.z;
-            output.y = p;
-            output.z = q;
-            break;
-        }
-        return output;
+        // TODO: Fix last offset to support TMMC
+        return Read<long>(GetExeBaseAddr() + (TMType == TM::GameType::United ? 0x957BFC : (TMType == TM::GameType::Nations ? 0x95659C : 0x957BFC)));
     }
+
+    void SetCurrentCheckpoint(long Time)
+    {
+        // TODO: Fix last offset to support TMMC
+        return Write<long>(Time, GetExeBaseAddr() + (TMType == TM::GameType::United ? 0x957BFC : (TMType == TM::GameType::Nations ? 0x95659C : 0x957BFC)));
+    }
+
+    //long GetCurrentLaps()
+    //{
+    //    return Read<long>(GetExeBaseAddr() + (TMType == TM::GameType::United ? 0x957BFC : (TMType == TM::GameType::Nations ? 0x9560EC : 0x957BFC)));
+    //}
 
     bool IsPlaying()
     {
-        return GetPlayerInfo().Vehicle;
+        return GetPlayerInfo().Vehicle and GetInputInfoWrite();
     }
 
     void RenderAboutWindow()
@@ -429,28 +503,140 @@ public:
         End();
     }
 
+    void DrawSpeedAndSplitText(ImDrawList* DrawList, std::string ValueText, std::string DiffText, ImVec4 Color)
+    {
+        using namespace ImGui;
+        auto ScreenSize = ImGui::GetMainViewport()->Size;
+
+        ImVec2 SizeVal = CalcTextSize(ValueText.c_str());
+        ImVec2 SizeDiff = CalcTextSize(DiffText.c_str());
+
+        DrawList->AddText(ImVec2((ScreenSize.x / 2.f) - (SizeVal.x / 2.f) + 3, ScreenSize.y / 10.f + 3), ColorConvertFloat4ToU32(ImVec4(0, 0, 0, 1)), ValueText.c_str());
+        DrawList->AddText(ImVec2((ScreenSize.x / 2.f) - (SizeVal.x / 2.f), ScreenSize.y / 10.f), ColorConvertFloat4ToU32(Color), ValueText.c_str());
+
+        DrawList->AddText(ImVec2((ScreenSize.x / 2.f) - (SizeDiff.x / 2.f) + 3, ScreenSize.y / 10.f + 3 + SizeVal.y), ColorConvertFloat4ToU32(ImVec4(0, 0, 0, 1)), DiffText.c_str());
+        DrawList->AddText(ImVec2((ScreenSize.x / 2.f) - (SizeDiff.x / 2.f), ScreenSize.y / 10.f + SizeVal.y), ColorConvertFloat4ToU32(Color), DiffText.c_str());
+    }
+
+    void RenderSplitSpeeds()
+    {
+        static long LastCheckpoint = 0;
+        static long CurrentCheckpoint = 0;
+        static TM::RaceState CurrentState = TM::RaceState::Finished;
+        static TM::RaceState LastState = TM::RaceState::Finished;
+        static long LastRaceTime = 0;
+        static long CurrentRaceTime = 0;
+
+        static unsigned long CurrentCheckpointIdx = -1;
+
+        static std::vector<long> Splits = {};
+        static std::vector<long> BestSplits = {434, 444, 355};
+
+        static bool DrawlistTesting = true;
+
+        using namespace ImGui;
+
+        if (IsPlaying())
+        {
+            if (Begin("SplitSpeeds", &EnableSplitSpeeds))
+            {
+                Text("Last checkpoint: %lu", GetCurrentCheckpoint());
+                Checkbox("Test drawlist rendering", &DrawlistTesting);
+
+                CurrentState = Read<TM::RaceState>(CurPlayerInfo.TrackmaniaRace + 0x50);
+                std::string RaceStateText = CurrentState == TM::RaceState::Finished ? "Finished" : (CurrentState == TM::RaceState::Playing ? "Playing" : "Paused");
+
+                Text(std::format("RaceState: {}", RaceStateText).c_str());
+
+                CurrentRaceTime = GetRaceTime();
+                if (CurrentRaceTime < LastRaceTime)
+                {
+                    CurrentCheckpoint = 0;
+                    LastCheckpoint = 0;
+
+                    CurrentCheckpointIdx = -1;
+
+                    CurrentRaceTime = 0;
+                    LastRaceTime = 0;
+
+                    SetCurrentCheckpoint(0);
+                    LastState = CurrentState;
+
+                    Splits = {};
+
+                    End();
+                    return;
+                }
+                LastRaceTime = CurrentRaceTime;
+
+                CurrentCheckpoint = GetCurrentCheckpoint();
+                if (CurrentCheckpoint != LastCheckpoint)
+                {
+                    Splits.push_back(GetDisplaySpeed());
+                    CurrentCheckpointIdx++;
+                }
+                LastCheckpoint = CurrentCheckpoint;
+            }
+            End();
+
+            if (DrawlistTesting and CurrentCheckpointIdx != -1)
+            {
+                auto FGDrawList = ImGui::GetForegroundDrawList();
+                auto ScreenSize = ImGui::GetWindowSize();
+
+                long CurrentSplit = Splits[CurrentCheckpointIdx];
+
+                long BestSplit = -1;
+                bool IsFaster = false;
+                bool IsNew = false;
+
+                if (CurrentCheckpointIdx < BestSplits.size())
+                {
+                    BestSplit = BestSplits[CurrentCheckpointIdx];
+                    IsFaster = CurrentSplit >= BestSplit;
+                    IsNew = false;
+                }
+                else
+                {
+                    IsNew = true;
+                }
+
+                ImVec4 SplitTextCol = IsNew ? ImVec4(0, 0, 1, 1) : (IsFaster ? ImVec4(0, 1, 0, 1) : ImVec4(1, 0, 0, 1));
+                std::string ValueText = std::format("{}", CurrentSplit);
+                long SplitDiff = CurrentSplit - BestSplit;
+                std::string IFuckingHateC20 = !IsNew ? (SplitDiff < 0 ? "{}" : "+{}") : "";
+                std::string DiffText = std::vformat(IFuckingHateC20, std::make_format_args(SplitDiff));
+
+                if (KanitFont48) PushFont(KanitFont48);
+                DrawSpeedAndSplitText(FGDrawList, ValueText, DiffText, SplitTextCol);
+                if (KanitFont48) PopFont();
+            }
+        }
+    }
+
+
+#ifdef BUILD_DEBUG
     void RenderPlayerInfo()
     {
         using namespace ImGui;
         static bool ShowOffsetTesting = false;
 
-        static int OffsetPlayer = 0;
-        static int OffsetMobil = 0;
-        static int OffsetVehicle = 0;
-        static int OffsetPlayerInfo = 0;
-        static int OffsetTrackmaniaRace = 0;
-
-        static int WritePlayer = 0;
-        static int WriteMobil = 0;
-        static int WriteVehicle = 0;
-        static int WritePlayerInfo = 0;
-        static int WriteTrackmaniaRace = 0;
+        static uintptr_t OffsetAddr = 0;
 
         Begin("Player Information", &EnablePlayerInfo);
 
         if (CurPlayerInfo.Player)
         {
-            SeparatorText("Player Information");
+            SeparatorText("Addresses");
+
+            Text("Address of GameApp: %x", GetTrackmania());
+            SameLine();
+            std::string GameAppAddrStr = ToHex(GetTrackmania());
+            if (Button("Copy##GameApp"))
+            {
+                SetClipboardText(GameAppAddrStr.c_str());
+                PrintArgs("Copied to clipboard: {}", GameAppAddrStr);
+            }
 
             Text("Address of Player: %x", CurPlayerInfo.Player);
             SameLine();
@@ -458,7 +644,7 @@ public:
             if (Button("Copy##Player"))
             {
                 SetClipboardText(PlayerAddrStr.c_str());
-                PrintArgs("Copied to clipboard: {}", PlayerAddrStr.c_str());
+                PrintArgs("Copied to clipboard: {}", PlayerAddrStr);
             }
 
             Text("Address of Mobil: %x", CurPlayerInfo.Mobil);
@@ -467,7 +653,7 @@ public:
             if (Button("Copy##Mobil"))
             {
                 SetClipboardText(MobilAddrStr.c_str());
-                PrintArgs("Copied to clipboard: {}", MobilAddrStr.c_str());
+                PrintArgs("Copied to clipboard: {}", MobilAddrStr);
             }
 
             Text("Address of Vehicle: %x", CurPlayerInfo.Vehicle);
@@ -476,7 +662,7 @@ public:
             if (Button("Copy##Vehicle"))
             {
                 SetClipboardText(VehicleAddrStr.c_str());
-                PrintArgs("Copied to clipboard: {}", VehicleAddrStr.c_str());
+                PrintArgs("Copied to clipboard: {}", VehicleAddrStr);
             }
 
             Text("Address of PlayerInfo: %x", CurPlayerInfo.PlayerInfo);
@@ -485,12 +671,22 @@ public:
             if (Button("Copy##PlayerInfo"))
             {
                 SetClipboardText(PlayerInfoAddrStr.c_str());
-                PrintArgs("Copied to clipboard: {}", PlayerInfoAddrStr.c_str());
+                PrintArgs("Copied to clipboard: {}", PlayerInfoAddrStr);
+            }
+
+            Text("Address of TrackmaniaRace: %x", CurPlayerInfo.TrackmaniaRace);
+            SameLine();
+            std::string TrackmaniaRaceAddrStr = ToHex(CurPlayerInfo.TrackmaniaRace);
+            if (Button("Copy##TrackmaniaRace"))
+            {
+                SetClipboardText(TrackmaniaRaceAddrStr.c_str());
+                PrintArgs("Copied to clipboard: {}", TrackmaniaRaceAddrStr);
             }
 
             SeparatorText("Race data");
 
-            Text("Time: %lu", GetRaceTime(CurPlayerInfo));
+            Text("Time: %lu", GetRaceTime());
+            Text("Speed: %d", GetDisplaySpeed());
 
             VehicleInputs InputInfo = Read<VehicleInputs>(CurPlayerInfo.Vehicle + 80);
 
@@ -516,7 +712,7 @@ public:
 
             if (ShowOffsetTesting)
             {
-                BeginChild("Offsets");
+                /*BeginChild("Offsets");
 
                 if (CurPlayerInfo.Player)
                 {
@@ -586,7 +782,14 @@ public:
                     }
                 }
 
-                EndChild();
+                EndChild();*/
+
+                InputInt("Address", reinterpret_cast<int*>(&OffsetAddr), 2);
+
+                if (OffsetAddr)
+                {
+                    Text("Value: 0x%x, %lu", Read<unsigned long>(OffsetAddr), Read<unsigned long>(OffsetAddr));
+                }
             }
         }
         else
@@ -596,11 +799,12 @@ public:
 
         End();
     }
+#endif
 
     void RenderDashboard()
     {
         using namespace ImGui;
-        if (IsPlaying() and GetInputInfoWrite())
+        if (IsPlaying())
         {
             static bool IsPrevHovered = false;
             VehicleInputs InputInfo = GetInputInfo();
@@ -681,11 +885,51 @@ public:
         End();
     }
 
+    std::string FormatTmDuration(unsigned int Duration) {
+        unsigned int TotalSeconds = Duration / 1000;
+        unsigned int Millis = (Duration % 1000) / 10;
+        unsigned int Seconds = TotalSeconds % 60;
+        unsigned int Minutes = (TotalSeconds / 60) % 60;
+        unsigned int Hours = TotalSeconds / 3600;
+
+        std::ostringstream StringStream;
+        StringStream << std::setfill('0');
+
+        if (Hours > 0) {
+            StringStream << std::setw(2) << Hours << ":";
+        }
+
+        StringStream << std::setw(2) << Minutes << ":"
+            << std::setw(2) << Seconds << "."
+            << std::setw(2) << Millis;
+
+        return StringStream.str();
+    }
+
+    void RenderMedals()
+    {
+        using namespace ImGui;
+        if (GetChallenge())
+        {
+            ChallengeInfo InfoStruct = GetChallengeInfo();
+            Begin("##Medals", &EnableMedals, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize);
+
+            Text(("Author: " + FormatTmDuration(InfoStruct.AuthorTime)).c_str());
+            Text(("Gold: " + FormatTmDuration(InfoStruct.GoldTime)).c_str());
+            Text(("Silver: " + FormatTmDuration(InfoStruct.SilverTime)).c_str());
+            Text(("Bronze: " + FormatTmDuration(InfoStruct.BronzeTime)).c_str());
+
+            End();
+        }
+    }
+
     // Render() only renders when the GUI is active (Twink.DoRender)
     void Render()
     {
         using namespace ImGui;
         CurPlayerInfo = GetPlayerInfo();
+
+        if (KanitFont16) PushFont(KanitFont16);
 
         if (BeginMainMenuBar()) {
             if (BeginMenu("Twinkie")) {
@@ -702,6 +946,17 @@ public:
                 {
                     EnableDashboard = !EnableDashboard;
                 }
+                Separator();
+#ifdef BUILD_DEBUG
+                if (MenuItem("SplitSpeeds", "", EnableSplitSpeeds))
+                {
+                    EnableSplitSpeeds = !EnableSplitSpeeds;
+                }
+#endif
+                if (MenuItem("Medals", "", EnableMedals))
+                {
+                    EnableMedals = !EnableMedals;
+                }
                 ImGui::EndMenu();
             }
             if (BeginMenu("Debug"))
@@ -710,20 +965,23 @@ public:
                 {
                     EnableLog = !EnableLog;
                 }
+#ifdef BUILD_DEBUG
                 if (MenuItem("PlayerInformation", "", EnablePlayerInfo))
                 {
                     EnablePlayerInfo = !EnablePlayerInfo;
                 }
+#endif
                 ImGui::EndMenu();
             }
             EndMainMenuBar();
         }
 
+#ifdef BUILD_DEBUG
         if (EnablePlayerInfo)
         {
             RenderPlayerInfo();
         }
-
+#endif
         if (EnableLog)
         {
             RenderLog();
@@ -738,6 +996,15 @@ public:
         {
             RenderSettings();
         }
+
+#ifdef BUILD_DEBUG
+        if (EnableSplitSpeeds)
+        {
+            RenderSplitSpeeds();
+        }
+#endif
+
+        if (KanitFont16) PopFont();
     }
 
     // RenderAnyways() always gets called regardless of the current GUI state
@@ -749,6 +1016,11 @@ public:
         if (EnableDashboard)
         {
             RenderDashboard();
+        }
+
+        if (EnableMedals)
+        {
+            RenderMedals();
         }
     }
 };

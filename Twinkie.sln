@@ -9,6 +9,8 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		Modloader|x64 = Modloader|x64
+		Modloader|x86 = Modloader|x86
 		Nations|x64 = Nations|x64
 		Nations|x86 = Nations|x86
 		Release|x64 = Release|x64
@@ -21,6 +23,10 @@ Global
 		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Debug|x64.Build.0 = Debug|x64
 		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Debug|x86.ActiveCfg = Debug|Win32
 		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Debug|x86.Build.0 = Debug|Win32
+		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Modloader|x64.ActiveCfg = Modloader|x64
+		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Modloader|x64.Build.0 = Modloader|x64
+		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Modloader|x86.ActiveCfg = Modloader|Win32
+		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Modloader|x86.Build.0 = Modloader|Win32
 		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Nations|x64.ActiveCfg = Nations|x64
 		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Nations|x64.Build.0 = Nations|x64
 		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Nations|x86.ActiveCfg = Nations|Win32

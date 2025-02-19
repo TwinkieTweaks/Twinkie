@@ -33,10 +33,12 @@ static void InitImGui(LPDIRECT3DDEVICE9 pDevice)
 {
 	ImGui::CreateContext();
 	Twinkie.SetupImGuiStyle();
-	ImGuiIO& io = ImGui::GetIO();
-	io.ConfigFlags = ImGuiConfigFlags_NoMouseCursorChange;
+	ImGuiIO& ImIo = ImGui::GetIO();
+	ImIo.ConfigFlags = ImGuiConfigFlags_NoMouseCursorChange;
 	ImGui_ImplWin32_Init(window);
 	ImGui_ImplDX9_Init(pDevice);
+
+	Twinkie.InitFonts(ImIo);
 }
 
 bool init = false;
