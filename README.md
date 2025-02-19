@@ -3,7 +3,7 @@ Twinkie is a QOL modification for TrackMania Forever, currently featuring 2 modu
 
 # Special thanks
 To [GreffMASTER](https://github.com/GreffMASTER) and [brokenphilip](https://github.com/brokenphilip) for helping me during development. brokenphilip has his own [tool for TMUF](https://github.com/BulbToys/TMUF) and GreffMASTER [as well (for TM1.0)](https://github.com/GreffMASTER/TMStuff) if you're interested in more cool mods for old TM games.
-GreffMASTER also provided me with a helpful list of class members and their offset for TMF <3
+GreffMASTER also provided me with a helpful list of class members and their offsets for TMF <3
 
 # TODO (from most viable to least)
 - Port some openplanet plugins (2 out of ???)
