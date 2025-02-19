@@ -17,8 +17,8 @@
 #include "kiero/minhook/include/MinHook.h"
 
 // #define BUILD_DEBUG
-// #define BUILD_UNITED
-#define BUILD_NATIONS
+#define BUILD_UNITED
+// #define BUILD_NATIONS
 // #define BUILD_TMMC
 
 struct ChallengeInfo
@@ -119,14 +119,28 @@ public:
         Settings["Dashboard"]["Brake color (inactive)"].Set(ColorBrakeI);
         Settings["Dashboard"]["Acceleration color (inactive)"].Set(ColorAccelI);
 
+        Settings["Dashboard"]["Enable"].Set(EnableDashboard);
+        
+        Settings["Medals"]["Enable"].Set(EnableMedals);
+
         Settings.Save();
     }
 
 	Twink()
     {
-        if (Settings.Status == -1)
+        if (Settings.Status == 0)
         {
-            SaveSettings();
+            ColorSteer = Settings["Dashboard"]["Steer color"].GetAsVec4();
+            ColorBrake = Settings["Dashboard"]["Brake color"].GetAsVec4();
+            ColorAccel = Settings["Dashboard"]["Acceleration color"].GetAsVec4();
+
+            ColorSteerI = Settings["Dashboard"]["Steer color (inactive)"].GetAsVec4();
+            ColorBrakeI = Settings["Dashboard"]["Brake color (inactive)"].GetAsVec4();
+            ColorAccelI = Settings["Dashboard"]["Acceleration color (inactive)"].GetAsVec4();
+
+            EnableDashboard = Settings["Dashboard"]["Enable"].GetAsBool();
+
+            EnableMedals = Settings["Medals"]["Enable"].GetAsBool();
         }
     }
 
@@ -137,7 +151,8 @@ public:
 
     void InitFonts(ImGuiIO& ImIo)
     {
-        KanitFont16 = ImIo.Fonts->AddFontFromFileTTF("Twinkie\\Fonts\\Kanit.ttf", 16.f);
+        // TODO
+        /*KanitFont16 = ImIo.Fonts->AddFontFromFileTTF("Twinkie\\Fonts\\Kanit.ttf", 16.f);
         if (KanitFont16)
         {
             PrintInternal("Font \"Kanit16\" initialized.");
@@ -155,7 +170,8 @@ public:
         else
         {
             PrintError("Font \"Kanit48\" not initialized. SplitSpeeds extension is not available.");
-        }
+        }*/
+        return;
     }
 
     void Init()

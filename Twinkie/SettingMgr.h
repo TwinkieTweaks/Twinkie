@@ -137,12 +137,17 @@ public:
 	{
 		if (!IniFile.read(IniStruct))
 		{
+			Status = -1;
 			GenerateIni();
 			if (!IniFile.generate(IniStruct))
 			{
 				Filesystem::create_directories("Twinkie");
 				IniFile.generate(IniStruct);
 			}
+		}
+		else
+		{
+			LoadIni();
 		}
 	}
 
