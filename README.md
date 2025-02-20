@@ -8,7 +8,7 @@ GreffMASTER also provided me with a helpful list of class members and their offs
 # TODO (from most viable to least)
 - Port some openplanet plugins (2 out of ???)
 - ~~Add saving settings as .ini file~~
-- Create a launcher for easier usage
+- ~~Create a launcher for easier usage~~
 - Export as ASI instead of DLL for easier debugging
 - Add `ManiaPlanet_Telemetry`
 - ~~Hook `Present` instead of `EndScene`, as TMF uses `EndScene` for lightmap calculations~~
