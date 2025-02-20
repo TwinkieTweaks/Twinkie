@@ -108,12 +108,10 @@ static DWORD WINAPI MainThread(LPVOID lpReserved)
 	freopen_s((FILE**)stdout, "CONOUT$", "w", stdout);
 #endif
 
-#ifdef BUILD_TMMC
 	while (!Twinkie.GetTrackmania())
 	{
 		Sleep(1);
 	}
-#endif
 
 	Twinkie.Init();
 
