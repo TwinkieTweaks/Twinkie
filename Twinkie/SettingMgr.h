@@ -6,8 +6,21 @@
 #include "mINI/ini.h"
 
 #include <filesystem>
+#include <shlobj.h>
+#include <shlwapi.h>
 
 namespace Filesystem = std::filesystem;
+
+std::string GetDocumentsFolder()
+{
+	std::string path;
+
+	char szPath[MAX_PATH + 1] = {};
+	if (SHGetFolderPathA(NULL, CSIDL_MYDOCUMENTS, NULL, SHGFP_TYPE_CURRENT, szPath) == S_OK)
+		path = szPath;
+
+	return path;
+}
 
 class Setting
 {
@@ -128,7 +141,7 @@ class SettingMgr
 {
 public:
 	std::vector<Tab> Tabs;
-	mINI::INIFile IniFile = mINI::INIFile("Twinkie/Twinkie.ini");
+	mINI::INIFile IniFile = mINI::INIFile(GetDocumentsFolder() + "\\Twinkie\\Twinkie.ini");
 	mINI::INIStructure IniStruct;
 
 	int Status = 0;
@@ -141,7 +154,7 @@ public:
 			GenerateIni();
 			if (!IniFile.generate(IniStruct))
 			{
-				Filesystem::create_directories("Twinkie");
+				Filesystem::create_directories(GetDocumentsFolder() + "\\Twinkie\\");
 				IniFile.generate(IniStruct);
 			}
 		}
