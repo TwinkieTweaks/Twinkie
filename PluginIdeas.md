@@ -1,4 +1,5 @@
 - ~~No-respawn timer (requires RE splits)~~ too useless for TMF because no flying respawns
-- Tweaker (too hard imo)
+- ~~Ultimate Medals (done)~~ (maybe add icons later when the launcher comes)
+- Tweaker (might be possible)
 - Split Speeds (requires RE splits) <-- CURRENTLY WORKING ON THIS
 - Hunting Stats (steal code from bulbtoys :3)
