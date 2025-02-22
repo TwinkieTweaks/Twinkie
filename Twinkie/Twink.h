@@ -1,5 +1,10 @@
 #pragma once
 
+// #define BUILD_DEBUG
+#define BUILD_UNITED
+// #define BUILD_NATIONS
+// #define BUILD_TMMC
+
 #include <string>
 #include <format>
 #include <iomanip>
@@ -15,17 +20,14 @@
 #include "kiero/kiero.h"
 #include "kiero/minhook/include/MinHook.h"
 
-// #define BUILD_DEBUG
-#define BUILD_UNITED
-// #define BUILD_NATIONS
-// #define BUILD_TMMC
-
 struct ChallengeInfo
 {
+    unsigned int AuthorScore;
     unsigned int AuthorTime;
     unsigned int GoldTime;
     unsigned int SilverTime;
     unsigned int BronzeTime;
+    int ChallengeType;
 };
 
 struct PlayerInfo
@@ -205,6 +207,12 @@ public:
         *reinterpret_cast<T*>(Addr) = Value;
     }
 
+    template <int Idx>
+    uintptr_t Virtual(uintptr_t This)
+    {
+        return Read<uintptr_t>(Read<uintptr_t>(This) + Idx * 4);
+    }
+
     uintptr_t GetExeBaseAddr()
     {
         return (unsigned long)GetModuleHandle(NULL);
@@ -214,6 +222,16 @@ public:
 	{
         return Read<uintptr_t>(GetExeBaseAddr() + O_CTRACKMANIA);
 	}
+    
+    std::string GetMwIdName(int Id)
+    {
+#ifdef BUILD_NATIONS
+        uintptr_t MwIdGetNamePtr = GetExeBaseAddr() + 0x535450;
+#endif
+#ifdef BUILD_UNITED
+        uintptr_t MwIdGetNamePtr = GetExeBaseAddr() + 0x535450;
+#endif
+    }
 
     void PrintInternal(const char* Str)
     {
@@ -278,7 +296,7 @@ public:
 
     ChallengeInfo GetChallengeInfo()
     {
-        ChallengeInfo InfoStruct{0,0,0,0};
+        ChallengeInfo InfoStruct{0,0,0,0,0,0};
 
         auto GameApp = GetTrackmania();
         auto Challenge = Read<uintptr_t>(GameApp + 0x198);
@@ -288,10 +306,13 @@ public:
             auto ChallengeParameters = Read<uintptr_t>(Challenge + 0xb4);
             if (ChallengeParameters)
             {
+                InfoStruct.AuthorScore = Read<unsigned int>(ChallengeParameters + 0x28);
                 InfoStruct.AuthorTime = Read<unsigned int>(ChallengeParameters + 0x20);
                 InfoStruct.GoldTime = Read<unsigned int>(ChallengeParameters + 0x1c);
                 InfoStruct.SilverTime = Read<unsigned int>(ChallengeParameters + 0x18);
                 InfoStruct.BronzeTime = Read<unsigned int>(ChallengeParameters + 0x14);
+
+                InfoStruct.ChallengeType = Read<int>(Challenge + 0xf8);
             }
         }
 
@@ -349,6 +370,7 @@ public:
         CurPlayerInfo = GetPlayerInfo();
         return Read<VehicleInputs>(CurPlayerInfo.Vehicle + 80); 
     }
+
 
     VehicleInputs* GetInputInfoWrite()
     {
@@ -929,10 +951,20 @@ public:
             ChallengeInfo InfoStruct = GetChallengeInfo();
             Begin("##Medals", &EnableMedals, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize);
 
-            Text(("Author: " + FormatTmDuration(InfoStruct.AuthorTime)).c_str());
-            Text(("Gold: " + FormatTmDuration(InfoStruct.GoldTime)).c_str());
-            Text(("Silver: " + FormatTmDuration(InfoStruct.SilverTime)).c_str());
-            Text(("Bronze: " + FormatTmDuration(InfoStruct.BronzeTime)).c_str());
+            if (InfoStruct.ChallengeType != 1 and InfoStruct.ChallengeType != 5)
+            {
+                Text(("Author: " + FormatTmDuration(InfoStruct.AuthorTime)).c_str());
+                Text(("Gold: " + FormatTmDuration(InfoStruct.GoldTime)).c_str());
+                Text(("Silver: " + FormatTmDuration(InfoStruct.SilverTime)).c_str());
+                Text(("Bronze: " + FormatTmDuration(InfoStruct.BronzeTime)).c_str());
+            }
+            else
+            {
+                Text("Author: %lu", InfoStruct.AuthorScore);
+                Text("Gold: %lu", InfoStruct.GoldTime);
+                Text("Silver: %lu", InfoStruct.SilverTime);
+                Text("Bronze: %lu", InfoStruct.BronzeTime);
+            }
 
             End();
         }
