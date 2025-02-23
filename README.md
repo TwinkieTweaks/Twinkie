@@ -6,6 +6,7 @@ To [GreffMASTER](https://github.com/GreffMASTER) and [brokenphilip](https://gith
 GreffMASTER also provided me with a helpful list of class members and their offsets for TMF <3
 
 ## Features
+- **NEW!** Ghost Editor, allows you to access the ghost editor without the cheat code
 - Dashboard, an input display with customizable colors
 - Medals window, for easily viewing medals
 
