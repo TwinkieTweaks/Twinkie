@@ -152,8 +152,8 @@ public:
 
     void InitFonts(ImGuiIO& ImIo)
     {
-        // TODO
-        /*KanitFont16 = ImIo.Fonts->AddFontFromFileTTF("Twinkie\\Fonts\\Kanit.ttf", 16.f);
+        /*
+        KanitFont16 = ImIo.Fonts->AddFontFromFileTTF((GetDocumentsFolder() + "\\Twinkie\\Fonts\\Kanit.ttf").c_str(), 16.f);
         if (KanitFont16)
         {
             PrintInternal("Font \"Kanit16\" initialized.");
@@ -162,7 +162,6 @@ public:
         {
             PrintError("Font \"Kanit16\" not initialized.");
         }
-
         KanitFont48 = ImIo.Fonts->AddFontFromFileTTF("Twinkie\\Fonts\\Kanit.ttf", 48.f);
         if (KanitFont48)
         {
@@ -222,15 +221,21 @@ public:
 	{
         return Read<uintptr_t>(GetExeBaseAddr() + O_CTRACKMANIA);
 	}
-    
-    std::string GetMwIdName(int Id)
+
+    uintptr_t GetMenuManager()
     {
-#ifdef BUILD_NATIONS
-        uintptr_t MwIdGetNamePtr = GetExeBaseAddr() + 0x535450;
-#endif
-#ifdef BUILD_UNITED
-        uintptr_t MwIdGetNamePtr = GetExeBaseAddr() + 0x535450;
-#endif
+        return Read<uintptr_t>(GetTrackmania() + 0x194);
+    }
+
+    void CallMenuGhostEditor()
+    {
+        using MenuGhostEditorFn = int(__thiscall*)(uintptr_t);
+        
+        uintptr_t GhostEditorPtr = TMType == TM::GameType::United ? 0x4D93D0 : 0x4d9780;
+        if (GetMenuManager())
+        {
+            reinterpret_cast<MenuGhostEditorFn>(GhostEditorPtr)(GetMenuManager());
+        }
     }
 
     void PrintInternal(const char* Str)
@@ -319,6 +324,11 @@ public:
         return InfoStruct;
     }
 
+    bool ChallengeUsesScore()
+    {
+        return GetChallengeInfo().ChallengeType == 1 or GetChallengeInfo().ChallengeType == 5;
+    }
+
     PlayerInfo GetPlayerInfo()
     {
         PlayerInfo InfoStruct{ 0,0,0,0,0 };
@@ -382,6 +392,23 @@ public:
         return Read<uintptr_t>(GetTrackmania() + 0x198);
     }
 
+    int GetBestTime()
+    {
+        if (!ChallengeUsesScore())
+            return Read<int>(CurPlayerInfo.PlayerInfo + 0x2b4);
+        return Read<int>(CurPlayerInfo.PlayerInfo + 0x2e0);
+    }
+
+    bool IsPersonalBest()
+    {
+        if (CurPlayerInfo.TrackmaniaRace)
+        {
+            // TODO: support stunts and platform mode here                 vvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+            return !ChallengeUsesScore() ? GetRaceTime() < GetBestTime() : GetRaceTime() > GetBestTime();
+        }
+        return false;
+    }
+
     long GetRaceTime()
     {
         auto RaceTime = Read<unsigned long>(CurPlayerInfo.Player + 0x44);
@@ -399,8 +426,7 @@ public:
 
     int GetDisplaySpeed()
     {
-        uintptr_t Struct = Read<uintptr_t>(CurPlayerInfo.PlayerInfo);
-        return Read<int>(Struct + 0x340);
+        return Read<int>(CurPlayerInfo.TrackmaniaRace + 0x26c);
     }
 
     void SetupImGuiStyle()
@@ -518,11 +544,6 @@ public:
         return Write<long>(Time, GetExeBaseAddr() + (TMType == TM::GameType::United ? 0x957BFC : (TMType == TM::GameType::Nations ? 0x95659C : 0x957BFC)));
     }
 
-    //long GetCurrentLaps()
-    //{
-    //    return Read<long>(GetExeBaseAddr() + (TMType == TM::GameType::United ? 0x957BFC : (TMType == TM::GameType::Nations ? 0x9560EC : 0x957BFC)));
-    //}
-
     bool IsPlaying()
     {
         return GetPlayerInfo().Vehicle and GetInputInfoWrite();
@@ -584,6 +605,8 @@ public:
                 std::string RaceStateText = CurrentState == TM::RaceState::Finished ? "Finished" : (CurrentState == TM::RaceState::Playing ? "Playing" : "Paused");
 
                 Text(std::format("RaceState: {}", RaceStateText).c_str());
+                Text(std::format("IsPb: {}", IsPersonalBest()).c_str());
+                Text(std::format("BestTime: {}", GetBestTime()).c_str());
 
                 CurrentRaceTime = GetRaceTime();
                 if (CurrentRaceTime < LastRaceTime)
@@ -659,6 +682,7 @@ public:
         static bool ShowOffsetTesting = false;
 
         static uintptr_t OffsetAddr = 0;
+        static uintptr_t AddrOffset = 0;
 
         Begin("Player Information", &EnablePlayerInfo);
 
@@ -673,6 +697,7 @@ public:
             {
                 SetClipboardText(GameAppAddrStr.c_str());
                 PrintArgs("Copied to clipboard: {}", GameAppAddrStr);
+                OffsetAddr = GetTrackmania();
             }
 
             Text("Address of Player: %x", CurPlayerInfo.Player);
@@ -682,6 +707,7 @@ public:
             {
                 SetClipboardText(PlayerAddrStr.c_str());
                 PrintArgs("Copied to clipboard: {}", PlayerAddrStr);
+                OffsetAddr = CurPlayerInfo.Player;
             }
 
             Text("Address of Mobil: %x", CurPlayerInfo.Mobil);
@@ -691,6 +717,7 @@ public:
             {
                 SetClipboardText(MobilAddrStr.c_str());
                 PrintArgs("Copied to clipboard: {}", MobilAddrStr);
+                OffsetAddr = CurPlayerInfo.Mobil;
             }
 
             Text("Address of Vehicle: %x", CurPlayerInfo.Vehicle);
@@ -700,6 +727,7 @@ public:
             {
                 SetClipboardText(VehicleAddrStr.c_str());
                 PrintArgs("Copied to clipboard: {}", VehicleAddrStr);
+                OffsetAddr = CurPlayerInfo.Vehicle;
             }
 
             Text("Address of PlayerInfo: %x", CurPlayerInfo.PlayerInfo);
@@ -709,6 +737,7 @@ public:
             {
                 SetClipboardText(PlayerInfoAddrStr.c_str());
                 PrintArgs("Copied to clipboard: {}", PlayerInfoAddrStr);
+                OffsetAddr = CurPlayerInfo.PlayerInfo;
             }
 
             Text("Address of TrackmaniaRace: %x", CurPlayerInfo.TrackmaniaRace);
@@ -718,6 +747,7 @@ public:
             {
                 SetClipboardText(TrackmaniaRaceAddrStr.c_str());
                 PrintArgs("Copied to clipboard: {}", TrackmaniaRaceAddrStr);
+                OffsetAddr = CurPlayerInfo.TrackmaniaRace;
             }
 
             SeparatorText("Race data");
@@ -741,6 +771,7 @@ public:
 
             Checkbox("Free wheeling", (bool*)CurPlayerInfo.Vehicle + 1548);
             Checkbox("Turbo", (bool*)CurPlayerInfo.Vehicle + 948);
+            Text("Turbo factor: %f", *((float*)CurPlayerInfo.Vehicle + 0x182) + 1.0f);
             EndDisabled();
 
             SeparatorText("Offset Testing");
@@ -749,83 +780,12 @@ public:
 
             if (ShowOffsetTesting)
             {
-                /*BeginChild("Offsets");
-
-                if (CurPlayerInfo.Player)
-                {
-                    InputInt("PlayerOffset", &OffsetPlayer, 2);
-                    Text("Value: %x", Read<unsigned long>(CurPlayerInfo.Player + OffsetPlayer));
-                    InputInt("PlayerWrite", &WritePlayer);
-                    SameLine();
-                    if (Button("Write##Player"))
-                    {
-                        Write<int>(WritePlayer, CurPlayerInfo.Player + OffsetPlayer);
-                    }
-                }
-
-                Separator();
-
-                if (CurPlayerInfo.Mobil)
-                {
-                    InputInt("MobilOffset", &OffsetMobil, 2);
-                    Text("Value: %x", Read<unsigned long>(CurPlayerInfo.Mobil + OffsetMobil));
-                    InputInt("MobilWrite", &WriteMobil);
-                    SameLine();
-                    if (Button("Write##Mobil"))
-                    {
-                        Write<int>(WriteMobil, CurPlayerInfo.Mobil + OffsetMobil);
-                    }
-                }
-
-                Separator();
-
-                if (CurPlayerInfo.Vehicle)
-                {
-                    InputInt("VehicleOffset", &OffsetVehicle, 2);
-                    Text("Value: %x", Read<unsigned long>(CurPlayerInfo.Vehicle + OffsetVehicle));
-                    InputInt("VehicleWrite", &WriteVehicle);
-                    SameLine();
-                    if (Button("Write##Vehicle"))
-                    {
-                        Write<int>(WriteVehicle, CurPlayerInfo.Vehicle + OffsetVehicle);
-                    }
-                }
-
-                Separator();
-
-                if (CurPlayerInfo.PlayerInfo)
-                {
-                    InputInt("PlayerInfoOffset", &OffsetPlayerInfo, 2);
-                    Text("Value: %x", Read<unsigned long>(CurPlayerInfo.PlayerInfo + OffsetPlayerInfo));
-                    InputInt("PlayerInfoWrite", &WritePlayerInfo);
-                    SameLine();
-                    if (Button("Write##PlayerInfo"))
-                    {
-                        Write<int>(WritePlayerInfo, CurPlayerInfo.PlayerInfo + OffsetPlayerInfo);
-                    }
-                }
-
-                Separator();
-
-                if (CurPlayerInfo.TrackmaniaRace)
-                {
-                    InputInt("TrackmaniaRaceOffset", &OffsetTrackmaniaRace, 2);
-                    Text("Value: %x", Read<unsigned long>(CurPlayerInfo.TrackmaniaRace + OffsetTrackmaniaRace));
-                    InputInt("TrackmaniaRaceWrite", &WriteTrackmaniaRace);
-                    SameLine();
-                    if (Button("Write##TrackmaniaRace"))
-                    {
-                        Write<int>(WriteTrackmaniaRace, CurPlayerInfo.TrackmaniaRace + OffsetTrackmaniaRace);
-                    }
-                }
-
-                EndChild();*/
-
                 InputInt("Address", reinterpret_cast<int*>(&OffsetAddr), 2);
+                InputInt("Offset", reinterpret_cast<int*>(&AddrOffset), 2);
 
                 if (OffsetAddr)
                 {
-                    Text("Value: 0x%x, %lu", Read<unsigned long>(OffsetAddr), Read<unsigned long>(OffsetAddr));
+                    Text("Value: 0x%x, %lu", Read<unsigned long>(OffsetAddr + AddrOffset), Read<unsigned long>(OffsetAddr + AddrOffset));
                 }
             }
         }
@@ -908,12 +868,12 @@ public:
             BeginTabBar("##SettingsTabBar");
             if (BeginTabItem("Dashboard"))
             {
-                ColorEdit4("Steering", &ColorSteer.x);
-                ColorEdit4("Acceleration", &ColorAccel.x);
-                ColorEdit4("Brake", &ColorBrake.x);
-                ColorEdit4("Steering (inactive)", &ColorSteerI.x);
-                ColorEdit4("Acceleration (inactive)", &ColorAccelI.x);
-                ColorEdit4("Brake (inactive)", &ColorBrakeI.x);
+                ColorEdit4("Steering", &ColorSteer.x, ImGuiColorEditFlags_NoInputs);
+                ColorEdit4("Acceleration", &ColorAccel.x, ImGuiColorEditFlags_NoInputs);
+                ColorEdit4("Brake", &ColorBrake.x, ImGuiColorEditFlags_NoInputs);
+                ColorEdit4("Steering (inactive)", &ColorSteerI.x, ImGuiColorEditFlags_NoInputs);
+                ColorEdit4("Acceleration (inactive)", &ColorAccelI.x, ImGuiColorEditFlags_NoInputs);
+                ColorEdit4("Brake (inactive)", &ColorBrakeI.x, ImGuiColorEditFlags_NoInputs);
 
                 EndTabItem();
             }
@@ -951,7 +911,7 @@ public:
             ChallengeInfo InfoStruct = GetChallengeInfo();
             Begin("##Medals", &EnableMedals, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize);
 
-            if (InfoStruct.ChallengeType != 1 and InfoStruct.ChallengeType != 5)
+            if (!ChallengeUsesScore())
             {
                 Text(("Author: " + FormatTmDuration(InfoStruct.AuthorTime)).c_str());
                 Text(("Gold: " + FormatTmDuration(InfoStruct.GoldTime)).c_str());
@@ -970,7 +930,7 @@ public:
         }
     }
 
-    // Render() only renders when the GUI is active (Twink.DoRender)
+    // Render() only renders when the GUI is active (Twink.DoRender is true)
     void Render()
     {
         using namespace ImGui;
@@ -987,6 +947,11 @@ public:
                 if (MenuItem("Settings", "", EnableSettings))
                 {
                     EnableSettings = !EnableSettings;
+                }
+                Separator();
+                if (MenuItem("Ghost Editor"))
+                {
+                    CallMenuGhostEditor();
                 }
                 Separator();
                 if (MenuItem("Dashboard", "", EnableDashboard))
@@ -1060,6 +1025,8 @@ public:
         using namespace ImGui;
         CurPlayerInfo = GetPlayerInfo();
 
+        if (KanitFont16) PushFont(KanitFont16);
+
         if (EnableDashboard)
         {
             RenderDashboard();
@@ -1069,5 +1036,7 @@ public:
         {
             RenderMedals();
         }
+
+        if (KanitFont16) PopFont();
     }
 };

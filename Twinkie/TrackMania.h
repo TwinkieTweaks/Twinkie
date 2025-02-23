@@ -32,6 +32,11 @@ namespace TM
 		GmVec3 t;
 	};
 
+	struct CMwId
+	{
+		int Value;
+	};
+
 	enum GameType
 	{
 		United,
