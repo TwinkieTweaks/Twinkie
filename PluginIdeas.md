@@ -1,6 +1,2 @@
-- ~~No-respawn timer (requires RE splits)~~ too useless for TMF because no flying respawns
 - ~~Ultimate Medals (done)~~ (maybe add icons later when the launcher comes)
 - ~~Dashboard (done)~~ (maybe add gears widget)
-- ~~Tweaker (no direct nod path to camera)~~
-- ~~Split Speeds (requires RE challenge UID)~~
-- ~~Hunting Stats (requires RE challenge UID)~~
