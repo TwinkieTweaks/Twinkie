@@ -15,6 +15,7 @@ GreffMASTER also provided me with a helpful list of class members and their offs
 - ~~Add saving settings as .ini file~~
 - ~~Create a launcher for easier usage~~
 - Add `ManiaPlanet_Telemetry`
+- Prevent clicks from going "through" the UI
 - ~~Hook `Present` instead of `EndScene`, as TMF uses `EndScene` for lightmap calculations~~
 - Full Modloader support
 
