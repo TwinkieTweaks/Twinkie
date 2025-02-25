@@ -1,9 +1,10 @@
 #pragma once
 
 // #define BUILD_DEBUG
-#define BUILD_UNITED
-// #define BUILD_NATIONS
+// #define BUILD_UNITED
+#define BUILD_NATIONS
 // #define BUILD_TMMC
+// #define BUILD_EXTERNAL_CONSOLE
 
 #include <string>
 #include <format>
@@ -101,7 +102,7 @@ public:
     ImVec4 ColorTachometerDownshift = ImVec4(1.f, 1.f, 0.f, 1.f);
     ImVec4 ColorTachometerMiddle = ImVec4(0.f, 1.f, 0.f, 1.f);
     ImVec4 ColorTachometerDefault = ImVec4(0.f, 0.f, 0.f, 0.25f);
-    ImVec4 ColorTachometerBackground = ImVec4(0.f, 0.f, 0.f, 0.f);
+    ImVec4 ColorTachometerBackground = ImVec4(0.1294117718935013f, 0.1372549086809158f, 0.168627455830574f, 0.8f);
     float TachometerDownshiftRpm = 6500;
     float TachometerUpshiftRpm = 10000;
 
@@ -136,6 +137,7 @@ public:
 
         Settings["Dashboard"]["Upshift"].Set(ColorTachometerUpshift);
         Settings["Dashboard"]["Downshift"].Set(ColorTachometerDownshift);
+        Settings["Dashboard"]["Middle"].Set(ColorTachometerMiddle);
         Settings["Dashboard"]["Default"].Set(ColorTachometerDefault);
 
         Settings["Dashboard"]["Tachometer background color"].Set(ColorTachometerBackground);
@@ -168,6 +170,7 @@ public:
 
             ColorTachometerUpshift = Settings["Dashboard"]["Upshift"].GetAsVec4(ColorTachometerUpshift);
             ColorTachometerDownshift = Settings["Dashboard"]["Downshift"].GetAsVec4(ColorTachometerDownshift);
+            ColorTachometerMiddle = Settings["Dashboard"]["Middle"].GetAsVec4(ColorTachometerMiddle);
             ColorTachometerDefault = Settings["Dashboard"]["Default"].GetAsVec4(ColorTachometerDefault);
 
             ColorTachometerBackground = Settings["Dashboard"]["Tachometer background color"].GetAsVec4(ColorTachometerBackground);

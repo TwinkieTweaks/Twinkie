@@ -103,7 +103,7 @@ static HWND GetProcessWindow()
 
 static DWORD WINAPI MainThread(LPVOID lpReserved)
 {
-#ifdef TT_EXTERNAL_CONSOLE
+#ifdef BUILD_EXTERNAL_CONSOLE
 	AllocConsole();
 	freopen_s((FILE**)stdout, "CONOUT$", "w", stdout);
 #endif
