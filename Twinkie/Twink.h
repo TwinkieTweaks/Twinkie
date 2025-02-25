@@ -1,6 +1,6 @@
 #pragma once
 
-// #define BUILD_DEBUG
+#define BUILD_DEBUG
 #define BUILD_UNITED
 // #define BUILD_NATIONS
 // #define BUILD_TMMC
@@ -64,8 +64,8 @@ struct VehicleInputs
 class Twink
 {
 public:
-	// uintptr_t O_CTRACKMANIA_UNITED = 0xD6A2A4;
-    // uintptr_t O_CTRACKMANIA_NATIONS = 0xD68C44;
+    const float MINRPM = 200.f;
+    const float MAXRPM = 11000.f;
 
 #ifdef BUILD_UNITED
     uintptr_t O_CTRACKMANIA = 0x96A2A4;
@@ -87,19 +87,27 @@ public:
     bool EnableLog = false;
     std::string LogStr = "";
 
-    bool EnableDashboard = false;
-    ImVec4 ColorSteer = ImVec4(0.976f, 0.737f, 0.008f, 1.f);
-    ImVec4 ColorSteerI = ImVec4(1.f, 1.f, 1.f, 0.5f);
-    ImVec4 ColorAccel = ImVec4(0.f, 0.94f, 0.f, 1.f);
-    ImVec4 ColorAccelI = ImVec4(1.f, 1.f, 1.f, 0.5f);
-    ImVec4 ColorBrake = ImVec4(0.94f, 0.f, 0.f, 1.f);
-    ImVec4 ColorBrakeI = ImVec4(1.f, 1.f, 1.f, 0.5f);
+    bool EnableDashboardSteerModule = false;
+    ImVec4 ColorInputSteer = ImVec4(0.976f, 0.737f, 0.008f, 1.f);
+    ImVec4 ColorInputSteerI = ImVec4(1.f, 1.f, 1.f, 0.5f);
+    ImVec4 ColorInputAccel = ImVec4(0.f, 0.94f, 0.f, 1.f);
+    ImVec4 ColorInputAccelI = ImVec4(1.f, 1.f, 1.f, 0.5f);
+    ImVec4 ColorInputBrake = ImVec4(0.94f, 0.f, 0.f, 1.f);
+    ImVec4 ColorInputBrakeI = ImVec4(1.f, 1.f, 1.f, 0.5f);
+    ImVec4 ColorInputBackground = ImVec4(0.f, 0.f, 0.f, 0.f);
+
+    bool EnableDashboardRpmModule = false;
+    ImVec4 ColorTachometerUpshift = ImVec4(1.f, 0.f, 0.f, 1.f);
+    ImVec4 ColorTachometerDownshift = ImVec4(1.f, 1.f, 0.f, 1.f);
+    ImVec4 ColorTachometerMiddle = ImVec4(0.f, 1.f, 0.f, 1.f);
+    ImVec4 ColorTachometerDefault = ImVec4(0.f, 0.f, 0.f, 0.25f);
+    ImVec4 ColorTachometerBackground = ImVec4(0.f, 0.f, 0.f, 0.f);
+    float TachometerDownshiftRpm = 6500;
+    float TachometerUpshiftRpm = 10000;
 
     bool EnableAboutWindow = false;
 
     bool EnableSettings = false;
-
-    bool EnableSplitSpeeds = false;
 
     bool EnableMedals = false;
 
@@ -112,15 +120,28 @@ public:
 
     void SaveSettings()
     {
-        Settings["Dashboard"]["Steer color"].Set(ColorSteer);
-        Settings["Dashboard"]["Brake color"].Set(ColorBrake);
-        Settings["Dashboard"]["Acceleration color"].Set(ColorAccel);
+        Settings["Dashboard"]["Steer color"].Set(ColorInputSteer);
+        Settings["Dashboard"]["Brake color"].Set(ColorInputBrake);
+        Settings["Dashboard"]["Acceleration color"].Set(ColorInputAccel);
 
-        Settings["Dashboard"]["Steer color (inactive)"].Set(ColorSteerI);
-        Settings["Dashboard"]["Brake color (inactive)"].Set(ColorBrakeI);
-        Settings["Dashboard"]["Acceleration color (inactive)"].Set(ColorAccelI);
+        Settings["Dashboard"]["Steer color (inactive)"].Set(ColorInputSteerI);
+        Settings["Dashboard"]["Brake color (inactive)"].Set(ColorInputBrakeI);
+        Settings["Dashboard"]["Acceleration color (inactive)"].Set(ColorInputAccelI);
 
-        Settings["Dashboard"]["Enable"].Set(EnableDashboard);
+        Settings["Dashboard"]["Input display background color"].Set(ColorInputBackground);
+
+        Settings["Dashboard"]["Enable input display"].Set(EnableDashboardSteerModule);
+
+        Settings["Dashboard"]["Enable tachometer"].Set(EnableDashboardRpmModule);
+
+        Settings["Dashboard"]["Upshift"].Set(ColorTachometerUpshift);
+        Settings["Dashboard"]["Downshift"].Set(ColorTachometerDownshift);
+        Settings["Dashboard"]["Default"].Set(ColorTachometerDefault);
+
+        Settings["Dashboard"]["Tachometer background color"].Set(ColorTachometerBackground);
+
+        Settings["Dashboard"]["Upshift RPM"].Set(TachometerUpshiftRpm);
+        Settings["Dashboard"]["Downshift RPM"].Set(TachometerDownshiftRpm);
         
         Settings["Medals"]["Enable"].Set(EnableMedals);
 
@@ -131,17 +152,30 @@ public:
     {
         if (Settings.Status == 0)
         {
-            ColorSteer = Settings["Dashboard"]["Steer color"].GetAsVec4();
-            ColorBrake = Settings["Dashboard"]["Brake color"].GetAsVec4();
-            ColorAccel = Settings["Dashboard"]["Acceleration color"].GetAsVec4();
+            ColorInputSteer = Settings["Dashboard"]["Steer color"].GetAsVec4(ColorInputSteer);
+            ColorInputBrake = Settings["Dashboard"]["Brake color"].GetAsVec4(ColorInputBrake);
+            ColorInputAccel = Settings["Dashboard"]["Acceleration color"].GetAsVec4(ColorInputAccel);
 
-            ColorSteerI = Settings["Dashboard"]["Steer color (inactive)"].GetAsVec4();
-            ColorBrakeI = Settings["Dashboard"]["Brake color (inactive)"].GetAsVec4();
-            ColorAccelI = Settings["Dashboard"]["Acceleration color (inactive)"].GetAsVec4();
+            ColorInputSteerI = Settings["Dashboard"]["Steer color (inactive)"].GetAsVec4(ColorInputSteerI);
+            ColorInputBrakeI = Settings["Dashboard"]["Brake color (inactive)"].GetAsVec4(ColorInputBrakeI);
+            ColorInputAccelI = Settings["Dashboard"]["Acceleration color (inactive)"].GetAsVec4(ColorInputAccelI);
 
-            EnableDashboard = Settings["Dashboard"]["Enable"].GetAsBool();
+            ColorInputBackground = Settings["Dashboard"]["Background color"].GetAsVec4(ColorInputBackground);
 
-            EnableMedals = Settings["Medals"]["Enable"].GetAsBool();
+            EnableDashboardSteerModule = Settings["Dashboard"]["Enable input display"].GetAsBool(EnableDashboardSteerModule);
+
+            EnableDashboardRpmModule = Settings["Dashboard"]["Enable tachometer"].GetAsBool(EnableDashboardRpmModule);
+
+            ColorTachometerUpshift = Settings["Dashboard"]["Upshift"].GetAsVec4(ColorTachometerUpshift);
+            ColorTachometerDownshift = Settings["Dashboard"]["Downshift"].GetAsVec4(ColorTachometerDownshift);
+            ColorTachometerDefault = Settings["Dashboard"]["Default"].GetAsVec4(ColorTachometerDefault);
+
+            ColorTachometerBackground = Settings["Dashboard"]["Tachometer background color"].GetAsVec4(ColorTachometerBackground);
+
+            TachometerUpshiftRpm = Settings["Dashboard"]["Upshift RPM"].GetAsFloat(TachometerUpshiftRpm);
+            TachometerDownshiftRpm = Settings["Dashboard"]["Downshift RPM"].GetAsFloat(TachometerDownshiftRpm);
+
+            EnableMedals = Settings["Medals"]["Enable"].GetAsBool(EnableMedals);
         }
     }
 
@@ -231,7 +265,7 @@ public:
     {
         using MenuGhostEditorFn = int(__thiscall*)(uintptr_t);
         
-        uintptr_t GhostEditorPtr = TMType == TM::GameType::United ? 0x4D93D0 : 0x4d9780;
+        uintptr_t GhostEditorPtr = TMType == TM::GameType::United ? 0x4D93D0 : 0x4D9780;
         if (GetMenuManager())
         {
             reinterpret_cast<MenuGhostEditorFn>(GhostEditorPtr)(GetMenuManager());
@@ -424,9 +458,19 @@ public:
         return -1;
     }
 
-    int GetDisplaySpeed()
+    float GetDisplaySpeed()
     {
-        return Read<int>(CurPlayerInfo.TrackmaniaRace + 0x26c);
+        return Read<float>(CurPlayerInfo.Vehicle + 760) * 3.6f;
+    }
+
+    float GetRpm()
+    {
+        return Read<float>(CurPlayerInfo.Vehicle + 1464);
+    }
+
+    int GetGear()
+    {
+        return Read<int>(CurPlayerInfo.Vehicle + 1480);
     }
 
     void SetupImGuiStyle()
@@ -557,124 +601,12 @@ public:
         {
             Text(std::format("Twinkie for TrackMania{} Forever. Version {}", TMType == TM::GameType::Nations ? " Nations" : (TMType == TM::GameType::United ? " United" : ""), Versions.TwinkieVer).c_str());
             Text("Made with love by jailman. <3");
+#ifdef BUILD_DEBUG
+            Text("This is a debug copy, please report any bugs to the author.");
+#endif
         }
         End();
     }
-
-    void DrawSpeedAndSplitText(ImDrawList* DrawList, std::string ValueText, std::string DiffText, ImVec4 Color)
-    {
-        using namespace ImGui;
-        auto ScreenSize = ImGui::GetMainViewport()->Size;
-
-        ImVec2 SizeVal = CalcTextSize(ValueText.c_str());
-        ImVec2 SizeDiff = CalcTextSize(DiffText.c_str());
-
-        DrawList->AddText(ImVec2((ScreenSize.x / 2.f) - (SizeVal.x / 2.f) + 3, ScreenSize.y / 10.f + 3), ColorConvertFloat4ToU32(ImVec4(0, 0, 0, 1)), ValueText.c_str());
-        DrawList->AddText(ImVec2((ScreenSize.x / 2.f) - (SizeVal.x / 2.f), ScreenSize.y / 10.f), ColorConvertFloat4ToU32(Color), ValueText.c_str());
-
-        DrawList->AddText(ImVec2((ScreenSize.x / 2.f) - (SizeDiff.x / 2.f) + 3, ScreenSize.y / 10.f + 3 + SizeVal.y), ColorConvertFloat4ToU32(ImVec4(0, 0, 0, 1)), DiffText.c_str());
-        DrawList->AddText(ImVec2((ScreenSize.x / 2.f) - (SizeDiff.x / 2.f), ScreenSize.y / 10.f + SizeVal.y), ColorConvertFloat4ToU32(Color), DiffText.c_str());
-    }
-
-    void RenderSplitSpeeds()
-    {
-        static long LastCheckpoint = 0;
-        static long CurrentCheckpoint = 0;
-        static TM::RaceState CurrentState = TM::RaceState::Finished;
-        static TM::RaceState LastState = TM::RaceState::Finished;
-        static long LastRaceTime = 0;
-        static long CurrentRaceTime = 0;
-
-        static unsigned long CurrentCheckpointIdx = -1;
-
-        static std::vector<long> Splits = {};
-        static std::vector<long> BestSplits = {434, 444, 355};
-
-        static bool DrawlistTesting = true;
-
-        using namespace ImGui;
-
-        if (IsPlaying())
-        {
-            if (Begin("SplitSpeeds", &EnableSplitSpeeds))
-            {
-                Text("Last checkpoint: %lu", GetCurrentCheckpoint());
-                Checkbox("Test drawlist rendering", &DrawlistTesting);
-
-                CurrentState = Read<TM::RaceState>(CurPlayerInfo.TrackmaniaRace + 0x50);
-                std::string RaceStateText = CurrentState == TM::RaceState::Finished ? "Finished" : (CurrentState == TM::RaceState::Playing ? "Playing" : "Paused");
-
-                Text(std::format("RaceState: {}", RaceStateText).c_str());
-                Text(std::format("IsPb: {}", IsPersonalBest()).c_str());
-                Text(std::format("BestTime: {}", GetBestTime()).c_str());
-
-                CurrentRaceTime = GetRaceTime();
-                if (CurrentRaceTime < LastRaceTime)
-                {
-                    CurrentCheckpoint = 0;
-                    LastCheckpoint = 0;
-
-                    CurrentCheckpointIdx = -1;
-
-                    CurrentRaceTime = 0;
-                    LastRaceTime = 0;
-
-                    SetCurrentCheckpoint(0);
-                    LastState = CurrentState;
-
-                    Splits = {};
-
-                    End();
-                    return;
-                }
-                LastRaceTime = CurrentRaceTime;
-
-                CurrentCheckpoint = GetCurrentCheckpoint();
-                if (CurrentCheckpoint != LastCheckpoint)
-                {
-                    Splits.push_back(GetDisplaySpeed());
-                    CurrentCheckpointIdx++;
-                }
-                LastCheckpoint = CurrentCheckpoint;
-            }
-            End();
-
-            if (DrawlistTesting and CurrentCheckpointIdx != -1)
-            {
-                auto FGDrawList = ImGui::GetForegroundDrawList();
-                auto ScreenSize = ImGui::GetWindowSize();
-
-                long CurrentSplit = Splits[CurrentCheckpointIdx];
-
-                long BestSplit = -1;
-                bool IsFaster = false;
-                bool IsNew = false;
-
-                if (CurrentCheckpointIdx < BestSplits.size())
-                {
-                    BestSplit = BestSplits[CurrentCheckpointIdx];
-                    IsFaster = CurrentSplit >= BestSplit;
-                    IsNew = false;
-                }
-                else
-                {
-                    IsNew = true;
-                }
-
-                ImVec4 SplitTextCol = IsNew ? ImVec4(0, 0, 1, 1) : (IsFaster ? ImVec4(0, 1, 0, 1) : ImVec4(1, 0, 0, 1));
-                std::string ValueText = std::format("{}", CurrentSplit);
-                long SplitDiff = CurrentSplit - BestSplit;
-                std::string IFuckingHateC20 = !IsNew ? (SplitDiff < 0 ? "{}" : "+{}") : "";
-                std::string DiffText = std::vformat(IFuckingHateC20, std::make_format_args(SplitDiff));
-
-                if (KanitFont48) PushFont(KanitFont48);
-                DrawSpeedAndSplitText(FGDrawList, ValueText, DiffText, SplitTextCol);
-                if (KanitFont48) PopFont();
-            }
-        }
-    }
-
-
 #ifdef BUILD_DEBUG
     void RenderPlayerInfo()
     {
@@ -753,7 +685,9 @@ public:
             SeparatorText("Race data");
 
             Text("Time: %lu", GetRaceTime());
-            Text("Speed: %d", GetDisplaySpeed());
+            Text("Speed: %f", GetDisplaySpeed());
+            Text("RPM: %f", GetRpm());
+            Text("Gear: %lu", GetGear());
 
             VehicleInputs InputInfo = Read<VehicleInputs>(CurPlayerInfo.Vehicle + 80);
 
@@ -785,7 +719,7 @@ public:
 
                 if (OffsetAddr)
                 {
-                    Text("Value: 0x%x, %lu", Read<unsigned long>(OffsetAddr + AddrOffset), Read<unsigned long>(OffsetAddr + AddrOffset));
+                    Text("Value: 0x%x, %lu, %f", Read<unsigned long>(OffsetAddr + AddrOffset), Read<unsigned long>(OffsetAddr + AddrOffset), Read<float>(OffsetAddr + AddrOffset));
                 }
             }
         }
@@ -797,8 +731,7 @@ public:
         End();
     }
 #endif
-
-    void RenderDashboard()
+    void RenderDashboardInputs()
     {
         using namespace ImGui;
         if (IsPlaying())
@@ -806,12 +739,12 @@ public:
             static bool IsPrevHovered = false;
             VehicleInputs InputInfo = GetInputInfo();
 
-            PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+            PushStyleColor(ImGuiCol_WindowBg, ColorInputBackground);
             PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 
             int DashboardWindowFlags = ImGuiWindowFlags_NoTitleBar;
 
-            Begin("Dashboard", nullptr, DashboardWindowFlags);
+            Begin("Dashboard##Inputs", nullptr, DashboardWindowFlags);
 
             IsPrevHovered = IsWindowHovered();
 
@@ -846,18 +779,69 @@ public:
             auto BottomCornerGas = ImVec2(CursorPos.x + WindowWidth * 2, CursorPos.y + WindowHeight / 2.f);
             auto TopCornerBrake = ImVec2(CursorPos.x + WindowWidth, CursorPos.y + WindowHeight / 2.f);
 
-            UIDrawList->AddTriangleFilled(UpperR, LowerR, TipBgR, ColorConvertFloat4ToU32(ColorSteerI)); // right one (no AA)
-            UIDrawList->AddTriangleFilled(TipBgL, UpperL, LowerL, ColorConvertFloat4ToU32(ColorSteerI)); // left one (AA)
+            UIDrawList->AddTriangleFilled(UpperR, LowerR, TipBgR, ColorConvertFloat4ToU32(ColorInputSteerI)); // right one (no AA)
+            UIDrawList->AddTriangleFilled(TipBgL, UpperL, LowerL, ColorConvertFloat4ToU32(ColorInputSteerI)); // left one (AA)
             if (InputInfo.Steer < 0)
-                UIDrawList->AddTriangleFilled(TipSteer, UpperL, LowerL, ColorConvertFloat4ToU32(ColorSteer));
+                UIDrawList->AddTriangleFilled(TipSteer, UpperL, LowerL, ColorConvertFloat4ToU32(ColorInputSteer));
             else if (InputInfo.Steer > 0)
-                UIDrawList->AddTriangleFilled(TipSteer, UpperR, LowerR, ColorConvertFloat4ToU32(ColorSteer));
+                UIDrawList->AddTriangleFilled(TipSteer, UpperR, LowerR, ColorConvertFloat4ToU32(ColorInputSteer));
 
-            UIDrawList->AddRectFilled(ImVec2(UpperL.x + 6.f, UpperL.y), ImVec2(BottomCornerGas.x - 6.f, BottomCornerGas.y - 3.f), InputInfo.get_Gas() ? ColorConvertFloat4ToU32(ColorAccel) : ColorConvertFloat4ToU32(ColorAccelI));
-            UIDrawList->AddRectFilled(ImVec2(TopCornerBrake.x + 6.f, TopCornerBrake.y + 3.f), ImVec2(LowerR.x - 6.f, LowerR.y), InputInfo.get_Brake() ? ColorConvertFloat4ToU32(ColorBrake) : ColorConvertFloat4ToU32(ColorBrakeI));
+            UIDrawList->AddRectFilled(ImVec2(UpperL.x + 6.f, UpperL.y), ImVec2(BottomCornerGas.x - 6.f, BottomCornerGas.y - 3.f), InputInfo.get_Gas() ? ColorConvertFloat4ToU32(ColorInputAccel) : ColorConvertFloat4ToU32(ColorInputAccelI));
+            UIDrawList->AddRectFilled(ImVec2(TopCornerBrake.x + 6.f, TopCornerBrake.y + 3.f), ImVec2(LowerR.x - 6.f, LowerR.y), InputInfo.get_Brake() ? ColorConvertFloat4ToU32(ColorInputBrake) : ColorConvertFloat4ToU32(ColorInputBrakeI));
 
             End();
         }
+    }
+
+    void RenderDashboardRpm()
+    {
+        using namespace ImGui;
+
+        if (!GetPlayerInfo().Vehicle) return;
+
+        int DashboardWindowFlags = ImGuiWindowFlags_NoTitleBar;
+
+        PushStyleColor(ImGuiCol_WindowBg, ColorTachometerBackground);
+
+        Begin("Dashboard##Rpm", nullptr, DashboardWindowFlags);
+
+        PopStyleColor();
+
+        auto UIDrawList = GetWindowDrawList();
+
+        auto CursorPos = GetCursorScreenPos();
+
+        float WindowWidth = GetWindowWidth();
+        float WindowHeight = GetWindowHeight();
+
+        int BarsToDraw = (int)WindowWidth / 10; // cast so we don't get the "possible loss of data" bullshit
+        BarsToDraw--; // last bar almost always gets cutoff, i don't like that
+
+        for (int Idx = 0; Idx < BarsToDraw; Idx++)
+        {
+            float RepresentedRpm = (((float)Idx) / ((float)BarsToDraw)) * MAXRPM;
+            float Rpm = GetRpm();
+            ImVec4 Color = ColorTachometerDefault;
+            if (Rpm > MINRPM and Rpm >= RepresentedRpm) {
+                if (RepresentedRpm <= TachometerDownshiftRpm) {
+                    Color = ColorTachometerDownshift;
+                }
+                else if (RepresentedRpm <= TachometerUpshiftRpm) {
+                    Color = ColorTachometerMiddle;
+                }
+                else {
+                    Color = ColorTachometerUpshift;
+                }
+            }
+            else
+            {
+                Color = ColorTachometerDefault;
+            }
+            UIDrawList->AddRectFilled(CursorPos, ImVec2(CursorPos.x + 5.f, CursorPos.y + GetWindowHeight() - (2.f * GetStyle().WindowPadding.y)), ColorConvertFloat4ToU32(Color));
+            CursorPos.x += 10.f; // 5.f from width of each bar and 5.f for padding between each bar
+        }
+
+        End();
     }
 
     void RenderSettings()
@@ -866,16 +850,30 @@ public:
         if (Begin("Settings", &EnableSettings))
         {
             BeginTabBar("##SettingsTabBar");
-            if (BeginTabItem("Dashboard"))
+            if (BeginTabItem("Input display"))
             {
-                ColorEdit4("Steering", &ColorSteer.x, ImGuiColorEditFlags_NoInputs);
-                ColorEdit4("Acceleration", &ColorAccel.x, ImGuiColorEditFlags_NoInputs);
-                ColorEdit4("Brake", &ColorBrake.x, ImGuiColorEditFlags_NoInputs);
-                ColorEdit4("Steering (inactive)", &ColorSteerI.x, ImGuiColorEditFlags_NoInputs);
-                ColorEdit4("Acceleration (inactive)", &ColorAccelI.x, ImGuiColorEditFlags_NoInputs);
-                ColorEdit4("Brake (inactive)", &ColorBrakeI.x, ImGuiColorEditFlags_NoInputs);
-
+                ColorEdit4("Steering", &ColorInputSteer.x, ImGuiColorEditFlags_NoInputs);
+                ColorEdit4("Acceleration", &ColorInputAccel.x, ImGuiColorEditFlags_NoInputs);
+                ColorEdit4("Brake", &ColorInputBrake.x, ImGuiColorEditFlags_NoInputs);
+                Separator();
+                ColorEdit4("Steering (inactive)", &ColorInputSteerI.x, ImGuiColorEditFlags_NoInputs);
+                ColorEdit4("Acceleration (inactive)", &ColorInputAccelI.x, ImGuiColorEditFlags_NoInputs);
+                ColorEdit4("Brake (inactive)", &ColorInputBrakeI.x, ImGuiColorEditFlags_NoInputs);
+                Separator();
+                ColorEdit4("Background color", &ColorInputBackground.x, ImGuiColorEditFlags_NoInputs);
                 EndTabItem();
+            }
+            if (BeginTabItem("Tachometer"))
+            {
+                ColorEdit4("Upshift", &ColorTachometerUpshift.x, ImGuiColorEditFlags_NoInputs);
+                ColorEdit4("Downshift", &ColorTachometerDownshift.x, ImGuiColorEditFlags_NoInputs);
+                ColorEdit4("Middle", &ColorTachometerMiddle.x, ImGuiColorEditFlags_NoInputs);
+                ColorEdit4("Default", &ColorTachometerDefault.x, ImGuiColorEditFlags_NoInputs);
+                Separator();
+                InputFloat("Upshift RPM", &TachometerUpshiftRpm);
+                InputFloat("Downshift RPM", &TachometerDownshiftRpm);
+                Separator();
+                ColorEdit4("Background color", &ColorTachometerBackground.x, ImGuiColorEditFlags_NoInputs);
             }
             EndTabBar();
         }
@@ -954,17 +952,15 @@ public:
                     CallMenuGhostEditor();
                 }
                 Separator();
-                if (MenuItem("Dashboard", "", EnableDashboard))
+                if (MenuItem("Input display", "Dashboard", EnableDashboardSteerModule))
                 {
-                    EnableDashboard = !EnableDashboard;
+                    EnableDashboardSteerModule = !EnableDashboardSteerModule;
+                }
+                if (MenuItem("Tachometer", "Dashboard", EnableDashboardRpmModule))
+                {
+                    EnableDashboardRpmModule = !EnableDashboardRpmModule;
                 }
                 Separator();
-#ifdef BUILD_DEBUG
-                if (MenuItem("SplitSpeeds", "", EnableSplitSpeeds))
-                {
-                    EnableSplitSpeeds = !EnableSplitSpeeds;
-                }
-#endif
                 if (MenuItem("Medals", "", EnableMedals))
                 {
                     EnableMedals = !EnableMedals;
@@ -1009,13 +1005,6 @@ public:
             RenderSettings();
         }
 
-#ifdef BUILD_DEBUG
-        if (EnableSplitSpeeds)
-        {
-            RenderSplitSpeeds();
-        }
-#endif
-
         if (KanitFont16) PopFont();
     }
 
@@ -1027,9 +1016,14 @@ public:
 
         if (KanitFont16) PushFont(KanitFont16);
 
-        if (EnableDashboard)
+        if (EnableDashboardSteerModule)
         {
-            RenderDashboard();
+            RenderDashboardInputs();
+        }
+
+        if (EnableDashboardRpmModule)
+        {
+            RenderDashboardRpm();
         }
 
         if (EnableMedals)

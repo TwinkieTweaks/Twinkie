@@ -56,25 +56,51 @@ public:
 		return ImVec4{ Values[0], Values[1], Values[2], Values[3] };
 	}
 
-	std::vector<int> GetAsIntArray()
+	ImVec4 GetAsVec4(ImVec4 DefaultValue)
 	{
-		// FORMAT: "i,i,i..."
+		// FORMAT: "f,f,f,f"
 		std::stringstream Stream(Value);
-		std::vector<int> Values = {};
+		std::vector<float> Values = {};
 		std::string Token = "";
 
 		while (std::getline(Stream, Token, ','))
 		{
-			Values.push_back(std::stoi(Token));
+			Values.push_back(std::stof(Token));
+		}
+
+		if (Values.size() < 4)
+		{
+			return DefaultValue;
+		}
+
+		return ImVec4{ Values[0], Values[1], Values[2], Values[3] };
+	}
+
+	std::vector<float> GetAsFloatArray()
+	{
+		// FORMAT: "i,i,i..."
+		std::stringstream Stream(Value);
+		std::vector<float> Values = {};
+		std::string Token = "";
+
+		while (std::getline(Stream, Token, ','))
+		{
+			Values.push_back(std::stof(Token));
 		}
 
 		return Values;
 	}
 
-	bool GetAsBool()
+	bool GetAsBoolFuzzy()
 	{
 		// FORMAT: "true|false"
 		return Value == "true" ? true : false;
+	}
+
+	bool GetAsBool(bool DefaultValue)
+	{
+		// FORMAT: "true|false"
+		return Value == "true" ? true : (Value == "false" ? false : DefaultValue);
 	}
 
 	float GetAsFloat()
@@ -83,17 +109,26 @@ public:
 		return std::stof(Value);
 	}
 
+	float GetAsFloat(float Default)
+	{
+		// FORMAT: "f"
+		return Value == "" ? Default : std::stof(Value);
+	}
+
 	void Set(ImVec4 Value)
 	{
 		this->Value = std::to_string(Value.x) + "," + std::to_string(Value.y) + "," + std::to_string(Value.z) + "," + std::to_string(Value.w);
 	}
 
-	void Set(std::vector<int> Value)
+	void Set(std::vector<float> Value)
 	{
 		this->Value = "";
-		for (auto& Int : Value)
+		unsigned int Idx = 0;
+		for (auto& Float : Value)
 		{
-			this->Value = this->Value + std::to_string(Int) + ",";
+			//                                    more than or equal vv due to possible overflow from subtraction
+			this->Value = this->Value + std::to_string(Float) + (Idx >= (Value.size() - 1) ? "" : ",");
+			Idx++;
 		}
 	}
 
