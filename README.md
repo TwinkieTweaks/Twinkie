@@ -22,3 +22,11 @@ GreffMASTER also provided me with a helpful list of class members and their offs
 ## Screenshots
 ![In stadium](https://github.com/user-attachments/assets/6d19231c-c225-4b5d-93c6-01ef6ea28bb6)
 ![In bay](https://github.com/user-attachments/assets/d33827a8-d405-427a-98d2-130ff1389342)
+
+## Create separate builds for different TMF variants
+The visual studio solution already comes with various build options for some TMF variants. Note that this only renames the DLL and puts it in the corresponding directory.
+![image](https://github.com/user-attachments/assets/25da4bde-8146-4740-94d6-d7e75660a87a)
+To actually make the build function differently for different games, then head over to the `Twink.h` file where you will find some commented `#define` statements, uncomment however you like to make the build you want:
+- `#define BUILD_DEBUG`: build with debugging features like the PlayerInformation module
+- `#define BUILD_{GAME}`: build for a specific TMF variant
+- `#define BUILD_EXTERNAL_CONSOLE`: make Twinkie create an external console upon hooking to the game
