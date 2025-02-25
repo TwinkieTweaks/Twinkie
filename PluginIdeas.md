@@ -1,2 +1,1 @@
 - ~~Ultimate Medals (done)~~ (maybe add icons later when the launcher comes)
-- ~~Dashboard (done)~~ (maybe add gears widget)
