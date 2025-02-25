@@ -7,7 +7,7 @@ GreffMASTER also provided me with a helpful list of class members and their offs
 
 ## Features
 - **NEW!** Ghost Editor, allows you to access the ghost editor without the cheat code
-- Dashboard, an input display with customizable colors
+- Dashboard, an input display and **NEW!** gear display with customizable options
 - Medals window, for easily viewing medals
 
 ## TODO (from most viable to least)
