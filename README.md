@@ -7,7 +7,7 @@ GreffMASTER also provided me with a helpful list of class members and their offs
 
 ## Features
 - **NEW!** Ghost Editor, allows you to access the ghost editor without the cheat code
-- Dashboard, an input display with customizable colors
+- Dashboard, an input display and **NEW!** gear display with customizable options
 - Medals window, for easily viewing medals
 
 ## TODO (from most viable to least)
@@ -20,5 +20,13 @@ GreffMASTER also provided me with a helpful list of class members and their offs
 - Full Modloader support
 
 ## Screenshots
-![image](https://github.com/user-attachments/assets/583ebe11-5d90-4636-9c61-22d5825df31a)
-![image](https://github.com/user-attachments/assets/0647711c-cb47-4e02-90fc-58588d575e93)
+![In stadium](https://github.com/user-attachments/assets/6d19231c-c225-4b5d-93c6-01ef6ea28bb6)
+![In bay](https://github.com/user-attachments/assets/d33827a8-d405-427a-98d2-130ff1389342)
+
+## Create separate builds for different TMF variants
+![image](https://github.com/user-attachments/assets/25da4bde-8146-4740-94d6-d7e75660a87a)
+The visual studio solution already comes with various build options for some TMF variants. Note that this only renames the DLL and puts it in the corresponding directory.
+To actually make the build function differently for different games, then head over to the `Twink.h` file where you will find some commented `#define` statements, uncomment however you like to make the build you want:
+- `#define BUILD_DEBUG`: build with debugging features like the PlayerInformation module
+- `#define BUILD_{GAME}`: build for a specific TMF variant
+- `#define BUILD_EXTERNAL_CONSOLE`: make Twinkie create an external console upon hooking to the game
