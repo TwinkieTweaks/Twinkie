@@ -1,6 +1,6 @@
 #pragma once
 
-#define BUILD_DEBUG
+// #define BUILD_DEBUG
 #define BUILD_UNITED
 // #define BUILD_NATIONS
 // #define BUILD_TMMC
@@ -855,12 +855,17 @@ public:
                 ColorEdit4("Steering", &ColorInputSteer.x, ImGuiColorEditFlags_NoInputs);
                 ColorEdit4("Acceleration", &ColorInputAccel.x, ImGuiColorEditFlags_NoInputs);
                 ColorEdit4("Brake", &ColorInputBrake.x, ImGuiColorEditFlags_NoInputs);
+
                 Separator();
+
                 ColorEdit4("Steering (inactive)", &ColorInputSteerI.x, ImGuiColorEditFlags_NoInputs);
                 ColorEdit4("Acceleration (inactive)", &ColorInputAccelI.x, ImGuiColorEditFlags_NoInputs);
                 ColorEdit4("Brake (inactive)", &ColorInputBrakeI.x, ImGuiColorEditFlags_NoInputs);
+
                 Separator();
+
                 ColorEdit4("Background color", &ColorInputBackground.x, ImGuiColorEditFlags_NoInputs);
+
                 EndTabItem();
             }
             if (BeginTabItem("Tachometer"))
@@ -869,11 +874,16 @@ public:
                 ColorEdit4("Downshift", &ColorTachometerDownshift.x, ImGuiColorEditFlags_NoInputs);
                 ColorEdit4("Middle", &ColorTachometerMiddle.x, ImGuiColorEditFlags_NoInputs);
                 ColorEdit4("Default", &ColorTachometerDefault.x, ImGuiColorEditFlags_NoInputs);
-                Separator();
-                InputFloat("Upshift RPM", &TachometerUpshiftRpm);
-                InputFloat("Downshift RPM", &TachometerDownshiftRpm);
+
                 Separator();
                 ColorEdit4("Background color", &ColorTachometerBackground.x, ImGuiColorEditFlags_NoInputs);
+
+                Separator();
+
+                InputFloat("Upshift RPM", &TachometerUpshiftRpm);
+                InputFloat("Downshift RPM", &TachometerDownshiftRpm);
+
+                EndTabItem();
             }
             EndTabBar();
         }

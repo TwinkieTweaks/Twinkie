@@ -187,10 +187,10 @@ public:
 		{
 			Status = -1;
 			GenerateIni();
-			if (!IniFile.generate(IniStruct))
+			if (!IniFile.generate(IniStruct, true))
 			{
 				Filesystem::create_directories(GetDocumentsFolder() + "\\Twinkie\\");
-				IniFile.generate(IniStruct);
+				IniFile.generate(IniStruct, true);
 			}
 		}
 		else
@@ -237,6 +237,6 @@ public:
 	void Save()
 	{
 		GenerateIni();
-		IniFile.write(IniStruct);
+		IniFile.write(IniStruct, true);
 	}
 };
