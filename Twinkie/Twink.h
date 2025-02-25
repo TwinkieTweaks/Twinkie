@@ -1,8 +1,8 @@
 #pragma once
 
 // #define BUILD_DEBUG
-// #define BUILD_UNITED
-#define BUILD_NATIONS
+#define BUILD_UNITED
+// #define BUILD_NATIONS
 // #define BUILD_TMMC
 // #define BUILD_EXTERNAL_CONSOLE
 
