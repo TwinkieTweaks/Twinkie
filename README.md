@@ -20,5 +20,5 @@ GreffMASTER also provided me with a helpful list of class members and their offs
 - Full Modloader support
 
 ## Screenshots
-![image](https://github.com/user-attachments/assets/583ebe11-5d90-4636-9c61-22d5825df31a)
-![image](https://github.com/user-attachments/assets/0647711c-cb47-4e02-90fc-58588d575e93)
+![In stadium](https://github.com/user-attachments/assets/6d19231c-c225-4b5d-93c6-01ef6ea28bb6)
+![In bay](https://github.com/user-attachments/assets/d33827a8-d405-427a-98d2-130ff1389342)
