@@ -24,6 +24,13 @@ namespace TM
 		float z;
 	};
 
+	struct GmNat3
+	{
+		int x;
+		int y;
+		int z;
+	};
+
 	struct GmIso4
 	{
 		GmVec3 x;

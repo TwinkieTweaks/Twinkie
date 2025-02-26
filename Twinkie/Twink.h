@@ -29,6 +29,9 @@ struct ChallengeInfo
     unsigned int SilverTime;
     unsigned int BronzeTime;
     int ChallengeType;
+    unsigned int CheckpointCount;
+    uintptr_t Challenge;
+    uintptr_t ChallengeParams;
 };
 
 struct PlayerInfo
@@ -38,6 +41,7 @@ struct PlayerInfo
     uintptr_t Vehicle;
     uintptr_t PlayerInfo;
     uintptr_t TrackmaniaRace;
+    bool IsNetworked;
 };
 
 struct VehicleInputs
@@ -85,9 +89,6 @@ public:
 #endif
     PlayerInfo CurPlayerInfo = {};
 
-    bool EnableLog = false;
-    std::string LogStr = "";
-
     bool EnableDashboardSteerModule = false;
     ImVec4 ColorInputSteer = ImVec4(0.976f, 0.737f, 0.008f, 1.f);
     ImVec4 ColorInputSteerI = ImVec4(1.f, 1.f, 1.f, 0.5f);
@@ -106,11 +107,20 @@ public:
     float TachometerDownshiftRpm = 6500;
     float TachometerUpshiftRpm = 10000;
 
+    bool EnableMedals = false;
+    ImVec4 ColorMedalsText = ImVec4(1.f, 1.f, 1.f, 1.f);
+    ImVec4 ColorMedalsBackground = ImVec4(0.1294117718935013f, 0.1372549086809158f, 0.168627455830574f, 0.8f);
+
+    bool EnableCheckpointCounter = false;
+    ImVec4 ColorCounterText = ImVec4(1.f, 1.f, 1.f, 1.f);
+    ImVec4 ColorCounterBackground = ImVec4(0.1294117718935013f, 0.1372549086809158f, 0.168627455830574f, 0.8f);
+
     bool EnableAboutWindow = false;
 
     bool EnableSettings = false;
 
-    bool EnableMedals = false;
+    bool EnableLog = false;
+    std::string LogStr = "";
 
     ImFont* KanitFont16 = nullptr;
     ImFont* KanitFont48 = nullptr;
@@ -145,7 +155,17 @@ public:
         Settings["Dashboard"]["Upshift RPM"].Set(TachometerUpshiftRpm);
         Settings["Dashboard"]["Downshift RPM"].Set(TachometerDownshiftRpm);
         
+        
         Settings["Medals"]["Enable"].Set(EnableMedals);
+
+        Settings["Medals"]["Background color"].Set(ColorMedalsBackground);
+        Settings["Medals"]["Text color"].Set(ColorMedalsText);
+
+
+        Settings["CheckpointCounter"]["Enable"].Set(EnableCheckpointCounter);
+
+        Settings["CheckpointCounter"]["Text color"].Set(ColorCounterText);
+        Settings["CheckpointCounter"]["Background color"].Set(ColorCounterBackground);
 
         Settings.Save();
     }
@@ -178,7 +198,17 @@ public:
             TachometerUpshiftRpm = Settings["Dashboard"]["Upshift RPM"].GetAsFloat(TachometerUpshiftRpm);
             TachometerDownshiftRpm = Settings["Dashboard"]["Downshift RPM"].GetAsFloat(TachometerDownshiftRpm);
 
+
             EnableMedals = Settings["Medals"]["Enable"].GetAsBool(EnableMedals);
+
+            ColorMedalsBackground = Settings["Medals"]["Background color"].GetAsVec4(ColorMedalsBackground);
+            ColorMedalsText = Settings["Medals"]["Text color"].GetAsVec4(ColorMedalsText);
+
+
+            EnableCheckpointCounter = Settings["CheckpointCounter"]["Enable"].GetAsBool(EnableCheckpointCounter);
+
+            ColorCounterBackground = Settings["CheckpointCounter"]["Background color"].GetAsVec4(ColorCounterBackground);
+            ColorCounterText = Settings["CheckpointCounter"]["Text color"].GetAsVec4(ColorCounterText);
         }
     }
 
@@ -355,6 +385,11 @@ public:
                 InfoStruct.BronzeTime = Read<unsigned int>(ChallengeParameters + 0x14);
 
                 InfoStruct.ChallengeType = Read<int>(Challenge + 0xf8);
+
+                InfoStruct.CheckpointCount = Read<TM::CFastBuffer<TM::GmNat3>>(Challenge + 0x60).Size;
+
+                InfoStruct.Challenge = Challenge;
+                InfoStruct.ChallengeParams = ChallengeParameters;
             }
         }
 
@@ -368,7 +403,8 @@ public:
 
     PlayerInfo GetPlayerInfo()
     {
-        PlayerInfo InfoStruct{ 0,0,0,0,0 };
+        // code graciously provided by brokenphilip
+        PlayerInfo InfoStruct{ 0,0,0,0,0,false };
 
         auto GameApp = GetTrackmania();
 
@@ -384,6 +420,7 @@ public:
             }
             else
             {
+                InfoStruct.IsNetworked = true;
                 auto Network = Read<uintptr_t>(GameApp + 0x12C);
                 if (Network)
                 {
@@ -474,6 +511,11 @@ public:
     int GetGear()
     {
         return Read<int>(CurPlayerInfo.Vehicle + 1480);
+    }
+
+    bool GetWaterPhysicsApplied()
+    {
+        return Read<bool>(CurPlayerInfo.Vehicle + 1508);
     }
 
     void SetupImGuiStyle()
@@ -581,14 +623,26 @@ public:
 
     long GetCurrentCheckpoint()
     {
-        // TODO: Fix last offset to support TMMC
         return Read<long>(GetExeBaseAddr() + (TMType == TM::GameType::United ? 0x957BFC : (TMType == TM::GameType::Nations ? 0x95659C : 0x957BFC)));
     }
 
     void SetCurrentCheckpoint(long Time)
     {
-        // TODO: Fix last offset to support TMMC
         return Write<long>(Time, GetExeBaseAddr() + (TMType == TM::GameType::United ? 0x957BFC : (TMType == TM::GameType::Nations ? 0x95659C : 0x957BFC)));
+    }
+
+    int GetCheckpointCount()
+    {
+        if (CurPlayerInfo.Player)
+        {
+            // i have no idea what type is this struct
+            uintptr_t MoreInfoStruct = Read<uintptr_t>(CurPlayerInfo.Player + 0x1C);
+            if (MoreInfoStruct)
+            {
+                return Read<int>(MoreInfoStruct + 0x330);
+            }
+        }
+        return 0;
     }
 
     bool IsPlaying()
@@ -691,6 +745,8 @@ public:
             Text("Speed: %f", GetDisplaySpeed());
             Text("RPM: %f", GetRpm());
             Text("Gear: %lu", GetGear());
+            Text("IsWet: %lu", GetWaterPhysicsApplied());
+            Text("Personal best: %lu", GetBestTime());
 
             VehicleInputs InputInfo = Read<VehicleInputs>(CurPlayerInfo.Vehicle + 80);
 
@@ -698,7 +754,6 @@ public:
             Text("Gas: %f", InputInfo.fGas);
             Text("Brake: %f", InputInfo.fBrake);
 
-            BeginDisabled();
             Checkbox("Mediatracker enabled", (bool*)CurPlayerInfo.Player + 56); // no Read here, ImGui reads the value internally
             auto MTClipIndex = Read<unsigned long>(CurPlayerInfo.Player + 72);
             if (*((bool*)CurPlayerInfo.Player + 56))
@@ -709,7 +764,6 @@ public:
             Checkbox("Free wheeling", (bool*)CurPlayerInfo.Vehicle + 1548);
             Checkbox("Turbo", (bool*)CurPlayerInfo.Vehicle + 948);
             Text("Turbo factor: %f", *((float*)CurPlayerInfo.Vehicle + 0x182) + 1.0f);
-            EndDisabled();
 
             SeparatorText("Offset Testing");
 
@@ -888,6 +942,18 @@ public:
 
                 EndTabItem();
             }
+            if (BeginTabItem("CheckpointCounter"))
+            {
+                ColorEdit4("Background color", &ColorCounterBackground.x, ImGuiColorEditFlags_NoInputs);
+                ColorEdit4("Text color", &ColorCounterText.x, ImGuiColorEditFlags_NoInputs);
+                EndTabItem();
+            }
+            if (BeginTabItem("Medals"))
+            {
+                ColorEdit4("Background color", &ColorMedalsBackground.x, ImGuiColorEditFlags_NoInputs);
+                ColorEdit4("Text color", &ColorMedalsText.x, ImGuiColorEditFlags_NoInputs);
+                EndTabItem();
+            }
             EndTabBar();
         }
         End();
@@ -920,22 +986,40 @@ public:
         if (GetChallenge())
         {
             ChallengeInfo InfoStruct = GetChallengeInfo();
+            PushStyleColor(ImGuiCol_WindowBg, ColorMedalsBackground);
             Begin("##Medals", &EnableMedals, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize);
+            PopStyleColor();
 
             if (!ChallengeUsesScore())
             {
-                Text(("Author: " + FormatTmDuration(InfoStruct.AuthorTime)).c_str());
-                Text(("Gold: " + FormatTmDuration(InfoStruct.GoldTime)).c_str());
-                Text(("Silver: " + FormatTmDuration(InfoStruct.SilverTime)).c_str());
-                Text(("Bronze: " + FormatTmDuration(InfoStruct.BronzeTime)).c_str());
+                TextColored(ColorMedalsText, ("Author: " + FormatTmDuration(InfoStruct.AuthorTime)).c_str());
+                TextColored(ColorMedalsText, ("Gold: " + FormatTmDuration(InfoStruct.GoldTime)).c_str());
+                TextColored(ColorMedalsText, ("Silver: " + FormatTmDuration(InfoStruct.SilverTime)).c_str());
+                TextColored(ColorMedalsText, ("Bronze: " + FormatTmDuration(InfoStruct.BronzeTime)).c_str());
             }
             else
             {
-                Text("Author: %lu", InfoStruct.AuthorScore);
-                Text("Gold: %lu", InfoStruct.GoldTime);
-                Text("Silver: %lu", InfoStruct.SilverTime);
-                Text("Bronze: %lu", InfoStruct.BronzeTime);
+                TextColored(ColorMedalsText, "Author: %lu", InfoStruct.AuthorScore);
+                TextColored(ColorMedalsText, "Gold: %lu", InfoStruct.GoldTime);
+                TextColored(ColorMedalsText, "Silver: %lu", InfoStruct.SilverTime);
+                TextColored(ColorMedalsText, "Bronze: %lu", InfoStruct.BronzeTime);
             }
+
+            End();
+        }
+    }
+
+    void RenderCheckpointCounter()
+    {
+        using namespace ImGui;
+        if (GetPlayerInfo().Vehicle)
+        {
+            if (GetChallengeInfo().CheckpointCount == 0) return;
+            PushStyleColor(ImGuiCol_WindowBg, ColorCounterBackground);
+            Begin("##CheckpointCounter", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize);
+            PopStyleColor();
+
+            TextColored(ColorCounterText, "%d / %d", GetCheckpointCount(), GetChallengeInfo().CheckpointCount);
 
             End();
         }
@@ -977,6 +1061,11 @@ public:
                 if (MenuItem("Medals", "", EnableMedals))
                 {
                     EnableMedals = !EnableMedals;
+                }
+                Separator();
+                if (MenuItem("Checkpoint counter", "", EnableCheckpointCounter))
+                {
+                    EnableCheckpointCounter = !EnableCheckpointCounter;
                 }
                 ImGui::EndMenu();
             }
@@ -1042,6 +1131,11 @@ public:
         if (EnableMedals)
         {
             RenderMedals();
+        }
+
+        if (EnableCheckpointCounter)
+        {
+            RenderCheckpointCounter();
         }
 
         if (KanitFont16) PopFont();
