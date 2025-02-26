@@ -16,17 +16,6 @@ GreffMASTER also provided me with a helpful list of class members and their offs
 - For some people, the F3 keybind to close the UI bar doesn't work
 - Only works with Vanilla Standalone TMF
 
-## TODO (from most viable to least)
-- Port some openplanet plugins (3 out of ???)
-- Rewrite and organise all the UI for better code readability
-- ~~Add saving settings as .ini file~~
-- ~~Create a launcher for easier usage~~
-- Add `ManiaPlanet_Telemetry`
-- Prevent clicks from going "through" the UI
-- ~~Hook `Present` instead of `EndScene`, as TMF uses `EndScene` for lightmap calculations~~
-- Implement automatic updates
-- Full Modloader support
-
 ## Screenshots
 ![In stadium (debug build)](https://github.com/user-attachments/assets/59a81970-0b01-4d9d-a4c2-f97216e42e24)
 ![In bay](https://github.com/user-attachments/assets/d37c048b-22d5-4495-8617-54776fb1d462)
