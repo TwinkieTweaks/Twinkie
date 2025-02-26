@@ -11,6 +11,11 @@ GreffMASTER also provided me with a helpful list of class members and their offs
 - **NEW!** Checkpoint counter, does what it says right on the tin
 - Medals window, for easily viewing medals
 
+## Limitations
+- Only works if the game is *launched* in windowed mode, putting it in fullscreen after works
+- For some people, the F3 keybind to close the UI bar doesn't work
+- Only works with Vanilla Standalone TMF
+
 ## TODO (from most viable to least)
 - Port some openplanet plugins (3 out of ???)
 - Rewrite and organise all the UI for better code readability
