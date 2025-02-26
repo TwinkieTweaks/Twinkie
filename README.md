@@ -38,3 +38,7 @@ To actually make the build function differently for different games, then head o
 - `#define BUILD_DEBUG`: build with debugging features like the PlayerInformation module
 - `#define BUILD_{GAME}`: build for a specific TMF variant
 - `#define BUILD_EXTERNAL_CONSOLE`: make Twinkie create an external console upon hooking to the game
+
+## Support me
+There currently aren't any monetary ways of supporting me, so if you like Twinkie and you have a github account, please star it so that more people see it.
+And if you don't, be kind enough to share it with your friends.
