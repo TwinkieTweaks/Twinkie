@@ -19,6 +19,7 @@ GreffMASTER also provided me with a helpful list of class members and their offs
 - Add `ManiaPlanet_Telemetry`
 - Prevent clicks from going "through" the UI
 - ~~Hook `Present` instead of `EndScene`, as TMF uses `EndScene` for lightmap calculations~~
+- Implement automatic updates
 - Full Modloader support
 
 ## Screenshots
