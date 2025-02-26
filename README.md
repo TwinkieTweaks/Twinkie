@@ -21,8 +21,8 @@ GreffMASTER also provided me with a helpful list of class members and their offs
 - Full Modloader support
 
 ## Screenshots
-![In stadium](https://github.com/user-attachments/assets/6d19231c-c225-4b5d-93c6-01ef6ea28bb6)
-![In bay](https://github.com/user-attachments/assets/d33827a8-d405-427a-98d2-130ff1389342)
+![In stadium](https://github.com/user-attachments/assets/59a81970-0b01-4d9d-a4c2-f97216e42e24)
+![In bay (debug build)](https://github.com/user-attachments/assets/d37c048b-22d5-4495-8617-54776fb1d462)
 
 ## Create separate builds for different TMF variants
 ![image](https://github.com/user-attachments/assets/25da4bde-8146-4740-94d6-d7e75660a87a)
