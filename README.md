@@ -6,9 +6,15 @@ To [GreffMASTER](https://github.com/GreffMASTER) and [brokenphilip](https://gith
 GreffMASTER also provided me with a helpful list of class members and their offsets for TMF <3
 
 ## Features
-- **NEW!** Ghost Editor, allows you to access the ghost editor without the cheat code
+- Ghost Editor, allows you to access the ghost editor without the cheat code
 - Dashboard, an input display and **NEW!** gear display with customizable options
+- **NEW!** Checkpoint counter, does what it says right on the tin
 - Medals window, for easily viewing medals
+
+## Limitations
+- Only works if the game is *launched* in windowed mode, putting it in fullscreen after works
+- For some people, the F3 keybind to close the UI bar doesn't work
+- Only works with Vanilla Standalone TMF
 
 ## TODO (from most viable to least)
 - Port some openplanet plugins (3 out of ???)
@@ -18,11 +24,12 @@ GreffMASTER also provided me with a helpful list of class members and their offs
 - Add `ManiaPlanet_Telemetry`
 - Prevent clicks from going "through" the UI
 - ~~Hook `Present` instead of `EndScene`, as TMF uses `EndScene` for lightmap calculations~~
+- Implement automatic updates
 - Full Modloader support
 
 ## Screenshots
-![In stadium](https://github.com/user-attachments/assets/59a81970-0b01-4d9d-a4c2-f97216e42e24)
-![In bay (debug build)](https://github.com/user-attachments/assets/d37c048b-22d5-4495-8617-54776fb1d462)
+![In stadium (debug build)](https://github.com/user-attachments/assets/59a81970-0b01-4d9d-a4c2-f97216e42e24)
+![In bay](https://github.com/user-attachments/assets/d37c048b-22d5-4495-8617-54776fb1d462)
 
 ## Create separate builds for different TMF variants
 ![image](https://github.com/user-attachments/assets/25da4bde-8146-4740-94d6-d7e75660a87a)
