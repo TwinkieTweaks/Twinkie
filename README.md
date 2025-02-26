@@ -11,7 +11,8 @@ GreffMASTER also provided me with a helpful list of class members and their offs
 - Medals window, for easily viewing medals
 
 ## TODO (from most viable to least)
-- Port some openplanet plugins (2 out of ???)
+- Port some openplanet plugins (3 out of ???)
+- Rewrite and organise all the UI for better code readability
 - ~~Add saving settings as .ini file~~
 - ~~Create a launcher for easier usage~~
 - Add `ManiaPlanet_Telemetry`
