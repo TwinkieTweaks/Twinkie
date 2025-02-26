@@ -1,8 +1,8 @@
 #pragma once
 
 // #define BUILD_DEBUG
-#define BUILD_UNITED
-// #define BUILD_NATIONS
+// #define BUILD_UNITED
+#define BUILD_NATIONS
 // #define BUILD_TMMC
 // #define BUILD_EXTERNAL_CONSOLE
 
@@ -316,7 +316,7 @@ public:
     void PrintError(const char* Str)
     {
         LogStr = LogStr + "[ERR] " + Str + "\n";
-#ifdef TT_EXTERNAL_CONSOLE
+#ifdef BUILD_EXTERNAL_CONSOLE
         std::cout << "[ERR] " << Str << "\n";
 #endif
     }
@@ -324,7 +324,7 @@ public:
     void Print(const char* Str)
     {
         LogStr = LogStr + "[LOG] " + Str + "\n";
-#ifdef TT_EXTERNAL_CONSOLE
+#ifdef BUILD_EXTERNAL_CONSOLE
         std::cout << "[LOG] " << Str << "\n";
 #endif
     }
@@ -333,7 +333,7 @@ public:
     void PrintArgs(const char* Str, Args&&... args)
     {
         LogStr = LogStr + "[LOG] " + std::vformat(Str, std::make_format_args(args...)) + "\n";
-#ifdef TT_EXTERNAL_CONSOLE
+#ifdef BUILD_EXTERNAL_CONSOLE
         std::cout << "[LOG] " + std::vformat(Str, std::make_format_args(args...)) + "\n";
 #endif
     }
@@ -342,7 +342,7 @@ public:
     void PrintErrorArgs(const char* Str, Args&&... args)
     {
         LogStr = LogStr + "[ERR] " + std::vformat(Str, std::make_format_args(args...)) + "\n";
-#ifdef TT_EXTERNAL_CONSOLE
+#ifdef BUILD_EXTERNAL_CONSOLE
         std::cout << "[ERR] " + std::vformat(Str, std::make_format_args(args...)) + "\n";
 #endif
     }
@@ -351,7 +351,7 @@ public:
     void PrintInternalArgs(const char* Str, Args&&... args)
     {
         LogStr = LogStr + "[TWINK] " + std::vformat(Str, std::make_format_args(args...)) + "\n";
-#ifdef TT_EXTERNAL_CONSOLE
+#ifdef BUILD_EXTERNAL_CONSOLE
         std::cout << "[TWINK] " + std::vformat(Str, std::make_format_args(args...)) + "\n";
 #endif
     }

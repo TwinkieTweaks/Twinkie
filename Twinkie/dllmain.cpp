@@ -44,6 +44,7 @@ static void InitImGui(LPDIRECT3DDEVICE9 pDevice)
 bool init = false;
 static long __stdcall hkReset(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pParams)
 {
+	if (!init) return oReset(pDevice, pParams);
 	ImGui_ImplDX9_InvalidateDeviceObjects();
 	const HRESULT result = oReset(pDevice, pParams);
 	ImGui_ImplDX9_CreateDeviceObjects();
