@@ -276,7 +276,7 @@ public:
             if (BeginMenu("Twinkie")) {
                 if (MenuItem("Settings", "", EnableSettings))
                 {
-
+                    EnableSettings = !EnableSettings;
                 }
                 for (IModule* Module : Modules)
                 {
