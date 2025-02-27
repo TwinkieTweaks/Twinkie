@@ -361,3 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Twinkie specific stuff
+United/
+Nations/
+Modloader/
+Release/

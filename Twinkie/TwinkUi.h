@@ -303,9 +303,11 @@ public:
             {
                 if (!Module->HasSettings) continue;
 
-                BeginTabItem(Module->FancyName.c_str());
-                Module->RenderSettings();
-                EndTabItem();
+                if (BeginTabItem(Module->FancyName.c_str()))
+                {
+                    Module->RenderSettings();
+                    EndTabItem();
+                }
             }
 
             EndTabBar();

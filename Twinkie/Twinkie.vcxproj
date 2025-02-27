@@ -399,6 +399,8 @@
     <ClInclude Include="TwinkUi.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Version.h" />
+    <ClInclude Include="Modules\CheckpointCounter.h" />
+    <ClInclude Include="TwinkTrackmania.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -415,8 +417,6 @@
     <ClCompile Include="kiero\minhook\src\hde\hde64.c" />
     <ClCompile Include="kiero\minhook\src\hook.c" />
     <ClCompile Include="kiero\minhook\src\trampoline.c" />
-    <ClCompile Include="Modules\CheckpointCounter.h" />
-    <ClCompile Include="TwinkTrackmania.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="kiero\minhook\dll_resources\MinHook.def" />
