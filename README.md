@@ -12,7 +12,7 @@ GreffMASTER also provided me with a helpful list of class members and their offs
 - Medals window, for easily viewing medals
 
 ## Limitations
-- Only works if the game is *launched* in windowed mode, putting it in fullscreen after works
+- Currently, you have to launch the game in windowed mode, then put it back into fullscreen for Twinkie to work properly.
 - For some people, the F3 keybind to close the UI bar doesn't work
 - Only works with Vanilla Standalone TMF
 
