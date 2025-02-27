@@ -92,6 +92,7 @@ public:
 		{
 			Enabled = !Enabled;
 		}
+		Separator();
 	}
 
 	virtual void SettingsInit(SettingMgr& Settings) 

@@ -22,6 +22,9 @@ public:
 		{
 			Twinkie.CallMenuGhostEditor();
 		}
+#ifdef BUILD_DEBUG
+		Separator(); // because of the fact that PlayerInfo follows this item
+#endif
 	}
 
 	virtual void SettingsInit(SettingMgr& Settings) {}
