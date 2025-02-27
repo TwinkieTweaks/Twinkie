@@ -12,20 +12,9 @@ GreffMASTER also provided me with a helpful list of class members and their offs
 - Medals window, for easily viewing medals
 
 ## Limitations
-- Only works if the game is *launched* in windowed mode, putting it in fullscreen after works
+- Currently, you have to launch the game in windowed mode, then put it back into fullscreen for Twinkie to work properly.
 - For some people, the F3 keybind to close the UI bar doesn't work
 - Only works with Vanilla Standalone TMF
-
-## TODO (from most viable to least)
-- Port some openplanet plugins (3 out of ???)
-- Rewrite and organise all the UI for better code readability
-- ~~Add saving settings as .ini file~~
-- ~~Create a launcher for easier usage~~
-- Add `ManiaPlanet_Telemetry`
-- Prevent clicks from going "through" the UI
-- ~~Hook `Present` instead of `EndScene`, as TMF uses `EndScene` for lightmap calculations~~
-- Implement automatic updates
-- Full Modloader support
 
 ## Screenshots
 ![In stadium (debug build)](https://github.com/user-attachments/assets/59a81970-0b01-4d9d-a4c2-f97216e42e24)
@@ -38,3 +27,7 @@ To actually make the build function differently for different games, then head o
 - `#define BUILD_DEBUG`: build with debugging features like the PlayerInformation module
 - `#define BUILD_{GAME}`: build for a specific TMF variant
 - `#define BUILD_EXTERNAL_CONSOLE`: make Twinkie create an external console upon hooking to the game
+
+## Support me
+There currently aren't any monetary ways of supporting me, so if you like Twinkie and you have a github account, please star it so that more people see it.
+And if you don't, be kind enough to share it with your friends.
