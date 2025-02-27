@@ -21,7 +21,7 @@ GreffMASTER also provided me with a helpful list of class members and their offs
 ![In bay](https://github.com/user-attachments/assets/d37c048b-22d5-4495-8617-54776fb1d462)
 
 ## Create separate builds for different TMF variants
-The visual studio solution already comes with various build options for some TMF variants.
+The visual studio solution already comes with various build options for some TMF variants.\
 ![image](https://github.com/user-attachments/assets/25da4bde-8146-4740-94d6-d7e75660a87a)
 
 ## Support me
