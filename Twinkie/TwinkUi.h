@@ -283,6 +283,7 @@ public:
                     Module->RenderMenuItem(TrackmaniaMgr);
                 }
             }
+            EndMainMenuBar();
         }
 
         if (EnableSettings)
