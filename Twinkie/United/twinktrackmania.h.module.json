@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "United\\TwinkTrackmania.h.obj",
+            "outputs": [
+                "C:\\Users\\HP\\source\\repos\\Twinkie\\Twinkie\\United\\vc143.pdb",
+                "United\\",
+                "C:\\Users\\HP\\source\\repos\\Twinkie\\Twinkie\\United\\TwinkTrackmania.h.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "TwinkTrackmania.h",
+                    "source-path": "c:\\users\\hp\\source\\repos\\twinkie\\twinkie\\twinktrackmania.h",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

@@ -11,7 +11,7 @@
 
 namespace Filesystem = std::filesystem;
 
-std::string GetDocumentsFolder()
+inline std::string GetDocumentsFolder()
 {
 	std::string path;
 
@@ -76,9 +76,9 @@ public:
 		return ImVec4{ Values[0], Values[1], Values[2], Values[3] };
 	}
 
-	std::vector<float> GetAsFloatArray()
+	void GetAsVec4(ImVec4* DefaultValue)
 	{
-		// FORMAT: "i,i,i..."
+		// FORMAT: "f,f,f,f"
 		std::stringstream Stream(Value);
 		std::vector<float> Values = {};
 		std::string Token = "";
@@ -88,7 +88,12 @@ public:
 			Values.push_back(std::stof(Token));
 		}
 
-		return Values;
+		if (Values.size() < 4)
+		{
+			return;
+		}
+
+		*DefaultValue = { Values[0], Values[1], Values[2], Values[3] };
 	}
 
 	bool GetAsBoolFuzzy()
@@ -103,33 +108,33 @@ public:
 		return Value == "true" ? true : (Value == "false" ? false : DefaultValue);
 	}
 
+	void GetAsBool(bool* DefaultValue)
+	{
+		// FORMAT: "true|false"
+		*DefaultValue = Value == "true" ? true : (Value == "false" ? false : *DefaultValue);
+	}
+
 	float GetAsFloat()
 	{
 		// FORMAT: "f"
 		return std::stof(Value);
 	}
 
-	float GetAsFloat(float Default)
+	float GetAsFloat(float DefaultValue)
 	{
 		// FORMAT: "f"
-		return Value == "" ? Default : std::stof(Value);
+		return Value == "" ? DefaultValue : std::stof(Value);
+	}
+
+	void GetAsFloat(float* DefaultValue)
+	{
+		// FORMAT: "f"
+		*DefaultValue = Value == "" ? *DefaultValue : std::stof(Value);
 	}
 
 	void Set(ImVec4 Value)
 	{
 		this->Value = std::to_string(Value.x) + "," + std::to_string(Value.y) + "," + std::to_string(Value.z) + "," + std::to_string(Value.w);
-	}
-
-	void Set(std::vector<float> Value)
-	{
-		this->Value = "";
-		unsigned int Idx = 0;
-		for (auto& Float : Value)
-		{
-			//                                    more than or equal vv due to possible overflow from subtraction
-			this->Value = this->Value + std::to_string(Float) + (Idx >= (Value.size() - 1) ? "" : ",");
-			Idx++;
-		}
 	}
 
 	void Set(bool Value)
@@ -207,6 +212,20 @@ public:
 		}
 		Tabs.push_back(Tab(Name));
 		return Tabs.back();
+	}
+
+	Setting& operator()(std::string TabName, std::string SettingName)
+	{
+		Tab FoundTab = this->operator[](TabName);
+		for (auto& Setting : FoundTab.Settings)
+		{
+			if (Setting.Name == SettingName)
+			{
+				return Setting;
+			}
+		}
+		FoundTab.Settings.push_back(Setting(SettingName, ""));
+		return FoundTab.Settings.back();
 	}
 
 	void LoadIni()

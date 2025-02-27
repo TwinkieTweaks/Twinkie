@@ -12,3 +12,4 @@ C:\Users\HP\source\repos\Twinkie\Twinkie\kiero\minhook\src\hde\hde32.c;C:\Users\
 C:\Users\HP\source\repos\Twinkie\Twinkie\kiero\minhook\src\hde\hde64.c;C:\Users\HP\source\repos\Twinkie\Twinkie\United\hde64.obj
 C:\Users\HP\source\repos\Twinkie\Twinkie\kiero\minhook\src\hook.c;C:\Users\HP\source\repos\Twinkie\Twinkie\United\hook.obj
 C:\Users\HP\source\repos\Twinkie\Twinkie\kiero\minhook\src\trampoline.c;C:\Users\HP\source\repos\Twinkie\Twinkie\United\trampoline.obj
+C:\Users\HP\source\repos\Twinkie\Twinkie\Modules\CheckpointCounter.h;C:\Users\HP\source\repos\Twinkie\Twinkie\United\CheckpointCounter.h.obj
