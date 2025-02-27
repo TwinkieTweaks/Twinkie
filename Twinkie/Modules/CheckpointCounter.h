@@ -16,8 +16,13 @@ public:
 	virtual void RenderSettings()
 	{
 		using namespace ImGui;
-		ColorEdit4("Background color", &ColorBackground.x, ImGuiColorEditFlags_NoInputs);
-		ColorEdit4("Text color", &ColorText.x, ImGuiColorEditFlags_NoInputs);
+		if (BeginTabItem(FancyName.c_str()))
+		{
+			ColorEdit4("Background color", &ColorBackground.x, ImGuiColorEditFlags_NoInputs);
+			ColorEdit4("Text color", &ColorText.x, ImGuiColorEditFlags_NoInputs);
+
+			EndTabItem();
+		}
 	}
 
 	virtual void RenderAnyways(TwinkTrackmania& Twinkie)

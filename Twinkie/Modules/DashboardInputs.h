@@ -9,7 +9,7 @@ public:
 	bool HasSettings = true;
 	bool IsDebug = false;
 	std::string Name = "Dashboard";
-	std::string FancyName = "";
+	std::string FancyName = "Input display";
 
 	ImVec4 ColorSteer = ImVec4(0.976f, 0.737f, 0.008f, 1.f);
 	ImVec4 ColorSteerI = ImVec4(1.f, 1.f, 1.f, 0.5f);
@@ -84,19 +84,24 @@ public:
 	virtual void RenderSettings() 
 	{
 		using namespace ImGui;
-		ColorEdit4("Steering", &ColorSteer.x, ImGuiColorEditFlags_NoInputs);
-		ColorEdit4("Acceleration", &ColorAccel.x, ImGuiColorEditFlags_NoInputs);
-		ColorEdit4("Brake", &ColorBrake.x, ImGuiColorEditFlags_NoInputs);
+		if (BeginTabItem(FancyName.c_str()))
+		{
+			ColorEdit4("Steering", &ColorSteer.x, ImGuiColorEditFlags_NoInputs);
+			ColorEdit4("Acceleration", &ColorAccel.x, ImGuiColorEditFlags_NoInputs);
+			ColorEdit4("Brake", &ColorBrake.x, ImGuiColorEditFlags_NoInputs);
 
-		Separator();
+			Separator();
 
-		ColorEdit4("Steering (inactive)", &ColorSteerI.x, ImGuiColorEditFlags_NoInputs);
-		ColorEdit4("Acceleration (inactive)", &ColorAccelI.x, ImGuiColorEditFlags_NoInputs);
-		ColorEdit4("Brake (inactive)", &ColorBrakeI.x, ImGuiColorEditFlags_NoInputs);
+			ColorEdit4("Steering (inactive)", &ColorSteerI.x, ImGuiColorEditFlags_NoInputs);
+			ColorEdit4("Acceleration (inactive)", &ColorAccelI.x, ImGuiColorEditFlags_NoInputs);
+			ColorEdit4("Brake (inactive)", &ColorBrakeI.x, ImGuiColorEditFlags_NoInputs);
 
-		Separator();
+			Separator();
 
-		ColorEdit4("Background color", &ColorBackground.x, ImGuiColorEditFlags_NoInputs);
+			ColorEdit4("Background color", &ColorBackground.x, ImGuiColorEditFlags_NoInputs);
+			
+			EndTabItem();
+		}
 	}
 	virtual void RenderMenuItem(TwinkTrackmania& Twinkie)
 	{

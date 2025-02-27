@@ -7,8 +7,8 @@ class DashboardTachometerModule : public IModule
 public:
 	bool HasSettings = true;
 	bool IsDebug = false;
-	std::string Name = "";
-	std::string FancyName = "";
+	std::string Name = "Dashboard";
+	std::string FancyName = "Tachometer";
 
 	ImVec4 ColorUpshift = ImVec4(1.f, 0.f, 0.f, 1.f);
 	ImVec4 ColorDownshift = ImVec4(1.f, 1.f, 0.f, 1.f);
@@ -72,23 +72,28 @@ public:
 	virtual void RenderSettings() 
 	{
 		using namespace ImGui;
-		ColorEdit4("Upshift", &ColorUpshift.x, ImGuiColorEditFlags_NoInputs);
-		ColorEdit4("Downshift", &ColorDownshift.x, ImGuiColorEditFlags_NoInputs);
-		ColorEdit4("Middle", &ColorMiddle.x, ImGuiColorEditFlags_NoInputs);
-		ColorEdit4("Default", &ColorDefault.x, ImGuiColorEditFlags_NoInputs);
+		if (BeginTabItem(FancyName.c_str()))
+		{
+			ColorEdit4("Upshift", &ColorUpshift.x, ImGuiColorEditFlags_NoInputs);
+			ColorEdit4("Downshift", &ColorDownshift.x, ImGuiColorEditFlags_NoInputs);
+			ColorEdit4("Middle", &ColorMiddle.x, ImGuiColorEditFlags_NoInputs);
+			ColorEdit4("Default", &ColorDefault.x, ImGuiColorEditFlags_NoInputs);
 
-		Separator();
-		ColorEdit4("Background color", &ColorBackground.x, ImGuiColorEditFlags_NoInputs);
+			Separator();
+			ColorEdit4("Background color", &ColorBackground.x, ImGuiColorEditFlags_NoInputs);
 
-		Separator();
+			Separator();
 
-		InputFloat("Upshift RPM", &UpshiftRpm);
-		InputFloat("Downshift RPM", &DownshiftRpm);
+			InputFloat("Upshift RPM", &UpshiftRpm);
+			InputFloat("Downshift RPM", &DownshiftRpm);
+
+			EndTabItem();
+		}
 	}
 	virtual void RenderMenuItem(TwinkTrackmania& Twinkie)
 	{
 		using namespace ImGui;
-		if (MenuItem("Input display", "Dashboard", Enabled))
+		if (MenuItem("Tachometer", "Dashboard", Enabled))
 		{
 			Enabled = !Enabled;
 		}

@@ -53,6 +53,14 @@ public:
 
     SettingMgr Settings;
 
+    void SettingsInit()
+    {
+        for (IModule* Module : Modules)
+        {
+            Module->SettingsInit(Settings);
+        }
+    }
+
     void SettingsSave()
     {
         for (IModule* Module : Modules)
@@ -63,6 +71,8 @@ public:
 
     TwinkUi()
     {
+        SettingsInit();
+
         Modules.push_back(new AboutModule());
         //
         Modules.push_back(new DashboardInputsModule());
@@ -282,6 +292,7 @@ public:
                 {
                     Module->RenderMenuItem(TrackmaniaMgr);
                 }
+                ImGui::EndMenu();
             }
             EndMainMenuBar();
         }
@@ -304,11 +315,7 @@ public:
             {
                 if (!Module->HasSettings) continue;
 
-                if (BeginTabItem(Module->FancyName.c_str()))
-                {
-                    Module->RenderSettings();
-                    EndTabItem();
-                }
+                Module->RenderSettings();
             }
 
             EndTabBar();
