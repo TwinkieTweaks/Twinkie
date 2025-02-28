@@ -1,1 +1,3 @@
-- ~~Ultimate Medals (done)~~ (maybe add icons later when the launcher comes)
+- ~~Ultimate Medals (done)~~ (maybe add icons later when the rewrite comes)
+- Tweaker (camera buffer is literally at `*(viewport + 142) + 12`)
+- Different dashboard styles (specifically tachometer, "solid bar" style and "cateye" dashboard style)

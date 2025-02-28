@@ -12,7 +12,7 @@ GreffMASTER also provided me with a helpful list of class members and their offs
 - Medals window, for easily viewing medals
 
 ## Limitations
-- Only works if the game is *launched* in windowed mode, putting it in fullscreen after works
+- Currently, you have to launch the game in windowed mode, then put it back into fullscreen for Twinkie to work properly.
 - For some people, the F3 keybind to close the UI bar doesn't work
 - Only works with Vanilla Standalone TMF
 
@@ -21,9 +21,9 @@ GreffMASTER also provided me with a helpful list of class members and their offs
 ![In bay](https://github.com/user-attachments/assets/d37c048b-22d5-4495-8617-54776fb1d462)
 
 ## Create separate builds for different TMF variants
+The visual studio solution already comes with various build options for some TMF variants.\
 ![image](https://github.com/user-attachments/assets/25da4bde-8146-4740-94d6-d7e75660a87a)
-The visual studio solution already comes with various build options for some TMF variants. Note that this only renames the DLL and puts it in the corresponding directory.
-To actually make the build function differently for different games, then head over to the `Twink.h` file where you will find some commented `#define` statements, uncomment however you like to make the build you want:
-- `#define BUILD_DEBUG`: build with debugging features like the PlayerInformation module
-- `#define BUILD_{GAME}`: build for a specific TMF variant
-- `#define BUILD_EXTERNAL_CONSOLE`: make Twinkie create an external console upon hooking to the game
+
+## Support me
+There currently aren't any monetary ways of supporting me, so if you like Twinkie and you have a github account, please star it so that more people see it.
+And if you don't, be kind enough to share it with your friends.
