@@ -214,7 +214,7 @@ public:
         using GetBestTimeOrScoreFn = int(__thiscall*)(uintptr_t);
         if (CurPlayerInfo.TrackmaniaRace)
         {
-            return reinterpret_cast<GetBestTimeOrScoreFn>(Virtual<22>(CurPlayerInfo.TrackmaniaRace))(CurPlayerInfo.TrackmaniaRace);
+            return reinterpret_cast<GetBestTimeOrScoreFn>(Virtual<23>(CurPlayerInfo.TrackmaniaRace))(CurPlayerInfo.TrackmaniaRace);
         }
         return -1;
     }

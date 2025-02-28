@@ -88,7 +88,7 @@ public:
         Modules.push_back(new GhostEditorModule(TrackmaniaMgr, Logger));
         //
 #ifdef BUILD_DEBUG
-        Modules.push_back(new PlayerInfoModule());
+        Modules.push_back(new PlayerInfoModule(TrackmaniaMgr, Logger));
 #endif
 
         Logger.PrintInternalArgs("{} module{} initialized.", Modules.size(), Modules.size() == 1 ? "" : "s");
@@ -253,7 +253,7 @@ public:
 #ifdef BUILD_DEBUG
                 for (IModule* Module : Modules)
                 {
-                    if (Module->IsDebug()) Module->RenderMenuItem(TrackmaniaMgr);
+                    if (Module->IsDebug()) Module->RenderMenuItem();
                 }
 #endif
                 ImGui::EndMenu();
