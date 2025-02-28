@@ -5,30 +5,35 @@
 class MedalsModule : public IModule
 {
 public:
-	std::string Name = "Medals";
-	std::string FancyName = "Medals";
-
 	ImVec4 ColorText = ImVec4(1.f, 1.f, 1.f, 1.f);
 	ImVec4 ColorBackground = ImVec4(0.1294117718935013f, 0.1372549086809158f, 0.168627455830574f, 0.8f);
 
-	virtual void Render(TwinkTrackmania& Twinkie) {}
+	MedalsModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger)
+	{
+		this->Twinkie = &Twinkie;
+		this->Logger = &Logger;
+		this->Name = "Medals";
+		this->FancyName = "Medals";
+	}
 
-	virtual void RenderAnyways(TwinkTrackmania& Twinkie) 
+	virtual void Render() {}
+
+	virtual void RenderAnyways() 
 	{
 		using namespace ImGui;
-		if (Twinkie.GetChallenge())
+		if (Twinkie->GetChallenge())
 		{
-			ChallengeInfo InfoStruct = Twinkie.GetChallengeInfo();
+			ChallengeInfo InfoStruct = Twinkie->GetChallengeInfo();
 			PushStyleColor(ImGuiCol_WindowBg, ColorBackground);
-			Begin("##Medals", &Enabled, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize);
+			Begin("##Medals", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize);
 			PopStyleColor();
 
-			if (!Twinkie.ChallengeUsesScore())
+			if (!Twinkie->ChallengeUsesScore())
 			{
-				TextColored(ColorText, ("Author: " + Twinkie.FormatTmDuration(InfoStruct.AuthorTime)).c_str());
-				TextColored(ColorText, ("Gold: " + Twinkie.FormatTmDuration(InfoStruct.GoldTime)).c_str());
-				TextColored(ColorText, ("Silver: " + Twinkie.FormatTmDuration(InfoStruct.SilverTime)).c_str());
-				TextColored(ColorText, ("Bronze: " + Twinkie.FormatTmDuration(InfoStruct.BronzeTime)).c_str());
+				TextColored(ColorText, ("Author: " + Twinkie->FormatTmDuration(InfoStruct.AuthorTime)).c_str());
+				TextColored(ColorText, ("Gold: " + Twinkie->FormatTmDuration(InfoStruct.GoldTime)).c_str());
+				TextColored(ColorText, ("Silver: " + Twinkie->FormatTmDuration(InfoStruct.SilverTime)).c_str());
+				TextColored(ColorText, ("Bronze: " + Twinkie->FormatTmDuration(InfoStruct.BronzeTime)).c_str());
 			}
 			else
 			{
@@ -54,10 +59,10 @@ public:
 		}
 	}
 
-	virtual void RenderMenuItem(TwinkTrackmania& Twinkie)
+	virtual void RenderMenuItem()
 	{
 		using namespace ImGui;
-		if (MenuItem(FancyName.c_str(), "", &Enabled))
+		if (MenuItem(FancyName.c_str(), "", Enabled))
 		{
 			Enabled = !Enabled;
 		}

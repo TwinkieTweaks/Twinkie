@@ -69,6 +69,8 @@ public:
     TM::GameType TMType = TM::GameType::Nations;
 #endif
 
+    TwinkTrackmania(){}
+
     template <typename T>
     T Read(uintptr_t Addr)
     {

@@ -5,10 +5,15 @@
 class PlayerInfoModule : public IModule
 {
 public:
-	std::string Name = "PlayerInfo";
-	std::string FancyName = "PlayerInformation";
+	PlayerInfoModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger)
+	{
+		this->Twinkie = &Twinkie;
+		this->Logger = &Logger;
+		this->Name = "PlayerInfo";
+		this->FancyName = "PlayerInformation";
+	}
 
-	virtual void Render(TwinkTrackmania& Twinkie) 
+	virtual void Render() 
 	{
 		using namespace ImGui;
 		static bool ShowOffsetTesting = false;
@@ -18,89 +23,89 @@ public:
 
 		Begin("Player Information", &Enabled);
 
-		if (Twinkie.CurPlayerInfo.Player)
+		if (Twinkie->CurPlayerInfo.Player)
 		{
 			SeparatorText("Addresses");
 
-			Text("Address of GameApp: %x", Twinkie.GetTrackmania());
+			Text("Address of GameApp: %x", Twinkie->GetTrackmania());
 			SameLine();
-			std::string GameAppAddrStr = ToHex(Twinkie.GetTrackmania());
+			std::string GameAppAddrStr = ToHex(Twinkie->GetTrackmania());
 			if (Button("Copy##GameApp"))
 			{
 				SetClipboardText(GameAppAddrStr.c_str());
-				OffsetAddr = Twinkie.GetTrackmania();
+				OffsetAddr = Twinkie->GetTrackmania();
 			}
 
-			Text("Address of Player: %x", Twinkie.CurPlayerInfo.Player);
+			Text("Address of Player: %x", Twinkie->CurPlayerInfo.Player);
 			SameLine();
-			std::string PlayerAddrStr = ToHex(Twinkie.CurPlayerInfo.Player);
+			std::string PlayerAddrStr = ToHex(Twinkie->CurPlayerInfo.Player);
 			if (Button("Copy##Player"))
 			{
 				SetClipboardText(PlayerAddrStr.c_str());
-				OffsetAddr = Twinkie.CurPlayerInfo.Player;
+				OffsetAddr = Twinkie->CurPlayerInfo.Player;
 			}
 
-			Text("Address of Mobil: %x", Twinkie.CurPlayerInfo.Mobil);
+			Text("Address of Mobil: %x", Twinkie->CurPlayerInfo.Mobil);
 			SameLine();
-			std::string MobilAddrStr = ToHex(Twinkie.CurPlayerInfo.Mobil);
+			std::string MobilAddrStr = ToHex(Twinkie->CurPlayerInfo.Mobil);
 			if (Button("Copy##Mobil"))
 			{
 				SetClipboardText(MobilAddrStr.c_str());
-				OffsetAddr = Twinkie.CurPlayerInfo.Mobil;
+				OffsetAddr = Twinkie->CurPlayerInfo.Mobil;
 			}
 
-			Text("Address of Vehicle: %x", Twinkie.CurPlayerInfo.Vehicle);
+			Text("Address of Vehicle: %x", Twinkie->CurPlayerInfo.Vehicle);
 			SameLine();
-			std::string VehicleAddrStr = ToHex(Twinkie.CurPlayerInfo.Vehicle);
+			std::string VehicleAddrStr = ToHex(Twinkie->CurPlayerInfo.Vehicle);
 			if (Button("Copy##Vehicle"))
 			{
 				SetClipboardText(VehicleAddrStr.c_str());
-				OffsetAddr = Twinkie.CurPlayerInfo.Vehicle;
+				OffsetAddr = Twinkie->CurPlayerInfo.Vehicle;
 			}
 
-			Text("Address of PlayerInfo: %x", Twinkie.CurPlayerInfo.PlayerInfo);
+			Text("Address of PlayerInfo: %x", Twinkie->CurPlayerInfo.PlayerInfo);
 			SameLine();
-			std::string PlayerInfoAddrStr = ToHex(Twinkie.CurPlayerInfo.PlayerInfo);
+			std::string PlayerInfoAddrStr = ToHex(Twinkie->CurPlayerInfo.PlayerInfo);
 			if (Button("Copy##PlayerInfo"))
 			{
 				SetClipboardText(PlayerInfoAddrStr.c_str());
-				OffsetAddr = Twinkie.CurPlayerInfo.PlayerInfo;
+				OffsetAddr = Twinkie->CurPlayerInfo.PlayerInfo;
 			}
 
-			Text("Address of TrackmaniaRace: %x", Twinkie.CurPlayerInfo.TrackmaniaRace);
+			Text("Address of TrackmaniaRace: %x", Twinkie->CurPlayerInfo.TrackmaniaRace);
 			SameLine();
-			std::string TrackmaniaRaceAddrStr = ToHex(Twinkie.CurPlayerInfo.TrackmaniaRace);
+			std::string TrackmaniaRaceAddrStr = ToHex(Twinkie->CurPlayerInfo.TrackmaniaRace);
 			if (Button("Copy##TrackmaniaRace"))
 			{
 				SetClipboardText(TrackmaniaRaceAddrStr.c_str());
-				OffsetAddr = Twinkie.CurPlayerInfo.TrackmaniaRace;
+				OffsetAddr = Twinkie->CurPlayerInfo.TrackmaniaRace;
 			}
 
 			SeparatorText("Race data");
 
-			Text("Time: %lu", Twinkie.GetRaceTime());
-			Text("Speed: %f", Twinkie.GetDisplaySpeed());
-			Text("RPM: %f", Twinkie.GetRpm());
-			Text("Gear: %lu", Twinkie.GetGear());
-			Text("IsWet: %lu", Twinkie.GetWaterPhysicsApplied());
-			Text("Personal best: %lu", Twinkie.GetBestTime());
+			Text("Time: %lu", Twinkie->GetRaceTime());
+			Text("Speed: %f", Twinkie->GetDisplaySpeed());
+			Text("RPM: %f", Twinkie->GetRpm());
+			Text("Gear: %lu", Twinkie->GetGear());
+			Text("IsWet: %lu", Twinkie->GetWaterPhysicsApplied());
+			Text("Personal best: %lu", Twinkie->GetBestTime());
 
-			VehicleInputs InputInfo = Twinkie.GetInputInfo();
+			VehicleInputs InputInfo = Twinkie->GetInputInfo();
 
 			Text("Steer: %f", InputInfo.Steer);
 			Text("Gas: %f", InputInfo.fGas);
 			Text("Brake: %f", InputInfo.fBrake);
 
-			Checkbox("Mediatracker enabled", (bool*)Twinkie.CurPlayerInfo.Player + 56); // no Read here, ImGui reads the value internally
-			auto MTClipIndex = Twinkie.Read<unsigned long>(Twinkie.CurPlayerInfo.Player + 72);
-			if (*((bool*)Twinkie.CurPlayerInfo.Player + 56))
+			Checkbox("Mediatracker enabled", (bool*)Twinkie->CurPlayerInfo.Player + 56); // no Read here, ImGui reads the value internally
+			auto MTClipIndex = Twinkie->Read<unsigned long>(Twinkie->CurPlayerInfo.Player + 72);
+			if (*((bool*)Twinkie->CurPlayerInfo.Player + 56))
 			{
-				Text("Index of active mediatracker clip: %lu", Twinkie.Read<unsigned long>(Twinkie.CurPlayerInfo.Player + 72));
+				Text("Index of active mediatracker clip: %lu", Twinkie->Read<unsigned long>(Twinkie->CurPlayerInfo.Player + 72));
 			}
 
-			Checkbox("Free wheeling", (bool*)Twinkie.CurPlayerInfo.Vehicle + 1548);
-			Checkbox("Turbo", (bool*)Twinkie.CurPlayerInfo.Vehicle + 948);
-			Text("Turbo factor: %f", *((float*)Twinkie.CurPlayerInfo.Vehicle + 0x182) + 1.0f);
+			Checkbox("Free wheeling", (bool*)Twinkie->CurPlayerInfo.Vehicle + 1548);
+			Checkbox("Turbo", (bool*)Twinkie->CurPlayerInfo.Vehicle + 948);
+			Text("Turbo factor: %f", *((float*)Twinkie->CurPlayerInfo.Vehicle + 0x182) + 1.0f);
 
 			SeparatorText("Offset Testing");
 
@@ -113,7 +118,7 @@ public:
 
 				if (OffsetAddr)
 				{
-					Text("Value: 0x%x, %lu, %f", Twinkie.Read<unsigned long>(OffsetAddr + AddrOffset), Twinkie.Read<unsigned long>(OffsetAddr + AddrOffset), Twinkie.Read<float>(OffsetAddr + AddrOffset));
+					Text("Value: 0x%x, %lu, %f", Twinkie->Read<unsigned long>(OffsetAddr + AddrOffset), Twinkie->Read<unsigned long>(OffsetAddr + AddrOffset), Twinkie->Read<float>(OffsetAddr + AddrOffset));
 				}
 			}
 		}
@@ -125,9 +130,9 @@ public:
 		End();
 	}
 
-	virtual void RenderAnyways(TwinkTrackmania& Twinkie) {}
+	virtual void RenderAnyways() {}
 	virtual void RenderSettings() {}
-	virtual void RenderMenuItem(TwinkTrackmania& Twinkie) 
+	virtual void RenderMenuItem()
 	{
 		using namespace ImGui;
 		if (MenuItem(FancyName.c_str(), "", Enabled))

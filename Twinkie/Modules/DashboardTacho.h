@@ -7,8 +7,6 @@ class DashboardTachometerModule : public IModule
 public:
 	bool HasSettings = true;
 	bool IsDebug = false;
-	std::string Name = "Dashboard";
-	std::string FancyName = "Tachometer";
 
 	ImVec4 ColorUpshift = ImVec4(1.f, 0.f, 0.f, 1.f);
 	ImVec4 ColorDownshift = ImVec4(1.f, 1.f, 0.f, 1.f);
@@ -18,37 +16,45 @@ public:
 	float DownshiftRpm = 6500;
 	float UpshiftRpm = 10000;
 
-	virtual void Render(TwinkTrackmania& Twinkie) {}
-	virtual void RenderAnyways(TwinkTrackmania& Twinkie) 
+	DashboardTachometerModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger)
+	{
+		this->Twinkie = &Twinkie;
+		this->Logger = &Logger;
+		this->Name = "Dashboard";
+		this->FancyName = "Tachometer";
+	}
+
+	virtual void Render() {}
+	virtual void RenderAnyways() 
 	{
 		using namespace ImGui;
 			
-		if (!Twinkie.GetPlayerInfo().Vehicle) return;
-			
+		if (!Twinkie->GetPlayerInfo().Vehicle) return;
+
 		int DashboardWindowFlags = ImGuiWindowFlags_NoTitleBar;
-			
+
 		PushStyleColor(ImGuiCol_WindowBg, ColorBackground);
-			
+
 		Begin("Dashboard##Rpm", nullptr, DashboardWindowFlags);
-			
+
 		PopStyleColor();
-			
+
 		auto UIDrawList = GetWindowDrawList();
-			
+
 		auto CursorPos = GetCursorScreenPos();
-			
+
 		float WindowWidth = GetWindowWidth();
 		float WindowHeight = GetWindowHeight();
-			
+
 		int BarsToDraw = (int)WindowWidth / 10; // cast so we don't get the "possible loss of data" bullshit
 		BarsToDraw--; // last bar almost always gets cutoff, i don't like that
-			
+
 		for (int Idx = 0; Idx < BarsToDraw; Idx++)
 		{
-			float RepresentedRpm = (((float)Idx) / ((float)BarsToDraw)) * Twinkie.MAXRPM;
-			float Rpm = Twinkie.GetRpm();
+			float RepresentedRpm = (((float)Idx) / ((float)BarsToDraw)) * Twinkie->MAXRPM;
+			float Rpm = Twinkie->GetRpm();
 			ImVec4 Color = ColorDefault;
-			if (Rpm > Twinkie.MINRPM and Rpm >= RepresentedRpm) {
+			if (Rpm > Twinkie->MINRPM and Rpm >= RepresentedRpm) {
 			    if (RepresentedRpm <= DownshiftRpm) {
 			        Color = ColorDownshift;
 			    }
@@ -90,7 +96,7 @@ public:
 			EndTabItem();
 		}
 	}
-	virtual void RenderMenuItem(TwinkTrackmania& Twinkie)
+	virtual void RenderMenuItem()
 	{
 		using namespace ImGui;
 		if (MenuItem("Tachometer", "Dashboard", Enabled))

@@ -2,6 +2,7 @@
 
 #include "SettingMgr.h"
 #include "TwinkTrackmania.h"
+#include "TwinkLogs.h"
 #include "Utils.h"
 #include "imgui-dx9/imgui.h"
 #include <vector>
@@ -13,11 +14,21 @@ public:
 	bool Enabled = false;
 	std::string Name = "";
 	std::string FancyName = "";
+	TwinkTrackmania* Twinkie = nullptr;
+	TwinkLogs* Logger = nullptr;
 
-	virtual void Render(TwinkTrackmania& Twinkie) {}
-	virtual void RenderAnyways(TwinkTrackmania& Twinkie) {}
+	IModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger)
+	{
+		this->Twinkie = &Twinkie;
+		this->Logger = &Logger;
+	}
+
+	IModule(){}
+
+	virtual void Render() {}
+	virtual void RenderAnyways() {}
 	virtual void RenderSettings() {}
-	virtual void RenderMenuItem(TwinkTrackmania& Twinkie) {}
+	virtual void RenderMenuItem() {}
 
 	virtual void SettingsInit(SettingMgr& Settings) {}
 	virtual void SettingsSave(SettingMgr& Settings) {}

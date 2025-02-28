@@ -28,10 +28,9 @@ static void InitImGui(LPDIRECT3DDEVICE9 pDevice)
 	Twinkie.InitFonts(ImIo);
 }
 
-bool init = false;
 static long __stdcall hkReset(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pParams)
 {
-	if (!init) return Twinkie.oReset(pDevice, pParams);
+	if (!Twinkie.Initialized) return Twinkie.oReset(pDevice, pParams);
 	ImGui_ImplDX9_InvalidateDeviceObjects();
 	const HRESULT result = Twinkie.oReset(pDevice, pParams);
 	ImGui_ImplDX9_CreateDeviceObjects();
@@ -42,10 +41,10 @@ static long __stdcall hkPresent(LPDIRECT3DDEVICE9 pDevice, LPVOID A, LPVOID B, H
 {
 	if (GetAsyncKeyState(VK_F3) & 1) Twinkie.DoRender = !Twinkie.DoRender;
 
-	if (!init)
+	if (!Twinkie.Initialized)
 	{
 		InitImGui(pDevice);
-		init = true;
+		Twinkie.Initialized = true;
 	}
 
 	ImGui_ImplDX9_NewFrame();

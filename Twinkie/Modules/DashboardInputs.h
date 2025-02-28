@@ -5,10 +5,7 @@
 class DashboardInputsModule : public IModule
 {
 public:
-	bool HasSettings = true;
 	bool IsDebug = false;
-	std::string Name = "Dashboard";
-	std::string FancyName = "Input display";
 
 	ImVec4 ColorSteer = ImVec4(0.976f, 0.737f, 0.008f, 1.f);
 	ImVec4 ColorSteerI = ImVec4(1.f, 1.f, 1.f, 0.5f);
@@ -18,14 +15,22 @@ public:
 	ImVec4 ColorBrakeI = ImVec4(1.f, 1.f, 1.f, 0.5f);
 	ImVec4 ColorBackground = ImVec4(0.f, 0.f, 0.f, 0.f);
 
-	virtual void Render(TwinkTrackmania& Twinkie) {}
-	virtual void RenderAnyways(TwinkTrackmania& Twinkie) 
+	DashboardInputsModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger)
+	{
+		this->Twinkie = &Twinkie;
+		this->Logger = &Logger;
+		this->Name = "Dashboard";
+		this->FancyName = "Input display";
+	}
+
+	virtual void Render() {}
+	virtual void RenderAnyways() 
 	{
 		using namespace ImGui;
-		if (Twinkie.IsPlaying())
+		if (Twinkie->IsPlaying())
 		{
-		    static bool IsPrevHovered = false;
-		    VehicleInputs InputInfo = Twinkie.GetInputInfo();
+			static bool IsPrevHovered = false;
+			VehicleInputs InputInfo = Twinkie->GetInputInfo();
 		
 		    PushStyleColor(ImGuiCol_WindowBg, ColorBackground);
 		    PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
@@ -80,6 +85,7 @@ public:
 		    End();
 		}
 	}
+
 	virtual void RenderSettings() 
 	{
 		using namespace ImGui;
@@ -102,7 +108,7 @@ public:
 			EndTabItem();
 		}
 	}
-	virtual void RenderMenuItem(TwinkTrackmania& Twinkie)
+	virtual void RenderMenuItem()
 	{
 		using namespace ImGui;
 		if (MenuItem("Input display", "Dashboard", Enabled))

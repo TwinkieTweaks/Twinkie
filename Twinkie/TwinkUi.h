@@ -18,8 +18,10 @@
 #include "Modules/DashboardInputs.h"
 #include "Modules/DashboardTacho.h"
 #include "Modules/Medals.h"
-#include "Modules/PlayerInfo.h"
 #include "Modules/GhostEditor.h"
+#ifdef BUILD_DEBUG
+#include "Modules/PlayerInfo.h"
+#endif
 
 #include <d3d9.h>
 
@@ -38,6 +40,7 @@ public:
     TwinkLogs Logger;
 
     bool DoRender = true;
+    bool Initialized = false;
 
     ResetFn oReset = NULL;
     PresentFn oPresent = NULL;
@@ -71,22 +74,24 @@ public:
     TwinkUi()
     {
         Logger.PrintInternal(":3c");
-        Logger.PrintInternal("Twinkie initialized.");
+        Logger.PrintInternalArgs("Twinkie for TrackMania{} Forever. Version {}", TrackmaniaMgr.TMType == TM::GameType::Nations ? " Nations" : (TrackmaniaMgr.TMType == TM::GameType::United ? " United" : ""), Versions.TwinkieVer);
 
-        Modules.push_back(new AboutModule());
+        Modules.push_back(new AboutModule(TrackmaniaMgr, Logger));
         //
-        Modules.push_back(new DashboardInputsModule());
-        Modules.push_back(new DashboardTachometerModule());
+        Modules.push_back(new DashboardInputsModule(TrackmaniaMgr, Logger));
+        Modules.push_back(new DashboardTachometerModule(TrackmaniaMgr, Logger));
         //
-        Modules.push_back(new CheckpointCounterModule());
+        Modules.push_back(new CheckpointCounterModule(TrackmaniaMgr, Logger));
         //
-        Modules.push_back(new MedalsModule());
+        Modules.push_back(new MedalsModule(TrackmaniaMgr, Logger));
         //
-        Modules.push_back(new GhostEditorModule());
+        Modules.push_back(new GhostEditorModule(TrackmaniaMgr, Logger));
         //
 #ifdef BUILD_DEBUG
         Modules.push_back(new PlayerInfoModule());
 #endif
+
+        Logger.PrintInternalArgs("{} module{} initialized.", Modules.size(), Modules.size() == 1 ? "" : "s");
 
         SettingsInit();
     }
@@ -224,7 +229,7 @@ public:
         using namespace ImGui;
         for (IModule* Module : Modules)
         {
-           if (Module->Enabled) Module->Render(TrackmaniaMgr);
+           if (Module->Enabled) Module->Render();
         }
 
         if (BeginMainMenuBar()) {
@@ -235,7 +240,7 @@ public:
                 }
                 for (IModule* Module : Modules)
                 {
-                    if (!Module->IsDebug()) Module->RenderMenuItem(TrackmaniaMgr);
+                    if (!Module->IsDebug()) Module->RenderMenuItem();
                 }
                 ImGui::EndMenu();
             }
@@ -293,7 +298,7 @@ public:
 
         for (IModule* Module : Modules)
         {
-            if (Module->Enabled) Module->RenderAnyways(TrackmaniaMgr);
+            if (Module->Enabled) Module->RenderAnyways();
         }
     }
 };
