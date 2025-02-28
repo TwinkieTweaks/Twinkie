@@ -5,8 +5,6 @@
 class PlayerInfoModule : public IModule
 {
 public:
-	bool HasSettings = false;
-	bool IsDebug = true;
 	std::string Name = "PlayerInfo";
 	std::string FancyName = "PlayerInformation";
 
@@ -140,4 +138,7 @@ public:
 
 	virtual void SettingsInit(SettingMgr& Settings) {}
 	virtual void SettingsSave(SettingMgr& Settings) {}
+
+	virtual bool IsDebug() { return true; }
+	virtual bool HasSettings() { return false; }
 };

@@ -5,7 +5,6 @@
 class MedalsModule : public IModule
 {
 public:
-	bool Enabled = false;
 	std::string Name = "Medals";
 	std::string FancyName = "Medals";
 
@@ -67,16 +66,16 @@ public:
 
 	virtual void SettingsInit(SettingMgr& Settings) 
 	{
-		Settings[Name]["Enable"].Set(Enabled);
+		Settings["Medals"]["Enable"].GetAsBool(&Enabled);
 
-		Settings[Name]["Background color"].Set(ColorBackground);
-		Settings[Name]["Text color"].Set(ColorText);
+		Settings["Medals"]["Background color"].GetAsVec4(&ColorBackground);
+		Settings["Medals"]["Text color"].GetAsVec4(&ColorText);
 	}
-	virtual void SettingsSave(SettingMgr& Settings) 
+	virtual void SettingsSave(SettingMgr& Settings)
 	{
-		Settings[Name]["Enable"].GetAsBool(&Enabled);
+		Settings["Medals"]["Enable"].Set(Enabled);
 
-		Settings[Name]["Background color"].GetAsVec4(&ColorBackground);
-		Settings[Name]["Text color"].GetAsVec4(&ColorText);
+		Settings["Medals"]["Background color"].Set(ColorBackground);
+		Settings["Medals"]["Text color"].Set(ColorText);
 	}
 };

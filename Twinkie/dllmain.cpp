@@ -104,13 +104,13 @@ static DWORD WINAPI MainThread(LPVOID lpReserved)
 	bool attached = false;
 	do
 	{
-		Twinkie.PrintInternal("Hooking DX9...");
+		Twinkie.Logger.PrintInternal("Hooking DX9...");
 		if ((Twinkie.DX9HookStatus = kiero::init(kiero::RenderType::D3D9)) == kiero::Status::Success)
 		{
-			Twinkie.PrintInternal("kiero initialized");
+			Twinkie.Logger.PrintInternal("kiero initialized");
 			kiero::bind(16, (void**)&Twinkie.oReset, hkReset);
 			Twinkie.DX9HookStatus = kiero::bind(17, (void**)&Twinkie.oPresent, hkPresent);
-			Twinkie.PrintInternalArgs("kiero status: {}", (int)Twinkie.DX9HookStatus);
+			Twinkie.Logger.PrintInternalArgs("kiero status: {}", (int)Twinkie.DX9HookStatus);
 			do
 				Twinkie.Window = GetProcessWindow();
 			while (Twinkie.Window == NULL);
@@ -119,8 +119,7 @@ static DWORD WINAPI MainThread(LPVOID lpReserved)
 		}
 		else
 		{
-			Twinkie.PrintError("Error when hooking DX9.");
-			Twinkie.PrintErrorArgs("kiero status: {}");
+			Twinkie.Logger.PrintError("Error when hooking DX9.");
 		}
 	} while (!attached);
 

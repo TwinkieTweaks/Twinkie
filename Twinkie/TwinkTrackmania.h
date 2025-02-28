@@ -209,9 +209,12 @@ public:
 
     int GetBestTime()
     {
-        if (!ChallengeUsesScore())
-            return Read<int>(CurPlayerInfo.PlayerInfo + 0x2b4);
-        return Read<int>(CurPlayerInfo.PlayerInfo + 0x2e0);
+        using GetBestTimeOrScoreFn = int(__thiscall*)(uintptr_t);
+        if (CurPlayerInfo.TrackmaniaRace)
+        {
+            return reinterpret_cast<GetBestTimeOrScoreFn>(Virtual<22>(CurPlayerInfo.TrackmaniaRace))(CurPlayerInfo.TrackmaniaRace);
+        }
+        return -1;
     }
 
     bool IsPersonalBest()

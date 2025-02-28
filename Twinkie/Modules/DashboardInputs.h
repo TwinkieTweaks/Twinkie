@@ -5,7 +5,6 @@
 class DashboardInputsModule : public IModule
 {
 public:
-	bool Enabled = false;
 	bool HasSettings = true;
 	bool IsDebug = false;
 	std::string Name = "Dashboard";

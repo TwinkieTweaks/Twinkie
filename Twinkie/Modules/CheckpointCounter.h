@@ -55,17 +55,17 @@ public:
 
 	virtual void SettingsInit(SettingMgr& Settings)
 	{
-		Settings[Name]["Enable"].GetAsBool(&Enabled);
+		Settings["CheckpointCounter"]["Enable"].GetAsBool(&Enabled);
 
-		Settings[Name]["Background color"].GetAsVec4(&ColorBackground);
-		Settings[Name]["Text color"].GetAsVec4(&ColorText);
+		Settings["CheckpointCounter"]["Background color"].GetAsVec4(&ColorBackground);
+		Settings["CheckpointCounter"]["Text color"].GetAsVec4(&ColorText);
 	}
 
-	virtual void SettingsSet(SettingMgr& Settings)
+	virtual void SettingsSave(SettingMgr& Settings)
 	{
-		Settings[Name]["Enable"].Set(Enabled);
+		Settings["CheckpointCounter"]["Enable"].Set(Enabled);
 
-		Settings[Name]["Background color"].Set(ColorBackground);
-		Settings[Name]["Text color"].Set(ColorText);
+		Settings["CheckpointCounter"]["Background color"].Set(ColorBackground);
+		Settings["CheckpointCounter"]["Text color"].Set(ColorText);
 	}
 };

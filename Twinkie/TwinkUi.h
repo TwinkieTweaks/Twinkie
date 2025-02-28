@@ -9,6 +9,7 @@
 #include "TwinkTrackmania.h"
 #include "Version.h"
 #include "SettingMgr.h"
+#include "TwinkLogs.h"
 
 #include "imgui-dx9/imgui.h"
 
@@ -34,6 +35,7 @@ class TwinkUi
 public:
     Versioning Versions;
     TwinkTrackmania TrackmaniaMgr;
+    TwinkLogs Logger;
 
     bool DoRender = true;
 
@@ -45,9 +47,6 @@ public:
     bool EnableSettings = false;
 
     std::vector<IModule*> Modules = {};
-
-    bool EnableLog = false;
-    std::string LogStr = "";
 
     kiero::Status::Enum DX9HookStatus = kiero::Status::UnknownError;
 
@@ -71,7 +70,8 @@ public:
 
     TwinkUi()
     {
-        SettingsInit();
+        Logger.PrintInternal(":3c");
+        Logger.PrintInternal("Twinkie initialized.");
 
         Modules.push_back(new AboutModule());
         //
@@ -87,10 +87,16 @@ public:
 #ifdef BUILD_DEBUG
         Modules.push_back(new PlayerInfoModule());
 #endif
+
+        SettingsInit();
     }
 
     ~TwinkUi()
     {
+        SettingsSave();
+
+        Settings.Save();
+
         for (IModule* Module : Modules)
         {
             delete Module;
@@ -120,67 +126,6 @@ public:
             PrintError("Font \"Kanit48\" not initialized. SplitSpeeds extension is not available.");
         }*/
         return;
-    }
-
-    void PrintInternal(const char* Str)
-    {
-        LogStr = LogStr + "[TWINK] " + Str + "\n";
-#ifdef TT_EXTERNAL_CONSOLE
-        std::cout << "[TWINK] " << Str << "\n";
-#endif
-    }
-
-    void PrintError(const char* Str)
-    {
-        LogStr = LogStr + "[ERR] " + Str + "\n";
-#ifdef BUILD_EXTERNAL_CONSOLE
-        std::cout << "[ERR] " << Str << "\n";
-#endif
-    }
-
-    void Print(const char* Str)
-    {
-        LogStr = LogStr + "[LOG] " + Str + "\n";
-#ifdef BUILD_EXTERNAL_CONSOLE
-        std::cout << "[LOG] " << Str << "\n";
-#endif
-    }
-
-    template<typename... Args>
-    void PrintArgs(const char* Str, Args&&... args)
-    {
-        LogStr = LogStr + "[LOG] " + std::vformat(Str, std::make_format_args(args...)) + "\n";
-#ifdef BUILD_EXTERNAL_CONSOLE
-        std::cout << "[LOG] " + std::vformat(Str, std::make_format_args(args...)) + "\n";
-#endif
-    }
-
-    template<typename... Args>
-    void PrintErrorArgs(const char* Str, Args&&... args)
-    {
-        LogStr = LogStr + "[ERR] " + std::vformat(Str, std::make_format_args(args...)) + "\n";
-#ifdef BUILD_EXTERNAL_CONSOLE
-        std::cout << "[ERR] " + std::vformat(Str, std::make_format_args(args...)) + "\n";
-#endif
-    }
-
-    template<typename... Args>
-    void PrintInternalArgs(const char* Str, Args&&... args)
-    {
-        LogStr = LogStr + "[TWINK] " + std::vformat(Str, std::make_format_args(args...)) + "\n";
-#ifdef BUILD_EXTERNAL_CONSOLE
-        std::cout << "[TWINK] " + std::vformat(Str, std::make_format_args(args...)) + "\n";
-#endif
-    }
-
-    void RenderLog()
-    {
-        using namespace ImGui;
-        if (Begin("Logs", &EnableLog))
-        {
-            TextWrapped(LogStr.c_str());
-        }
-        End();
     }
 
     void SetupImGuiStyle()
@@ -279,7 +224,7 @@ public:
         using namespace ImGui;
         for (IModule* Module : Modules)
         {
-            Module->Render(TrackmaniaMgr);
+           if (Module->Enabled) Module->Render(TrackmaniaMgr);
         }
 
         if (BeginMainMenuBar()) {
@@ -290,8 +235,22 @@ public:
                 }
                 for (IModule* Module : Modules)
                 {
-                    Module->RenderMenuItem(TrackmaniaMgr);
+                    if (!Module->IsDebug()) Module->RenderMenuItem(TrackmaniaMgr);
                 }
+                ImGui::EndMenu();
+            }
+            if (BeginMenu("Debug"))
+            {
+                if (MenuItem("Log", "", Logger.EnableLog))
+                {
+                    Logger.EnableLog = !Logger.EnableLog;
+                }
+#ifdef BUILD_DEBUG
+                for (IModule* Module : Modules)
+                {
+                    if (Module->IsDebug()) Module->RenderMenuItem(TrackmaniaMgr);
+                }
+#endif
                 ImGui::EndMenu();
             }
             EndMainMenuBar();
@@ -300,6 +259,11 @@ public:
         if (EnableSettings)
         {
             RenderSettings();
+        }
+
+        if (Logger.EnableLog)
+        {
+            Logger.RenderLog();
         }
     }
 
@@ -313,7 +277,7 @@ public:
 
             for (IModule* Module : Modules)
             {
-                if (!Module->HasSettings) continue;
+                if (!Module->HasSettings()) continue;
 
                 Module->RenderSettings();
             }
@@ -329,7 +293,7 @@ public:
 
         for (IModule* Module : Modules)
         {
-            Module->RenderAnyways(TrackmaniaMgr);
+            if (Module->Enabled) Module->RenderAnyways(TrackmaniaMgr);
         }
     }
 };

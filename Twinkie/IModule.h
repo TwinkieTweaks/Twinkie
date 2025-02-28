@@ -11,8 +11,6 @@ class IModule
 {
 public:
 	bool Enabled = false;
-	bool HasSettings = true;
-	bool IsDebug = false;
 	std::string Name = "";
 	std::string FancyName = "";
 
@@ -23,4 +21,7 @@ public:
 
 	virtual void SettingsInit(SettingMgr& Settings) {}
 	virtual void SettingsSave(SettingMgr& Settings) {}
+
+	virtual bool IsDebug() { return false; }
+	virtual bool HasSettings() { return true; }
 };

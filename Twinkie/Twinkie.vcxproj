@@ -175,7 +175,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;TWINKIE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;TWINKIE_EXPORTS;BUILD_UNITED;BUILD_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -396,6 +396,7 @@
     <ClInclude Include="Release\Settings.h" />
     <ClInclude Include="SettingMgr.h" />
     <ClInclude Include="TrackMania.h" />
+    <ClInclude Include="TwinkLogs.h" />
     <ClInclude Include="TwinkUi.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Version.h" />

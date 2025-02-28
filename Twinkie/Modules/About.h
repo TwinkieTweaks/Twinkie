@@ -6,7 +6,6 @@
 class AboutModule : public IModule
 {
 public:
-	bool Enabled = false;
 	bool HasSettings = false;
 	std::string Name = "About";
 	std::string FancyName = "About";

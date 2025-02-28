@@ -36,46 +36,6 @@ public:
 		this->Value = Value;
 	}
 
-	ImVec4 GetAsVec4()
-	{
-		// FORMAT: "f,f,f,f"
-		std::stringstream Stream(Value);
-		std::vector<float> Values = {};
-		std::string Token = "";
-
-		while (std::getline(Stream, Token, ','))
-		{
-			Values.push_back(std::stof(Token));
-		}
-
-		if (Values.size() < 4)
-		{
-			return ImVec4{ 0, 0, 0, -1 };
-		}
-
-		return ImVec4{ Values[0], Values[1], Values[2], Values[3] };
-	}
-
-	ImVec4 GetAsVec4(ImVec4 DefaultValue)
-	{
-		// FORMAT: "f,f,f,f"
-		std::stringstream Stream(Value);
-		std::vector<float> Values = {};
-		std::string Token = "";
-
-		while (std::getline(Stream, Token, ','))
-		{
-			Values.push_back(std::stof(Token));
-		}
-
-		if (Values.size() < 4)
-		{
-			return DefaultValue;
-		}
-
-		return ImVec4{ Values[0], Values[1], Values[2], Values[3] };
-	}
-
 	void GetAsVec4(ImVec4* DefaultValue)
 	{
 		// FORMAT: "f,f,f,f"
@@ -96,34 +56,10 @@ public:
 		*DefaultValue = { Values[0], Values[1], Values[2], Values[3] };
 	}
 
-	bool GetAsBoolFuzzy()
-	{
-		// FORMAT: "true|false"
-		return Value == "true" ? true : false;
-	}
-
-	bool GetAsBool(bool DefaultValue)
-	{
-		// FORMAT: "true|false"
-		return Value == "true" ? true : (Value == "false" ? false : DefaultValue);
-	}
-
 	void GetAsBool(bool* DefaultValue)
 	{
 		// FORMAT: "true|false"
 		*DefaultValue = Value == "true" ? true : (Value == "false" ? false : *DefaultValue);
-	}
-
-	float GetAsFloat()
-	{
-		// FORMAT: "f"
-		return std::stof(Value);
-	}
-
-	float GetAsFloat(float DefaultValue)
-	{
-		// FORMAT: "f"
-		return Value == "" ? DefaultValue : std::stof(Value);
 	}
 
 	void GetAsFloat(float* DefaultValue)

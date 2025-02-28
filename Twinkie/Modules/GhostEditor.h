@@ -5,7 +5,6 @@
 class GhostEditorModule : public IModule
 {
 public:
-	bool Enabled = false;
 	bool HasSettings = false;
 	bool IsDebug = false;
 	std::string Name = "GhostEditor";
