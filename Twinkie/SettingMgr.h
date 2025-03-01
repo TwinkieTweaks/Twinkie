@@ -10,7 +10,6 @@
 #include <shlwapi.h>
 
 namespace Filesystem = std::filesystem;
-
 inline std::string GetDocumentsFolder()
 {
 	std::string path;
