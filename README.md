@@ -7,7 +7,7 @@ GreffMASTER also provided me with a helpful list of class members and their offs
 
 ## Features
 - Ghost Editor, allows you to access the ghost editor without the cheat code
-- Dashboard, an input display and **NEW!** gear display with customizable options
+- Dashboard, an input display and **NEW!** gear display (tachometer, and gear number indicator) with customizable options
 - **NEW!** Checkpoint counter, does what it says right on the tin
 - Medals window, for easily viewing medals
 
@@ -17,8 +17,8 @@ GreffMASTER also provided me with a helpful list of class members and their offs
 - Only works with Vanilla Standalone TMF
 
 ## Screenshots
-![In stadium (debug build)](https://github.com/user-attachments/assets/59a81970-0b01-4d9d-a4c2-f97216e42e24)
-![In bay](https://github.com/user-attachments/assets/d37c048b-22d5-4495-8617-54776fb1d462)
+![In snow](https://github.com/user-attachments/assets/46e608bf-e90f-49af-87c2-108d100aaf9c)
+![In stadium](https://github.com/user-attachments/assets/371877be-c3d2-45d7-bfb2-0b78ad711cd2)
 
 ## Create separate builds for different TMF variants
 The visual studio solution already comes with various build options for some TMF variants.\
