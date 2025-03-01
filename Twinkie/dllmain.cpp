@@ -67,14 +67,15 @@ static LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 
 	auto& ImIo = ImGui::GetIO();
 
+	auto ImWndProcResult = ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam);
+	if (ImWndProcResult)
+	{
+		return ImWndProcResult;
+	}
+
 	if (uMsg >= WM_KEYFIRST && uMsg <= WM_KEYLAST)
 	{
-		auto ImWndProcResult = ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam);
-		if (ImWndProcResult)
-		{
-			return ImWndProcResult;
-		}
-
+		
 		if (ImIo.WantCaptureKeyboard)
 		{
 			return 0;
@@ -82,23 +83,9 @@ static LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 	}
 	else if (uMsg >= WM_MOUSEFIRST && uMsg <= WM_MOUSELAST)
 	{
-		auto ImWndProcResult = ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam);
-		if (ImWndProcResult)
-		{
-			return ImWndProcResult;
-		}
-
 		if (ImIo.WantCaptureMouse)
 		{
 			return 0;
-		}
-	}
-	else
-	{
-		auto ImWndProcResult = ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam);
-		if (ImWndProcResult)
-		{
-			return ImWndProcResult;
 		}
 	}
 
