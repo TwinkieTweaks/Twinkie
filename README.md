@@ -23,7 +23,9 @@ GreffMASTER also provided me with a helpful list of class members and their offs
 ## Create separate builds for different TMF variants
 The visual studio solution already comes with various build options for some TMF variants.\
 ![image](https://github.com/user-attachments/assets/25da4bde-8146-4740-94d6-d7e75660a87a)\
-Do note that the `Modloader` build option currently does not support Modloader, but I will work on this in the future.
+Do note that the `Modloader` build option currently does not support Modloader, but I will work on this in the future.\
+Building in x64 is **not supported** since TMF is 32-bit.\
+If you're having compilation issues, make sure you're ONLY compiling to x86/Win32.
 
 ## Support me
 There currently aren't any monetary ways of supporting me, so if you like Twinkie and you have a github account, please star it so that more people see it.
