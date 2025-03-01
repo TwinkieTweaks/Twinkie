@@ -390,6 +390,7 @@
     <ClInclude Include="Modules\About.h" />
     <ClInclude Include="Modules\DashboardInputs.h" />
     <ClInclude Include="Modules\DashboardTacho.h" />
+    <ClInclude Include="Modules\DashboardGears.h" />
     <ClInclude Include="Modules\GhostEditor.h" />
     <ClInclude Include="Modules\Medals.h" />
     <ClInclude Include="Modules\PlayerInfo.h" />

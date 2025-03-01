@@ -91,7 +91,8 @@ public:
 
     uintptr_t GetExeBaseAddr()
     {
-        return (unsigned long)GetModuleHandle(NULL);
+        // Gets the base address of the .exe
+        return (unsigned long)GetModuleHandle(NULL); // could be better
     }
 
     uintptr_t GetTrackmania()
@@ -211,9 +212,14 @@ public:
 
     int GetBestTime()
     {
-        if (ChallengeUsesScore())
-            return Read<int>(CurPlayerInfo.PlayerInfo + 0x2E0);
-        return Read<int>(CurPlayerInfo.PlayerInfo + 0x2B4);
+        uintptr_t StructPtr = Read<uintptr_t>(CurPlayerInfo.PlayerInfo);
+        if (StructPtr and IsPlaying())
+        {
+            if (ChallengeUsesScore())
+                return Read<int>(StructPtr + 0x2E0);
+            return Read<int>(StructPtr + 0x2B4); // i have no idea
+        }
+        return -1;
     }
 
     bool IsPersonalBest()

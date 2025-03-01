@@ -19,6 +19,7 @@
 #include "Modules/DashboardTacho.h"
 #include "Modules/Medals.h"
 #include "Modules/GhostEditor.h"
+#include "Modules/DashboardGears.h"
 #ifdef BUILD_DEBUG
 #include "Modules/PlayerInfo.h"
 #endif
@@ -80,6 +81,7 @@ public:
         //
         Modules.push_back(new DashboardInputsModule(TrackmaniaMgr, Logger));
         Modules.push_back(new DashboardTachometerModule(TrackmaniaMgr, Logger));
+        Modules.push_back(new DashboardGearsModule(TrackmaniaMgr, Logger));
         //
         Modules.push_back(new CheckpointCounterModule(TrackmaniaMgr, Logger));
         //

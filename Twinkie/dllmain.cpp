@@ -61,12 +61,48 @@ static long __stdcall hkPresent(LPDIRECT3DDEVICE9 pDevice, LPVOID A, LPVOID B, H
 	return Twinkie.oPresent(pDevice, A, B, C, D);
 }
 
-static LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+static LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
+{
+	if (!Twinkie.Initialized) return CallWindowProcA(Twinkie.oWndProc, hWnd, uMsg, wParam, lParam);
 
-	if ((bool)ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
-		return true;
+	auto& ImIo = ImGui::GetIO();
 
-	return CallWindowProc(Twinkie.oWndProc, hWnd, uMsg, wParam, lParam);
+	if (uMsg >= WM_KEYFIRST && uMsg <= WM_KEYLAST)
+	{
+		auto ImWndProcResult = ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam);
+		if (ImWndProcResult)
+		{
+			return ImWndProcResult;
+		}
+
+		if (ImIo.WantCaptureKeyboard)
+		{
+			return 0;
+		}
+	}
+	else if (uMsg >= WM_MOUSEFIRST && uMsg <= WM_MOUSELAST)
+	{
+		auto ImWndProcResult = ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam);
+		if (ImWndProcResult)
+		{
+			return ImWndProcResult;
+		}
+
+		if (ImIo.WantCaptureMouse)
+		{
+			return 0;
+		}
+	}
+	else
+	{
+		auto ImWndProcResult = ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam);
+		if (ImWndProcResult)
+		{
+			return ImWndProcResult;
+		}
+	}
+
+	return CallWindowProcA(Twinkie.oWndProc, hWnd, uMsg, wParam, lParam);
 }
 
 static BOOL CALLBACK EnumWindowsCallback(HWND handle, LPARAM lParam)
