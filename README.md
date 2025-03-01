@@ -3,7 +3,7 @@ Twinkie is a QOL modification for TrackMania Forever.
 
 ## Special thanks
 To [GreffMASTER](https://github.com/GreffMASTER) and [brokenphilip](https://github.com/brokenphilip) for helping me during development. brokenphilip has his own [tool for TMUF](https://github.com/BulbToys/TMUF) and GreffMASTER [as well (for TM1.0)](https://github.com/GreffMASTER/TMStuff) if you're interested in more cool mods for old TM games.\
-GreffMASTER also provided me with a helpful list of class members and their offsets for TMF, alongside brokenphilip helping me along my RE journey for this project <3\
+GreffMASTER also provided me with a helpful list of class members and their offsets for TMF, alongside brokenphilip helping me along my RE journey for this project <3
 
 ## Features
 - Ghost Editor, allows you to access the ghost editor without the cheat code
