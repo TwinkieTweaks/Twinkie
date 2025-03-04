@@ -395,9 +395,11 @@
     <ClInclude Include="Modules\GhostEditor.h" />
     <ClInclude Include="Modules\Medals.h" />
     <ClInclude Include="Modules\PlayerInfo.h" />
+    <ClInclude Include="Modules\Tweaker.h" />
     <ClInclude Include="Release\Settings.h" />
     <ClInclude Include="SettingMgr.h" />
     <ClInclude Include="TrackMania.h" />
+    <ClInclude Include="TwinkIo.h" />
     <ClInclude Include="TwinkLogs.h" />
     <ClInclude Include="TwinkUi.h" />
     <ClInclude Include="Utils.h" />

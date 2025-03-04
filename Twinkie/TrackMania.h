@@ -15,6 +15,11 @@ namespace TM
 	{
 		int Size = 0;
 		T* Ptr = nullptr;
+
+		T operator[](int Idx)
+		{
+			return Ptr[Idx];
+		}
 	};
 
 	struct GmVec3

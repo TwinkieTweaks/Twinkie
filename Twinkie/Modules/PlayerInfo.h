@@ -23,8 +23,12 @@ public:
 
 		Begin("Player Information", &Enabled);
 
-		if (Twinkie->CurPlayerInfo.Player)
+		if (Twinkie->IsPlaying())
 		{
+			Text("ok !");
+			End();
+			return;
+
 			SeparatorText("Addresses");
 
 			Text("Address of GameApp: %x", Twinkie->GetTrackmania());

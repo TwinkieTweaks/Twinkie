@@ -12,6 +12,7 @@
 #include "TwinkLogs.h"
 
 #include "imgui-dx9/imgui.h"
+#include "TwinkIo.h"
 
 #include "Modules/CheckpointCounter.h"
 #include "Modules/About.h"
@@ -20,6 +21,7 @@
 #include "Modules/Medals.h"
 #include "Modules/GhostEditor.h"
 #include "Modules/DashboardGears.h"
+#include "Modules/Tweaker.h"
 #ifdef BUILD_DEBUG
 #include "Modules/PlayerInfo.h"
 #endif
@@ -39,6 +41,7 @@ public:
     Versioning Versions;
     TwinkTrackmania TrackmaniaMgr;
     TwinkLogs Logger;
+    TwinkIo* IoMgr;
 
     bool DoRender = true;
     bool Initialized = false;
@@ -49,6 +52,7 @@ public:
     HWND Window = NULL;
 
     bool EnableSettings = false;
+    bool EnableImGuiDemo = false;
 
     std::vector<IModule*> Modules = {};
 
@@ -74,6 +78,8 @@ public:
 
     TwinkUi()
     {
+        IoMgr = new TwinkIo(TrackmaniaMgr);
+
         Logger.PrintInternal(":3c");
         Logger.PrintInternalArgs("Twinkie for TrackMania{} Forever. Version {}", TrackmaniaMgr.TMType == TM::GameType::Nations ? " Nations" : (TrackmaniaMgr.TMType == TM::GameType::United ? " United" : ""), Versions.TwinkieVer);
 
@@ -88,6 +94,7 @@ public:
         Modules.push_back(new MedalsModule(TrackmaniaMgr, Logger));
         //
         Modules.push_back(new GhostEditorModule(TrackmaniaMgr, Logger));
+        Modules.push_back(new TweakerModule(TrackmaniaMgr, Logger));
         //
 #ifdef BUILD_DEBUG
         Modules.push_back(new PlayerInfoModule(TrackmaniaMgr, Logger));
@@ -109,29 +116,13 @@ public:
             delete Module;
             Module = nullptr;
         }
+
+        delete IoMgr;
+        IoMgr = nullptr;
     }
 
     void InitFonts(ImGuiIO& ImIo)
     {
-        /*
-        KanitFont16 = ImIo.Fonts->AddFontFromFileTTF((GetDocumentsFolder() + "\\Twinkie\\Fonts\\Kanit.ttf").c_str(), 16.f);
-        if (KanitFont16)
-        {
-            PrintInternal("Font \"Kanit16\" initialized.");
-        }
-        else
-        {
-            PrintError("Font \"Kanit16\" not initialized.");
-        }
-        KanitFont48 = ImIo.Fonts->AddFontFromFileTTF("Twinkie\\Fonts\\Kanit.ttf", 48.f);
-        if (KanitFont48)
-        {
-            PrintInternal("Font \"Kanit48\" initialized.");
-        }
-        else
-        {
-            PrintError("Font \"Kanit48\" not initialized. SplitSpeeds extension is not available.");
-        }*/
         return;
     }
 
@@ -258,19 +249,24 @@ public:
                     if (Module->IsDebug()) Module->RenderMenuItem();
                 }
 #endif
+                if (MenuItem("ImGui Demo", "", EnableImGuiDemo))
+                {
+                    EnableImGuiDemo = !EnableImGuiDemo;
+                }
                 ImGui::EndMenu();
             }
             EndMainMenuBar();
         }
 
         if (EnableSettings)
-        {
             RenderSettings();
-        }
 
         if (Logger.EnableLog)
-        {
             Logger.RenderLog();
+
+        if (EnableImGuiDemo)
+        {
+            ShowDemoWindow(&EnableImGuiDemo);
         }
     }
 
@@ -296,6 +292,8 @@ public:
 
     void RenderAnyways()
     {
+        IoMgr->Update();
+
         TrackmaniaMgr.CurPlayerInfo = TrackmaniaMgr.GetPlayerInfo();
 
         for (IModule* Module : Modules)

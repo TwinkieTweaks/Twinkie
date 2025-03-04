@@ -64,7 +64,14 @@ public:
 	void GetAsFloat(float* DefaultValue)
 	{
 		// FORMAT: "f"
-		*DefaultValue = Value == "" ? *DefaultValue : std::stof(Value);
+		try
+		{
+			*DefaultValue = Value == "" ? *DefaultValue : std::stof(Value);
+		}
+		catch (std::exception e)
+		{
+			return;
+		}
 	}
 
 	void Set(ImVec4 Value)

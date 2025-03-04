@@ -100,9 +100,72 @@ public:
         return Read<uintptr_t>(GetExeBaseAddr() + O_CTRACKMANIA);
     }
 
+    int GetMwClassId(uintptr_t This)
+    {
+        using GetClassId = int(__thiscall*)(uintptr_t);
+        return reinterpret_cast<GetClassId>(Virtual<3>(This))(This);
+    }
+
     uintptr_t GetMenuManager()
     {
         return Read<uintptr_t>(GetTrackmania() + 0x194);
+    }
+
+    uintptr_t GetInputPort()
+    {
+        return Read<uintptr_t>(GetTrackmania() + 0x6c);
+    }
+
+    TM::CFastArray<uintptr_t> GetDevices()
+    {
+        return Read<TM::CFastArray<uintptr_t>>(GetInputPort() + 0x2c);
+    }
+
+    void ForceDevicePoll(uintptr_t Device, int MustNotPoll)
+    {
+        Write<int>(MustNotPoll, Device + 0x1c);
+    }
+
+    bool IsDeviceKeyboard(unsigned int ClassId)
+    {
+        return ClassId == 0x1300b000u;
+    }
+
+    bool IsDeviceMouse(unsigned int ClassId)
+    {
+        return ClassId == 0x1300a000u;
+    }
+
+    uintptr_t GetGameCamera()
+    {
+        return Read<uintptr_t>(GetTrackmania() + 0x174);
+    }
+
+    uintptr_t GetSceneCamera()
+    {
+        return Read<uintptr_t>(GetGameCamera() + 0x74);
+    }
+
+    uintptr_t GetHmsPocCamera()
+    {
+        return Read<uintptr_t>(GetSceneCamera() + 0x30);
+    }
+
+    bool IsHmsPocHmsCamera(uintptr_t HmsPoc)
+    {
+        return GetMwClassId(HmsPoc) == 0x6001000u;
+    }
+
+    void SetCameraZClip(bool Enable = false, float Distance = 50000.f)
+    {
+        if (!GetGameCamera() or !IsPlaying()) return;
+        uintptr_t Camera = GetHmsPocCamera();
+
+        if (IsHmsPocHmsCamera(Camera))
+        {
+            Write<int>(Enable ? 1 : 0, Camera + 0x174); // ZClipEnable
+            Write<float>(Distance, Camera + 0x178); // ZClipValue
+        }
     }
 
     void CallMenuGhostEditor()
@@ -293,7 +356,11 @@ public:
 
     bool IsPlaying()
     {
-        return GetPlayerInfo().Vehicle and GetPlayerInfo().TrackmaniaRace;
+        return GetPlayerInfo().Vehicle and 
+               GetPlayerInfo().TrackmaniaRace and 
+               GetPlayerInfo().Mobil and 
+               GetPlayerInfo().Player and 
+               GetPlayerInfo().PlayerInfo;
     }
 
     std::string FormatTmDuration(unsigned int Duration) {

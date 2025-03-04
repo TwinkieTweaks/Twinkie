@@ -1,3 +1,5 @@
+#define WIN32_LEAN_AND_MEAN
+
 #include <iostream>
 #include "TwinkUi.h"
 #include "imgui-dx9/imgui_impl_dx9.h"
@@ -21,7 +23,6 @@ static void InitImGui(LPDIRECT3DDEVICE9 pDevice)
 	ImGui::CreateContext();
 	Twinkie.SetupImGuiStyle();
 	ImGuiIO& ImIo = ImGui::GetIO();
-	ImIo.ConfigFlags = ImGuiConfigFlags_NoMouseCursorChange;
 	ImGui_ImplWin32_Init(Twinkie.Window);
 	ImGui_ImplDX9_Init(pDevice);
 
@@ -39,8 +40,6 @@ static long __stdcall hkReset(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* 
 
 static long __stdcall hkPresent(LPDIRECT3DDEVICE9 pDevice, LPVOID A, LPVOID B, HWND C, LPVOID D)
 {
-	if (GetAsyncKeyState(VK_F3) & 1) Twinkie.DoRender = !Twinkie.DoRender;
-
 	if (!Twinkie.Initialized)
 	{
 		InitImGui(pDevice);
@@ -65,6 +64,8 @@ static LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 {
 	if (!Twinkie.Initialized) return CallWindowProcA(Twinkie.oWndProc, hWnd, uMsg, wParam, lParam);
 
+	if (GetAsyncKeyState(VK_F3) & 1) Twinkie.DoRender = !Twinkie.DoRender;
+
 	auto& ImIo = ImGui::GetIO();
 
 	auto ImWndProcResult = ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam);
@@ -73,20 +74,9 @@ static LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 		return ImWndProcResult;
 	}
 
-	if (uMsg >= WM_KEYFIRST && uMsg <= WM_KEYLAST)
+	if ((uMsg >= WM_KEYFIRST && uMsg <= WM_KEYLAST && ImIo.WantCaptureKeyboard) || (uMsg >= WM_MOUSEFIRST && uMsg <= WM_MOUSELAST && ImIo.WantCaptureMouse))
 	{
-		
-		if (ImIo.WantCaptureKeyboard)
-		{
-			return 0;
-		}
-	}
-	else if (uMsg >= WM_MOUSEFIRST && uMsg <= WM_MOUSELAST)
-	{
-		if (ImIo.WantCaptureMouse)
-		{
-			return 0;
-		}
+		return 1;
 	}
 
 	return CallWindowProcA(Twinkie.oWndProc, hWnd, uMsg, wParam, lParam);
@@ -123,8 +113,8 @@ static DWORD WINAPI MainThread(LPVOID lpReserved)
 		Sleep(1);
 	}
 
-	bool attached = false;
-	do
+	bool HookedAndAttached = false;
+	while (!HookedAndAttached)
 	{
 		Twinkie.Logger.PrintInternal("Hooking DX9...");
 		if ((Twinkie.DX9HookStatus = kiero::init(kiero::RenderType::D3D9)) == kiero::Status::Success)
@@ -137,13 +127,9 @@ static DWORD WINAPI MainThread(LPVOID lpReserved)
 				Twinkie.Window = GetProcessWindow();
 			while (Twinkie.Window == NULL);
 			Twinkie.oWndProc = (WNDPROC)SetWindowLongPtr(Twinkie.Window, GWL_WNDPROC, (LONG_PTR)WndProc);
-			attached = true;
+			HookedAndAttached = true;
 		}
-		else
-		{
-			Twinkie.Logger.PrintError("Error when hooking DX9.");
-		}
-	} while (!attached);
+	}
 
 	return TRUE;
 }

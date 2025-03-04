@@ -34,7 +34,7 @@ public:
 	virtual void RenderAnyways()
 	{
 		using namespace ImGui;
-		if (Twinkie->GetPlayerInfo().Vehicle)
+		if (Twinkie->IsPlaying())
 		{
 			if (Twinkie->GetChallengeInfo().CheckpointCount == 0) return;
 			PushStyleColor(ImGuiCol_WindowBg, ColorBackground);
