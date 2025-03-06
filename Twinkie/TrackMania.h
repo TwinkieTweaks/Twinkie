@@ -22,6 +22,12 @@ namespace TM
 		}
 	};
 
+	struct CFastString
+	{
+		int Size;
+		char* Cstr;
+	};
+
 	struct GmVec3
 	{
 		float x;

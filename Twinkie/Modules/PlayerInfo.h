@@ -23,12 +23,9 @@ public:
 
 		Begin("Player Information", &Enabled);
 
-		if (Twinkie->IsPlaying())
+		if (Twinkie->CurPlayerInfo.Vehicle) 
 		{
-			Text("ok !");
-			End();
-			return;
-
+			if (!Twinkie->CurPlayerInfo.Player) return;
 			SeparatorText("Addresses");
 
 			Text("Address of GameApp: %x", Twinkie->GetTrackmania());

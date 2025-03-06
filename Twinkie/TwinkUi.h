@@ -24,6 +24,7 @@
 #include "Modules/Tweaker.h"
 #ifdef BUILD_DEBUG
 #include "Modules/PlayerInfo.h"
+#include "Modules/HuntingStats.h"
 #endif
 
 #include <d3d9.h>
@@ -98,6 +99,7 @@ public:
         //
 #ifdef BUILD_DEBUG
         Modules.push_back(new PlayerInfoModule(TrackmaniaMgr, Logger));
+        Modules.push_back(new HuntingStatsModule(TrackmaniaMgr, Logger));
 #endif
 
         Logger.PrintInternalArgs("{} module{} initialized.", Modules.size(), Modules.size() == 1 ? "" : "s");
@@ -153,7 +155,7 @@ public:
         style.ColumnsMinSpacing = 6.0f;
         style.ScrollbarSize = 13.0f;
         style.ScrollbarRounding = 16.0f;
-        style.GrabMinSize = 20.0f;
+        style.GrabMinSize = 8.0f;
         style.GrabRounding = 4.0f;
         style.TabRounding = 4.0f;
         style.TabBorderSize = 1.0f;
@@ -299,6 +301,7 @@ public:
         for (IModule* Module : Modules)
         {
             if (Module->Enabled) Module->RenderAnyways();
+            Module->RenderInactive();
         }
     }
 };

@@ -393,6 +393,7 @@
     <ClInclude Include="Modules\DashboardTacho.h" />
     <ClInclude Include="Modules\DashboardGears.h" />
     <ClInclude Include="Modules\GhostEditor.h" />
+    <ClInclude Include="Modules\HuntingStats.h" />
     <ClInclude Include="Modules\Medals.h" />
     <ClInclude Include="Modules\PlayerInfo.h" />
     <ClInclude Include="Modules\Tweaker.h" />

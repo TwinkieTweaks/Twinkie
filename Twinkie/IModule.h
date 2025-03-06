@@ -27,6 +27,7 @@ public:
 
 	virtual void Render() {}
 	virtual void RenderAnyways() {}
+	virtual void RenderInactive() {}
 	virtual void RenderSettings() {}
 	virtual void RenderMenuItem() {}
 

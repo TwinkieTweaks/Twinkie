@@ -50,8 +50,8 @@ static long __stdcall hkPresent(LPDIRECT3DDEVICE9 pDevice, LPVOID A, LPVOID B, H
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
+	Twinkie.RenderAnyways(); // aintnoway
 	if (Twinkie.DoRender) Twinkie.Render();
-	Twinkie.RenderAnyways();
 
 	ImGui::EndFrame();
 	ImGui::Render();

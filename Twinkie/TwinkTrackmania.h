@@ -156,7 +156,7 @@ public:
         return GetMwClassId(HmsPoc) == 0x6001000u;
     }
 
-    void SetCameraZClip(bool Enable = false, float Distance = 50000.f)
+    void SetCameraZClip(bool Enable = false, float Distance = 50000.f, bool Void = false)
     {
         if (!GetGameCamera() or !IsPlaying()) return;
         uintptr_t Camera = GetHmsPocCamera();
@@ -165,6 +165,7 @@ public:
         {
             Write<int>(Enable ? 1 : 0, Camera + 0x174); // ZClipEnable
             Write<float>(Distance, Camera + 0x178); // ZClipValue
+            Write<float>(Void ? Distance * -10000.f : 200.f, Camera + 0x17c); // ZClipMargin
         }
     }
 
@@ -268,6 +269,23 @@ public:
         return Read<VehicleInputs>(CurPlayerInfo.Vehicle + 80);
     }
 
+    void GetIdName(unsigned int Ident, TM::CFastString* String)
+    {
+        using GetIdNameFn = void* (__thiscall*)(unsigned int* Ident, TM::CFastString* String);
+		reinterpret_cast<GetIdNameFn>(TMType == TM::GameType::United ? 0x935660 : 0x935660)(&Ident, String);
+    }
+
+    std::string GetChallengeUID()
+    {
+        if (GetChallenge())
+        {
+            TM::CFastString ChallengeUID;
+            GetIdName(Read<unsigned int>(GetChallenge() + 220), &ChallengeUID);
+            return ChallengeUID.Cstr;
+        }
+        return "Unassigned";
+    }
+
     uintptr_t GetChallenge()
     {
         return Read<uintptr_t>(GetTrackmania() + 0x198);
@@ -298,11 +316,15 @@ public:
     long GetRaceTime()
     {
         auto RaceTime = Read<unsigned long>(CurPlayerInfo.Player + 0x44);
-        auto Offset = Read<unsigned long>(CurPlayerInfo.Vehicle + 0x5D0);
-        if (RaceTime != 0 and Offset <= RaceTime)
+        try
         {
-            return RaceTime - Offset;
+            auto Offset = Read<unsigned long>(CurPlayerInfo.Vehicle + 0x5D0);
+            if (RaceTime != 0 and Offset <= RaceTime)
+            {
+                return RaceTime - Offset;
+            }
         }
+        catch (...) {}
 
         // technically, the racetime is unsigned
         // but unless someone takes ~24 days to finish a run
