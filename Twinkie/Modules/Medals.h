@@ -24,6 +24,8 @@ public:
 		if (Twinkie->GetChallenge())
 		{
 			ChallengeInfo InfoStruct = Twinkie->GetChallengeInfo();
+			if (InfoStruct.AuthorTime == (MAXDWORD)) return;
+
 			PushStyleColor(ImGuiCol_WindowBg, ColorBackground);
 			Begin("##Medals", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize);
 			PopStyleColor();

@@ -121,6 +121,11 @@ public:
         return Read<uintptr_t>(GetTrackmania() + 0x6c);
     }
 
+    uintptr_t GetProfileScores()
+    {
+        return Read<uintptr_t>(GetTrackmania() + 0x16c);
+    }
+    
     TM::CFastArray<uintptr_t> GetDevices()
     {
         return Read<TM::CFastArray<uintptr_t>>(GetInputPort() + 0x2c);
