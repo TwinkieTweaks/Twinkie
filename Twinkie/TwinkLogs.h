@@ -63,8 +63,16 @@ public:
     void RenderLog()
     {
         using namespace ImGui;
-        if (Begin("Logs", &EnableLog))
+        if (Begin("Logs", &EnableLog, ImGuiWindowFlags_MenuBar))
         {
+            if (BeginMenuBar())
+            {
+                if (MenuItem("Clear"))
+                {
+                    LogStr = "";
+                }
+                EndMenuBar();
+            }
             TextWrapped(LogStr.c_str());
         }
         End();

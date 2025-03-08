@@ -126,7 +126,7 @@ static DWORD WINAPI MainThread(LPVOID lpReserved)
 			do
 				Twinkie.Window = GetProcessWindow();
 			while (Twinkie.Window == NULL);
-			Twinkie.oWndProc = (WNDPROC)SetWindowLongPtr(Twinkie.Window, GWL_WNDPROC, (LONG_PTR)WndProc);
+			Twinkie.oWndProc = (WNDPROC)SetWindowLongPtrA(Twinkie.Window, -4, (LONG_PTR)WndProc);
 			HookedAndAttached = true;
 		}
 	}

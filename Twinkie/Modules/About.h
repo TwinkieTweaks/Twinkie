@@ -23,7 +23,7 @@ public:
 		using namespace ImGui;
 		if (Begin("About Twinkie", &Enabled, ImGuiWindowFlags_AlwaysAutoResize))
 		{
-			Text(std::format("Twinkie for TrackMania{} Forever. Version {}", Twinkie->TMType == TM::GameType::Nations ? " Nations" : (Twinkie->TMType == TM::GameType::United ? " United" : ""), Versions.TwinkieVer).c_str());
+			Text(std::format("Twinkie for TrackMania Forever. Version {}", Versions.TwinkieVer).c_str());
 			Text("Made with love by jailman. <3");
 #ifdef BUILD_DEBUG
 			Separator();

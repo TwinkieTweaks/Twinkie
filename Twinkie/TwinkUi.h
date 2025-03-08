@@ -22,9 +22,10 @@
 #include "Modules/GhostEditor.h"
 #include "Modules/DashboardGears.h"
 #include "Modules/Tweaker.h"
+#include "Modules/HuntingStats.h"
 #ifdef BUILD_DEBUG
 #include "Modules/PlayerInfo.h"
-#include "Modules/HuntingStats.h"
+#include "Modules/AppExplorer.h"
 #endif
 
 #include <d3d9.h>
@@ -82,7 +83,7 @@ public:
         IoMgr = new TwinkIo(TrackmaniaMgr);
 
         Logger.PrintInternal(":3c");
-        Logger.PrintInternalArgs("Twinkie for TrackMania{} Forever. Version {}", TrackmaniaMgr.TMType == TM::GameType::Nations ? " Nations" : (TrackmaniaMgr.TMType == TM::GameType::United ? " United" : ""), Versions.TwinkieVer);
+        Logger.PrintInternalArgs("Twinkie for TrackMania Forever. Version {}", Versions.TwinkieVer);
 
         Modules.push_back(new AboutModule(TrackmaniaMgr, Logger));
         //
@@ -93,13 +94,14 @@ public:
         Modules.push_back(new CheckpointCounterModule(TrackmaniaMgr, Logger));
         //
         Modules.push_back(new MedalsModule(TrackmaniaMgr, Logger));
+        Modules.push_back(new HuntingStatsModule(TrackmaniaMgr, Logger));
         //
         Modules.push_back(new GhostEditorModule(TrackmaniaMgr, Logger));
         Modules.push_back(new TweakerModule(TrackmaniaMgr, Logger));
         //
 #ifdef BUILD_DEBUG
         Modules.push_back(new PlayerInfoModule(TrackmaniaMgr, Logger));
-        Modules.push_back(new HuntingStatsModule(TrackmaniaMgr, Logger));
+		Modules.push_back(new AppExplorerModule(TrackmaniaMgr, Logger));
 #endif
 
         Logger.PrintInternalArgs("{} module{} initialized.", Modules.size(), Modules.size() == 1 ? "" : "s");
@@ -233,6 +235,10 @@ public:
                 {
                     EnableSettings = !EnableSettings;
                 }
+                ImGui::EndMenu();
+            }
+            if (BeginMenu("Modules"))
+            {
                 for (IModule* Module : Modules)
                 {
                     if (!Module->IsDebug()) Module->RenderMenuItem();

@@ -60,16 +60,21 @@ public:
     const float MINRPM = 200.f;
     const float MAXRPM = 11000.f;
 
-#ifdef BUILD_UNITED
-    uintptr_t O_CTRACKMANIA = 0x96A2A4;
-    TM::GameType TMType = TM::GameType::United;
-#endif
-#ifdef BUILD_NATIONS
-    uintptr_t O_CTRACKMANIA = 0x968C44;
-    TM::GameType TMType = TM::GameType::Nations;
-#endif
+	uintptr_t O_CTRACKMANIA = 0x972EB8;
+    TM::GameType TMType = TM::GameType::Modded;
 
-    TwinkTrackmania(){}
+    TwinkTrackmania()
+    {
+		// 0x700b15 + ExeBaseAddr (0x400000) = 0xb00b15 (boobies)
+		if (Read<unsigned char>(GetExeBaseAddr() + 0x700b15) == 0xA3u)
+		{
+			TMType = TM::GameType::Nations;
+		}
+		else if (Read<unsigned char>(GetExeBaseAddr() + 0x700b15) == 0xF7u)
+		{
+			TMType = TM::GameType::United;
+		}
+    }
 
     template <typename T>
     T Read(uintptr_t Addr)
@@ -173,7 +178,7 @@ public:
     {
         using MenuGhostEditorFn = int(__thiscall*)(uintptr_t);
 
-        uintptr_t GhostEditorPtr = TMType == TM::GameType::United ? 0x4D93D0 : 0x4D9780;
+        uintptr_t GhostEditorPtr = TMType == TM::GameType::United ? GetExeBaseAddr() + 0xD93D0 : GetExeBaseAddr() + 0xD9780;
         if (GetMenuManager())
         {
             reinterpret_cast<MenuGhostEditorFn>(GhostEditorPtr)(GetMenuManager());
@@ -272,7 +277,7 @@ public:
     void GetIdName(unsigned int Ident, TM::CFastString* String)
     {
         using GetIdNameFn = void* (__thiscall*)(unsigned int* Ident, TM::CFastString* String);
-		reinterpret_cast<GetIdNameFn>(TMType == TM::GameType::United ? 0x935660 : 0x935660)(&Ident, String);
+		reinterpret_cast<GetIdNameFn>(TMType == TM::GameType::United ? GetExeBaseAddr() + 0x335660 + 0x200000 : GetExeBaseAddr() + 0x3357D0 + 0x200000)(&Ident, String);
     }
 
     std::string GetChallengeUID()
@@ -316,15 +321,12 @@ public:
     long GetRaceTime()
     {
         auto RaceTime = Read<unsigned long>(CurPlayerInfo.Player + 0x44);
-        try
+
+        auto Offset = Read<unsigned long>(CurPlayerInfo.Vehicle + 0x5D0);
+        if (RaceTime != 0 and Offset <= RaceTime)
         {
-            auto Offset = Read<unsigned long>(CurPlayerInfo.Vehicle + 0x5D0);
-            if (RaceTime != 0 and Offset <= RaceTime)
-            {
-                return RaceTime - Offset;
-            }
+            return RaceTime - Offset;
         }
-        catch (...) {}
 
         // technically, the racetime is unsigned
         // but unless someone takes ~24 days to finish a run
@@ -342,6 +344,19 @@ public:
         return Read<float>(CurPlayerInfo.Vehicle + 1464);
     }
 
+    int GetResets()
+    {
+        return Read<int>(CurPlayerInfo.TrackmaniaRace + 0x340);
+    }
+
+    int GetRespawns()
+    {
+        uintptr_t Struct = Read<uintptr_t>(CurPlayerInfo.Player + 0x1C);
+        if (Struct)
+            return Read<int>(Struct + 0x2C4);
+        return 0;
+    }
+
     int GetGear()
     {
         return Read<int>(CurPlayerInfo.Vehicle + 1480);
@@ -350,16 +365,6 @@ public:
     bool GetWaterPhysicsApplied()
     {
         return Read<bool>(CurPlayerInfo.Vehicle + 1508);
-    }
-
-    long GetCurrentCheckpoint()
-    {
-        return Read<long>(GetExeBaseAddr() + (TMType == TM::GameType::United ? 0x957BFC : (TMType == TM::GameType::Nations ? 0x95659C : 0x957BFC)));
-    }
-
-    void SetCurrentCheckpoint(long Time)
-    {
-        return Write<long>(Time, GetExeBaseAddr() + (TMType == TM::GameType::United ? 0x957BFC : (TMType == TM::GameType::Nations ? 0x95659C : 0x957BFC)));
     }
 
     int GetCheckpointCount()
@@ -374,6 +379,16 @@ public:
             }
         }
         return 0;
+    }
+
+    TM::RaceState GetState()
+    {
+        uintptr_t MoreInfoStruct = Read<uintptr_t>(CurPlayerInfo.Player + 0x1C);
+        if (MoreInfoStruct)
+        {
+            return Read<TM::RaceState>(MoreInfoStruct + 0x314);
+        }
+        return TM::RaceState::BeforeStart;
     }
 
     bool IsPlaying()

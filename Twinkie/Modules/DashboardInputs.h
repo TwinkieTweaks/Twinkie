@@ -73,15 +73,27 @@ public:
 		    auto TopCornerBrake = ImVec2(CursorPos.x + WindowWidth, CursorPos.y + WindowHeight / 2.f);
 
 			if (InputInfo.Steer != 1)
+			{
 				if (InputInfo.Steer > 0)
+				{
 					UIDrawList->AddQuadFilled(UpperR, TipSteer, LowerR, TipBgR, ColorConvertFloat4ToU32(ColorSteerI)); // right one (no AA)
+				}
 				else
+				{
 					UIDrawList->AddTriangleFilled(UpperR, LowerR, TipBgR, ColorConvertFloat4ToU32(ColorSteerI));
+				}
+			}
 			if (InputInfo.Steer != -1)
+			{
 				if (InputInfo.Steer < 0)
-					UIDrawList->AddQuadFilled(TipBgL, TipSteer, UpperL, LowerL, ColorConvertFloat4ToU32(ColorSteerI)); // left one (AA)
+				{
+					UIDrawList->AddQuadFilled(UpperL, TipSteer, LowerL, TipBgL, ColorConvertFloat4ToU32(ColorSteerI)); // left one (AA)
+				}
 				else
+				{
 					UIDrawList->AddTriangleFilled(TipBgL, UpperL, LowerL, ColorConvertFloat4ToU32(ColorSteerI));
+				}
+			}
 
 			if (InputInfo.Steer < 0)
 				UIDrawList->AddTriangleFilled(TipSteer, UpperL, LowerL, ColorConvertFloat4ToU32(ColorSteer));

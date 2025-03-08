@@ -65,8 +65,8 @@ namespace TM
 
 	enum RaceState
 	{
-		Playing = 0,
-		Finished = 1,
-		Paused = 0xf
+		BeforeStart = 0,
+		Running = 1,
+		Finished = 2
 	};
 }
