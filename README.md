@@ -10,11 +10,12 @@ GreffMASTER also provided me with a helpful list of class members and their offs
 - Dashboard, an input display and **NEW!** gear display (tachometer, and gear number indicator) with customizable options
 - **NEW!** Checkpoint counter, does what it says right on the tin
 - Medals window, for easily viewing medals
+- **NEW!** Tweaker, for customizing your render distance (even though TMUnlimiter already does that)
 
 ## Limitations
 - Currently, you have to launch the game in windowed mode, then put it back into fullscreen for Twinkie to work properly.
 - For some people, the F3 keybind to close the UI bar doesn't work
-- Only works with Vanilla Standalone TMF
+- Only works with Modloader
 
 ## Screenshots
 ![In snow](https://github.com/user-attachments/assets/46e608bf-e90f-49af-87c2-108d100aaf9c)
@@ -23,9 +24,9 @@ GreffMASTER also provided me with a helpful list of class members and their offs
 ## Create separate builds for different TMF variants
 The visual studio solution already comes with various build options for some TMF variants.\
 ![image](https://github.com/user-attachments/assets/25da4bde-8146-4740-94d6-d7e75660a87a)\
-Do note that the `Modloader` build option currently does not support Modloader, but I will work on this in the future.\
 Building in x64 is **not supported** since TMF is 32-bit.\
-If you're having compilation issues, make sure you're ONLY compiling to x86/Win32.
+If you're having compilation issues, make sure you're ONLY compiling to x86/Win32.\
+Building for United and Nations is not currently supported. Only Modloader builds are.
 
 ## Support me
 There currently aren't any monetary ways of supporting me, so if you like Twinkie and you have a github account, please star it so that more people see it.
