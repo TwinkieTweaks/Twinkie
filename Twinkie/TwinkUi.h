@@ -22,7 +22,7 @@
 #include "Modules/GhostEditor.h"
 #include "Modules/DashboardGears.h"
 #include "Modules/Tweaker.h"
-#include "Modules/HuntingStats.h"
+// #include "Modules/HuntingStats.h"
 #ifdef BUILD_DEBUG
 #include "Modules/PlayerInfo.h"
 #include "Modules/AppExplorer.h"
@@ -94,7 +94,6 @@ public:
         Modules.push_back(new CheckpointCounterModule(TrackmaniaMgr, Logger));
         //
         Modules.push_back(new MedalsModule(TrackmaniaMgr, Logger));
-        Modules.push_back(new HuntingStatsModule(TrackmaniaMgr, Logger));
         //
         Modules.push_back(new GhostEditorModule(TrackmaniaMgr, Logger));
         Modules.push_back(new TweakerModule(TrackmaniaMgr, Logger));
@@ -256,11 +255,11 @@ public:
                 {
                     if (Module->IsDebug()) Module->RenderMenuItem();
                 }
-#endif
                 if (MenuItem("ImGui Demo", "", EnableImGuiDemo))
                 {
                     EnableImGuiDemo = !EnableImGuiDemo;
                 }
+#endif
                 ImGui::EndMenu();
             }
             EndMainMenuBar();
@@ -272,10 +271,12 @@ public:
         if (Logger.EnableLog)
             Logger.RenderLog();
 
+#ifdef BUILD_DEBUG
         if (EnableImGuiDemo)
         {
             ShowDemoWindow(&EnableImGuiDemo);
         }
+#endif
     }
 
     void RenderSettings()

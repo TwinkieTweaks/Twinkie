@@ -147,7 +147,8 @@ public:
 	virtual void RenderInactive()
 	{
 		if (!Twinkie->GetChallenge() or !Twinkie->GetPlayerInfo().Player) return;
-		
+		if (Twinkie->GetChallengeUID() == "Unassigned") return;
+
 		CurrentRespawns = Twinkie->GetRespawns();
 		CurrentState = Twinkie->GetState();
 		Logger->PrintArgs("RaceTime: {}", CurrentRaceTime);
