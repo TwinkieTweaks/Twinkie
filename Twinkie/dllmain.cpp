@@ -9,8 +9,6 @@
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-#define BUILD_EXTERNAL_CONSOLE
-
 #ifdef BUILD_TMMC
 extern "C" __declspec(dllexport) int Bla() // TODO: Remove when modloader updates
 {
