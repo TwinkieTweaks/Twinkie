@@ -12,13 +12,15 @@ class IModule
 {
 public:
 	bool Enabled = false;
+	const bool* UiRenderEnabled = nullptr;
 	std::string Name = "";
 	std::string FancyName = "";
 	TwinkTrackmania* Twinkie = nullptr;
 	TwinkLogs* Logger = nullptr;
 
-	IModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger)
+	IModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled)
 	{
+		this->UiRenderEnabled = UiRenderEnabled;
 		this->Twinkie = &Twinkie;
 		this->Logger = &Logger;
 	}

@@ -417,6 +417,7 @@ public:
     }
 
     std::string FormatTmDuration(unsigned int Duration) {
+        if (Duration == MAXDWORD) return "--:--:--";
         unsigned int TotalSeconds = Duration / 1000;
         unsigned int Millis = (Duration % 1000) / 10;
         unsigned int Seconds = TotalSeconds % 60;

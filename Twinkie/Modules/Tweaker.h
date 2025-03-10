@@ -8,8 +8,9 @@ public:
 	float RenderDistance = 5000.f;
 	bool UseVoid = false;
 
-	TweakerModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger)
+	TweakerModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled)
 	{
+		this->UiRenderEnabled = UiRenderEnabled;
 		this->Name = "Tweaker";
 		this->FancyName = "Tweaker";
 		this->Twinkie = &Twinkie;

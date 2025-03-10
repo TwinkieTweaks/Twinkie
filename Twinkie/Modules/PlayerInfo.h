@@ -5,8 +5,9 @@
 class PlayerInfoModule : public IModule
 {
 public:
-	PlayerInfoModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger)
+	PlayerInfoModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled)
 	{
+		this->UiRenderEnabled = UiRenderEnabled;
 		this->Twinkie = &Twinkie;
 		this->Logger = &Logger;
 		this->Name = "PlayerInfo";

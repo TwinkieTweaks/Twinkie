@@ -74,6 +74,11 @@ public:
 		}
 	}
 
+	void GetAsString(std::string* DefaultValue)
+	{
+		*DefaultValue = Value == "" ? *DefaultValue : Value;
+	}
+
 	void Set(ImVec4 Value)
 	{
 		this->Value = std::to_string(Value.x) + "," + std::to_string(Value.y) + "," + std::to_string(Value.z) + "," + std::to_string(Value.w);
@@ -87,6 +92,11 @@ public:
 	void Set(float Value)
 	{
 		this->Value = std::to_string(Value);
+	}
+
+	void Set(std::string Value)
+	{
+		this->Value = Value;
 	}
 };
 

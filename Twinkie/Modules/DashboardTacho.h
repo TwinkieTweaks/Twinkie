@@ -16,8 +16,9 @@ public:
 	float DownshiftRpm = 6500;
 	float UpshiftRpm = 10000;
 
-	DashboardTachometerModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger)
+	DashboardTachometerModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled)
 	{
+		this->UiRenderEnabled = UiRenderEnabled;
 		this->Twinkie = &Twinkie;
 		this->Logger = &Logger;
 		this->Name = "Dashboard";
@@ -32,6 +33,7 @@ public:
 		if (!Twinkie->GetPlayerInfo().Vehicle) return;
 
 		int DashboardWindowFlags = ImGuiWindowFlags_NoTitleBar;
+		if (!*UiRenderEnabled) DashboardWindowFlags |= ImGuiWindowFlags_NoInputs;
 
 		PushStyleColor(ImGuiCol_WindowBg, ColorBackground);
 

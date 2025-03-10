@@ -11,8 +11,9 @@ public:
 	TwinkTrackmania* Twinkie = nullptr;
 	TwinkLogs* Logger = nullptr;
 
-	CheckpointCounterModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger)
+	CheckpointCounterModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled)
 	{
+		this->UiRenderEnabled = UiRenderEnabled;
 		this->Twinkie = &Twinkie;
 		this->Logger = &Logger;
 		this->Name = "CheckpointCounter";
@@ -38,7 +39,9 @@ public:
 		{
 			if (Twinkie->GetChallengeInfo().CheckpointCount == 0) return;
 			PushStyleColor(ImGuiCol_WindowBg, ColorBackground);
-			Begin("##CheckpointCounter", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize);
+			auto WindowFlags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize;
+			if (!*UiRenderEnabled) WindowFlags |= ImGuiWindowFlags_NoInputs;
+			Begin("##CheckpointCounter", nullptr, WindowFlags);
 			PopStyleColor();
 
 			TextColored(ColorText, "%d / %d", Twinkie->GetCheckpointCount(), Twinkie->GetChallengeInfo().CheckpointCount);

@@ -10,8 +10,9 @@ public:
 
 	Versioning Versions;
 
-	AboutModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger)
+	AboutModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled)
 	{
+		this->UiRenderEnabled = UiRenderEnabled;
 		this->Twinkie = &Twinkie;
 		this->Logger = &Logger;
 		this->Name = "About";

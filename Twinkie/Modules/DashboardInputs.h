@@ -15,8 +15,9 @@ public:
 	ImVec4 ColorBrakeI = ImVec4(1.f, 1.f, 1.f, 0.5f);
 	ImVec4 ColorBackground = ImVec4(0.f, 0.f, 0.f, 0.f);
 
-	DashboardInputsModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger)
+	DashboardInputsModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled)
 	{
+		this->UiRenderEnabled = UiRenderEnabled;
 		this->Twinkie = &Twinkie;
 		this->Logger = &Logger;
 		this->Name = "Dashboard";
@@ -36,10 +37,9 @@ public:
 		    PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 		
 		    int DashboardWindowFlags = ImGuiWindowFlags_NoTitleBar;
-		
+			if (!*UiRenderEnabled) DashboardWindowFlags |= ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs;
+
 		    Begin("Dashboard##Inputs", nullptr, DashboardWindowFlags);
-		
-		    IsPrevHovered = IsWindowHovered();
 		
 		    PopStyleColor();
 		    PopStyleVar();

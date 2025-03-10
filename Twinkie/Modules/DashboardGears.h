@@ -8,8 +8,9 @@ public:
 	ImVec4 ColorText = ImVec4(1.f, 1.f, 1.f, 1.f);
 	ImVec4 ColorBackground = ImVec4(0.1294117718935013f, 0.1372549086809158f, 0.168627455830574f, 0.8f);
 
-	DashboardGearsModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger)
+	DashboardGearsModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled)
 	{
+		this->UiRenderEnabled = UiRenderEnabled;
 		this->Name = "Gears";
 		this->FancyName = "Gear display";
 		this->Twinkie = &Twinkie;
@@ -23,7 +24,9 @@ public:
 		if (Twinkie->IsPlaying())
 		{
 			PushStyleColor(ImGuiCol_WindowBg, ColorBackground);
-			Begin("##Gears", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize);
+			auto WindowFlags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize;
+			if (!*UiRenderEnabled) WindowFlags |= ImGuiWindowFlags_NoInputs;
+			Begin("##Gears", nullptr, WindowFlags);
 			PopStyleColor();
 
 			TextColored(ColorText, std::to_string(Twinkie->GetGear()).c_str());

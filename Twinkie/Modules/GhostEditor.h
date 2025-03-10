@@ -7,8 +7,9 @@ class GhostEditorModule : public IModule
 public:
 	bool IsDebug = false;
 
-	GhostEditorModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger)
+	GhostEditorModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled)
 	{
+		this->UiRenderEnabled = UiRenderEnabled;
 		this->Twinkie = &Twinkie;
 		this->Logger = &Logger;
 		this->Name = "GhostEditor";

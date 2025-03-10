@@ -111,8 +111,9 @@ public:
 
 	std::map<std::string, PerMapStats> Stats;
 
-	HuntingStatsModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger)
+	HuntingStatsModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled)
 	{
+		this->UiRenderEnabled = UiRenderEnabled;
 		this->Twinkie = &Twinkie;
 		this->Logger = &Logger;
 		this->Name = "HuntingStats";

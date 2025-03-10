@@ -85,18 +85,18 @@ public:
         Logger.PrintInternal(":3c");
         Logger.PrintInternalArgs("Twinkie for TrackMania Forever. Version {}", Versions.TwinkieVer);
 
-        Modules.push_back(new AboutModule(TrackmaniaMgr, Logger));
+        Modules.push_back(new AboutModule(TrackmaniaMgr, Logger, &DoRender));
         //
-        Modules.push_back(new DashboardInputsModule(TrackmaniaMgr, Logger));
-        Modules.push_back(new DashboardTachometerModule(TrackmaniaMgr, Logger));
-        Modules.push_back(new DashboardGearsModule(TrackmaniaMgr, Logger));
+        Modules.push_back(new DashboardInputsModule(TrackmaniaMgr, Logger, &DoRender));
+        Modules.push_back(new DashboardTachometerModule(TrackmaniaMgr, Logger, &DoRender));
+        Modules.push_back(new DashboardGearsModule(TrackmaniaMgr, Logger, &DoRender));
         //
-        Modules.push_back(new CheckpointCounterModule(TrackmaniaMgr, Logger));
+        Modules.push_back(new CheckpointCounterModule(TrackmaniaMgr, Logger, &DoRender));
         //
-        Modules.push_back(new MedalsModule(TrackmaniaMgr, Logger));
+        Modules.push_back(new MedalsModule(TrackmaniaMgr, Logger, &DoRender));
         //
-        Modules.push_back(new GhostEditorModule(TrackmaniaMgr, Logger));
-        Modules.push_back(new TweakerModule(TrackmaniaMgr, Logger));
+        Modules.push_back(new GhostEditorModule(TrackmaniaMgr, Logger, &DoRender));
+        Modules.push_back(new TweakerModule(TrackmaniaMgr, Logger, &DoRender));
         //
 #ifdef BUILD_DEBUG
         Modules.push_back(new PlayerInfoModule(TrackmaniaMgr, Logger));
