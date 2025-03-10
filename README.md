@@ -15,11 +15,10 @@ GreffMASTER also provided me with a helpful list of class members and their offs
 ## Limitations
 - Currently, you have to launch the game in windowed mode, then put it back into fullscreen for Twinkie to work properly.
 - For some people, the F3 keybind to close the UI bar doesn't work
-- Only works with Modloader
 
 ## Screenshots
-![In snow](https://github.com/user-attachments/assets/46e608bf-e90f-49af-87c2-108d100aaf9c)
-![In stadium](https://github.com/user-attachments/assets/371877be-c3d2-45d7-bfb2-0b78ad711cd2)
+![In island](https://github.com/user-attachments/assets/71a7a99f-a526-40ee-a090-83ccfc547471)
+![In stadium](https://github.com/user-attachments/assets/a66e8add-b8a2-4143-a121-1bcb3bf010e3)
 
 ## Create separate builds for different TMF variants
 The visual studio solution already comes with various build options for some TMF variants.\
