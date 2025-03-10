@@ -2,6 +2,7 @@
 
 #include "TrackMania.h"
 
+#include <d3d9.h>
 #include <string>
 #include <iomanip>
 #include <sstream>
@@ -120,6 +121,16 @@ public:
     {
         return Read<uintptr_t>(GetTrackmania() + 0x6c);
     }
+
+    uintptr_t GetVisionViewport()
+    {
+        return Read<uintptr_t>(GetTrackmania() + 0x64);
+    }
+
+	IDirect3DDevice9* GetD3DDevice()
+	{
+        return Read<IDirect3DDevice9*>(GetVisionViewport() + 0x9F8);
+	}
 
     uintptr_t GetProfileScores()
     {

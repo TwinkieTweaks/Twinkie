@@ -131,7 +131,7 @@ public:
 
     void SetupImGuiStyle()
     {
-        // Soft Cherry style by Patitotective from ImThemes
+        // Soft Cherry style by Patitotective from ImThemes, twinkified
         ImGuiStyle& style = ImGui::GetStyle();
 
         style.Alpha = 1.0f;

@@ -9,6 +9,8 @@
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
+#define BUILD_EXTERNAL_CONSOLE
+
 #ifdef BUILD_TMMC
 extern "C" __declspec(dllexport) int Bla() // TODO: Remove when modloader updates
 {
@@ -82,25 +84,6 @@ static LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 	return CallWindowProcA(Twinkie.oWndProc, hWnd, uMsg, wParam, lParam);
 }
 
-static BOOL CALLBACK EnumWindowsCallback(HWND handle, LPARAM lParam)
-{
-	DWORD wndProcId;
-	GetWindowThreadProcessId(handle, &wndProcId);
-
-	if (GetCurrentProcessId() != wndProcId)
-		return TRUE; // skip to next window
-
-	Twinkie.Window = handle;
-	return FALSE; // window found abort search
-}
-
-static HWND GetProcessWindow()
-{
-	Twinkie.Window = NULL;
-	EnumWindows(EnumWindowsCallback, NULL);
-	return Twinkie.Window;
-}
-
 static DWORD WINAPI MainThread(LPVOID lpReserved)
 {
 #ifdef BUILD_EXTERNAL_CONSOLE
@@ -109,6 +92,20 @@ static DWORD WINAPI MainThread(LPVOID lpReserved)
 #endif
 
 	while (!Twinkie.TrackmaniaMgr.GetTrackmania())
+	{
+		Sleep(1);
+	}
+	while (!Twinkie.TrackmaniaMgr.GetVisionViewport())
+	{
+		Sleep(1);
+	}
+	while (!Twinkie.TrackmaniaMgr.GetD3DDevice())
+	{
+		Sleep(1);
+	}
+	auto D3DDevice = Twinkie.TrackmaniaMgr.GetD3DDevice();
+	D3DDEVICE_CREATION_PARAMETERS D3DCreationParams = {};
+	while ((D3DDevice->GetCreationParameters(&D3DCreationParams) != D3D_OK) or !D3DCreationParams.hFocusWindow)
 	{
 		Sleep(1);
 	}
@@ -123,11 +120,20 @@ static DWORD WINAPI MainThread(LPVOID lpReserved)
 			kiero::bind(16, (void**)&Twinkie.oReset, hkReset);
 			Twinkie.DX9HookStatus = kiero::bind(17, (void**)&Twinkie.oPresent, hkPresent);
 			Twinkie.Logger.PrintInternalArgs("kiero status: {}", (int)Twinkie.DX9HookStatus);
-			do
-				Twinkie.Window = GetProcessWindow();
-			while (Twinkie.Window == NULL);
-			Twinkie.oWndProc = (WNDPROC)SetWindowLongPtrA(Twinkie.Window, -4, (LONG_PTR)WndProc);
-			HookedAndAttached = true;
+			
+			if (D3DDevice->GetCreationParameters(&D3DCreationParams) == D3D_OK)
+			{
+				Twinkie.Window = D3DCreationParams.hFocusWindow;
+
+				Twinkie.oWndProc = (WNDPROC)SetWindowLongPtr(Twinkie.Window, GWLP_WNDPROC, (LONG_PTR)WndProc);
+				if (!Twinkie.oWndProc)
+					Twinkie.Logger.PrintErrorArgs("Failed to hook WndProc");
+				HookedAndAttached = true;
+			}
+			else
+			{
+				Twinkie.Logger.PrintError("Could not get D3D9CreationParameters");
+			}
 		}
 	}
 
