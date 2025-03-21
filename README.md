@@ -27,5 +27,4 @@ If you're having compilation issues, make sure you're ONLY compiling to x86/Win3
 Building for United and Nations is not currently supported. Only Modloader builds are.
 
 ## Support me
-There currently aren't any monetary ways of supporting me, so if you like Twinkie and you have a github account, please star it so that more people see it.
-And if you don't, be kind enough to share it with your friends.
+There currently aren't any monetary ways of supporting me, so if you like Twinkie and you have a github account, please star it so that more people see it, or be kind enough to share it with your friends.
