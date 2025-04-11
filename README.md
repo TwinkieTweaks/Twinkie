@@ -14,6 +14,7 @@ GreffMASTER also provided me with a helpful list of class members and their offs
 
 ## Limitations
 - For some people, the F3 keybind to close the UI bar doesn't work
+- Medal.tv randomly works and randomly doesn't
 
 ## Screenshots
 ![In island](https://github.com/user-attachments/assets/71a7a99f-a526-40ee-a090-83ccfc547471)
