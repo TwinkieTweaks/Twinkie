@@ -7,10 +7,10 @@ GreffMASTER also provided me with a helpful list of class members and their offs
 
 ## Features
 - Ghost Editor, allows you to access the ghost editor without the cheat code
-- Dashboard, an input display and **NEW!** gear display (tachometer, and gear number indicator) with customizable options
-- **NEW!** Checkpoint counter, does what it says right on the tin
+- Dashboard, an input display and gear display (tachometer, and gear number indicator) with customizable options
+- Checkpoint counter, does what it says right on the tin
 - Medals window, for easily viewing medals
-- **NEW!** Tweaker, for customizing your render distance (even though TMUnlimiter already does that)
+- Tweaker, for customizing your render distance (even though TMUnlimiter already does that)
 
 ## Limitations
 - For some people, the F3 keybind to close the UI bar doesn't work
