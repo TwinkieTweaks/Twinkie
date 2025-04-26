@@ -39,7 +39,7 @@ My String = hello guys
 My Vec4 = 1.0,1.0,0.5,3.14159
 My Bool = false
 ```
-where all values are loaded as strings by default, however Twinkie is able to understand these as the datatypes you request.\
+where all values are loaded as strings by default, however Twinkie is able to understand these as the datatypes you request.
 ### Loading
 To get the `MyModule` set of values from the above example `.ini` file:
 ```c++
