@@ -1,6 +1,9 @@
 # Twinkie
 Twinkie is a QOL modification for TrackMania Forever.
 
+## Discord
+We have a discord server at https://discord.gg/kRZ4MdCkVf
+
 ## Special thanks
 To [GreffMASTER](https://github.com/GreffMASTER) and [brokenphilip](https://github.com/brokenphilip) for helping me during development. brokenphilip has his own [tool for TMUF](https://github.com/BulbToys/TMUF) and GreffMASTER [as well (for TM1.0)](https://github.com/GreffMASTER/TMStuff) if you're interested in more cool mods for old TM games.\
 GreffMASTER also provided me with a helpful list of class members and their offsets for TMF, alongside brokenphilip helping me along my RE journey for this project <3
@@ -20,11 +23,14 @@ GreffMASTER also provided me with a helpful list of class members and their offs
 ![In island](https://github.com/user-attachments/assets/71a7a99f-a526-40ee-a090-83ccfc547471)
 ![In stadium](https://github.com/user-attachments/assets/a66e8add-b8a2-4143-a121-1bcb3bf010e3)
 
+## Contribute
+To know how to make new modules, check out [`CreatingModules.md`](https://github.com/TwinkieTweaks/Twinkie/blob/master/CreatingModules.md)
+
 ## Create separate builds for different TMF variants
 The visual studio solution already comes with various build options for some TMF variants.\
 ![image](https://github.com/user-attachments/assets/25da4bde-8146-4740-94d6-d7e75660a87a)\
 Building in x64 is **not supported** since TMF is 32-bit.\
-If you're having compilation issues, make sure you're ONLY compiling to x86/Win32.\
+If you're having compilation issues, make sure you're **ONLY** compiling to x86/Win32.\
 Building for United and Nations is not currently supported. Only Modloader builds are.
 
 ## Support me
