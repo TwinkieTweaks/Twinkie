@@ -32,45 +32,45 @@ public:
 		{
 			static bool IsPrevHovered = false;
 			VehicleInputs InputInfo = Twinkie->GetInputInfo();
+			
+		        PushStyleColor(ImGuiCol_WindowBg, ColorBackground);
+		        PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 		
-		    PushStyleColor(ImGuiCol_WindowBg, ColorBackground);
-		    PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-		
-		    int DashboardWindowFlags = ImGuiWindowFlags_NoTitleBar;
+		        int DashboardWindowFlags = ImGuiWindowFlags_NoTitleBar;
 			if (!*UiRenderEnabled) DashboardWindowFlags |= ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs;
 
-		    Begin("Dashboard##Inputs", nullptr, DashboardWindowFlags);
+		        Begin("Dashboard##Inputs", nullptr, DashboardWindowFlags);
 		
-		    PopStyleColor();
-		    PopStyleVar();
+		        PopStyleColor();
+		        PopStyleVar();
 		
-		    auto UIDrawList = GetWindowDrawList();
-		    auto CursorPos = GetCursorScreenPos();
+		        auto UIDrawList = GetWindowDrawList();
+		        auto CursorPos = GetCursorScreenPos();
 		
-		    float WindowWidth = GetWindowWidth() / 3.f;
-		    float WindowHeight = GetWindowHeight();
+		        float WindowWidth = GetWindowWidth() / 3.f;
+		        float WindowHeight = GetWindowHeight();
 		
-		    float Width = WindowWidth * -InputInfo.Steer;
+		        float Width = WindowWidth * -InputInfo.Steer;
 		
-		    float OffsettedWidth = abs(WindowWidth - Width);
+		        float OffsettedWidth = abs(WindowWidth - Width);
 		
-		    auto TipSteer = ImVec2();
+		        auto TipSteer = ImVec2();
 		
-		    if (InputInfo.Steer < 0)
-		        TipSteer = ImVec2(CursorPos.x + OffsettedWidth, CursorPos.y + WindowHeight / 2.f);
-		    else if (InputInfo.Steer > 0)
-		        TipSteer = ImVec2(CursorPos.x + WindowWidth * 2 - Width, CursorPos.y + WindowHeight / 2.f);
-		    auto TipBgL = ImVec2(CursorPos.x, CursorPos.y + WindowHeight / 2.f);
-		    auto TipBgR = ImVec2(CursorPos.x + GetWindowWidth(), CursorPos.y + WindowHeight / 2.f);
+		        if (InputInfo.Steer < 0)
+		            TipSteer = ImVec2(CursorPos.x + OffsettedWidth, CursorPos.y + WindowHeight / 2.f);
+		        else if (InputInfo.Steer > 0)
+		            TipSteer = ImVec2(CursorPos.x + WindowWidth * 2 - Width, CursorPos.y + WindowHeight / 2.f);
+		        auto TipBgL = ImVec2(CursorPos.x, CursorPos.y + WindowHeight / 2.f);
+		        auto TipBgR = ImVec2(CursorPos.x + GetWindowWidth(), CursorPos.y + WindowHeight / 2.f);
 		
-		    auto UpperL = ImVec2(CursorPos.x + WindowWidth, CursorPos.y);
-		    auto LowerL = ImVec2(CursorPos.x + WindowWidth, CursorPos.y + WindowHeight);
+		        auto UpperL = ImVec2(CursorPos.x + WindowWidth, CursorPos.y);
+		        auto LowerL = ImVec2(CursorPos.x + WindowWidth, CursorPos.y + WindowHeight);
 		
-		    auto UpperR = ImVec2(CursorPos.x + WindowWidth * 2, CursorPos.y);
-		    auto LowerR = ImVec2(CursorPos.x + WindowWidth * 2, CursorPos.y + WindowHeight);
+		        auto UpperR = ImVec2(CursorPos.x + WindowWidth * 2, CursorPos.y);
+		        auto LowerR = ImVec2(CursorPos.x + WindowWidth * 2, CursorPos.y + WindowHeight);
 		
-		    auto BottomCornerGas = ImVec2(CursorPos.x + WindowWidth * 2, CursorPos.y + WindowHeight / 2.f);
-		    auto TopCornerBrake = ImVec2(CursorPos.x + WindowWidth, CursorPos.y + WindowHeight / 2.f);
+		        auto BottomCornerGas = ImVec2(CursorPos.x + WindowWidth * 2, CursorPos.y + WindowHeight / 2.f);
+		        auto TopCornerBrake = ImVec2(CursorPos.x + WindowWidth, CursorPos.y + WindowHeight / 2.f);
 
 			if (InputInfo.Steer != 1)
 			{
@@ -100,10 +100,10 @@ public:
 			else if (InputInfo.Steer > 0)
 				UIDrawList->AddTriangleFilled(TipSteer, UpperR, LowerR, ColorConvertFloat4ToU32(ColorSteer));
 		
-		    UIDrawList->AddRectFilled(ImVec2(UpperL.x + 6.f, UpperL.y), ImVec2(BottomCornerGas.x - 6.f, BottomCornerGas.y - 3.f), InputInfo.get_Gas() ? ColorConvertFloat4ToU32(ColorAccel) : ColorConvertFloat4ToU32(ColorAccelI));
-		    UIDrawList->AddRectFilled(ImVec2(TopCornerBrake.x + 6.f, TopCornerBrake.y + 3.f), ImVec2(LowerR.x - 6.f, LowerR.y), InputInfo.get_Brake() ? ColorConvertFloat4ToU32(ColorBrake) : ColorConvertFloat4ToU32(ColorBrakeI));
+		        UIDrawList->AddRectFilled(ImVec2(UpperL.x + 6.f, UpperL.y), ImVec2(BottomCornerGas.x - 6.f, BottomCornerGas.y - 3.f), InputInfo.get_Gas() ? ColorConvertFloat4ToU32(ColorAccel) : ColorConvertFloat4ToU32(ColorAccelI));
+		        UIDrawList->AddRectFilled(ImVec2(TopCornerBrake.x + 6.f, TopCornerBrake.y + 3.f), ImVec2(LowerR.x - 6.f, LowerR.y), InputInfo.get_Brake() ? ColorConvertFloat4ToU32(ColorBrake) : ColorConvertFloat4ToU32(ColorBrakeI));
 		
-		    End();
+		        End();
 		}
 	}
 
