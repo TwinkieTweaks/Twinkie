@@ -365,4 +365,4 @@ FodyWeavers.xsd
 # Twinkie specific stuff
 United/
 Nations/
-Twinkie/Modules/AppExplorer.h
+AppExplorer.h
