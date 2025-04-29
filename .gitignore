@@ -365,5 +365,4 @@ FodyWeavers.xsd
 # Twinkie specific stuff
 United/
 Nations/
-**/AppExplorer.h
 /Twinkie/Modules/AppExplorer.h
