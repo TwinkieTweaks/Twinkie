@@ -25,7 +25,7 @@ public:
 		this->Logger = &Logger;
 	}
 
-	IModule(){}
+	IModule() = default;
 
 	virtual void Render() {}
 	virtual void RenderAnyways() {}
