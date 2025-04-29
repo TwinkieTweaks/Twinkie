@@ -44,6 +44,9 @@ public:
     TwinkTrackmania TrackmaniaMgr;
     TwinkLogs Logger;
     TwinkIo* IoMgr;
+	ImFont* FontMain = nullptr;
+
+    float UiScale = 1.f;
 
     bool DoRender = true;
     bool Initialized = false;
@@ -68,6 +71,8 @@ public:
         {
             Module->SettingsInit(Settings);
         }
+
+        Settings["Twinkie"]["UI Scale"].GetAsFloat(&UiScale);
     }
 
     void SettingsSave()
@@ -76,6 +81,8 @@ public:
         {
             Module->SettingsSave(Settings);
         }
+
+		Settings["Twinkie"]["UI Scale"].Set(UiScale);
     }
 
     TwinkUi()
@@ -99,8 +106,8 @@ public:
         Modules.push_back(new TweakerModule(TrackmaniaMgr, Logger, &DoRender));
         //
 #ifdef BUILD_DEBUG
-        Modules.push_back(new PlayerInfoModule(TrackmaniaMgr, Logger));
-		Modules.push_back(new AppExplorerModule(TrackmaniaMgr, Logger));
+        Modules.push_back(new PlayerInfoModule(TrackmaniaMgr, Logger, &DoRender));
+		Modules.push_back(new AppExplorerModule(TrackmaniaMgr, Logger, &DoRender));
 #endif
 
         Logger.PrintInternalArgs("{} module{} initialized.", Modules.size(), Modules.size() == 1 ? "" : "s");
@@ -126,6 +133,15 @@ public:
 
     void InitFonts(ImGuiIO& ImIo)
     {
+        FontMain = ImIo.Fonts->AddFontFromFileTTF((GetDocumentsFolder() + "\\Twinkie\\Fonts\\Twinkie.ttf").c_str(), 14.f * UiScale);
+        if (FontMain)
+        {
+            Logger.PrintInternal("Font \"Main\" initialized.");
+        }
+        else
+        {
+            Logger.PrintError("Font \"Main\" not initialized.");
+        }
         return;
     }
 
@@ -223,6 +239,8 @@ public:
     void Render()
     {
         using namespace ImGui;
+        if (FontMain) PushFont(FontMain);
+
         for (IModule* Module : Modules)
         {
            if (Module->Enabled) Module->Render();
@@ -277,6 +295,8 @@ public:
             ShowDemoWindow(&EnableImGuiDemo);
         }
 #endif
+
+        if (FontMain) PopFont();
     }
 
     void RenderSettings()
@@ -294,6 +314,25 @@ public:
                 Module->RenderSettings();
             }
 
+            if (BeginTabItem("Twinkie"))
+            { 
+                SliderFloat("UI Scale", &UiScale, 0.25f, 5.f, "%.3f", ImGuiSliderFlags_AlwaysClamp);
+                UiScale = roundf(UiScale / 0.25f) * 0.25f;
+
+                SameLine();
+
+                BeginDisabled();
+
+                Text("(?)");
+				if (IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+				{
+					SetTooltip("Applies only on restart.");
+				}
+
+                EndDisabled();
+                EndTabItem();
+            }
+
             EndTabBar();
         }
         End();
@@ -301,6 +340,10 @@ public:
 
     void RenderAnyways()
     {
+		using namespace ImGui;
+
+		if (FontMain) PushFont(FontMain);
+
         IoMgr->Update();
 
         TrackmaniaMgr.CurPlayerInfo = TrackmaniaMgr.GetPlayerInfo();
@@ -310,5 +353,7 @@ public:
             if (Module->Enabled) Module->RenderAnyways();
             Module->RenderInactive();
         }
+
+		if (FontMain) PopFont();
     }
 };

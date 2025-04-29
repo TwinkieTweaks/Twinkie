@@ -2,6 +2,43 @@
 
 #include "../IModule.h"
 
+const char* DashboardStyleNames[] = { "Pad", "Keyboard" };
+
+// thank you omar very cool
+struct Vec2
+{
+	float x;
+	float y;
+
+	Vec2 operator+(Vec2 B)
+	{
+		return Vec2(this->x + B.x, this->y + B.y);
+	}
+
+	Vec2 operator-(Vec2 B)
+	{
+		return Vec2(this->x - B.x, this->y - B.y);
+	}
+
+	Vec2 operator*(float F)
+	{
+		return Vec2(this->x * F, this->y * F);
+	}
+
+	operator ImVec2()
+	{
+		return ImVec2(this->x, this->y);
+	}
+};
+
+ImVec2 Lerp(ImVec2 A, ImVec2 B, float T)
+{
+	Vec2 A2 = Vec2(A.x, A.y);
+	Vec2 B2 = Vec2(B.x, B.y);
+
+	return A2 + ((B2 - A2) * T);
+}
+
 class DashboardInputsModule : public IModule
 {
 public:
@@ -14,6 +51,10 @@ public:
 	ImVec4 ColorBrake = ImVec4(0.94f, 0.f, 0.f, 1.f);
 	ImVec4 ColorBrakeI = ImVec4(1.f, 1.f, 1.f, 0.5f);
 	ImVec4 ColorBackground = ImVec4(0.f, 0.f, 0.f, 0.f);
+
+	std::string StyleName = "Pad";
+
+	int StyleIdx = 0;
 
 	DashboardInputsModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled)
 	{
@@ -33,77 +74,91 @@ public:
 			static bool IsPrevHovered = false;
 			VehicleInputs InputInfo = Twinkie->GetInputInfo();
 			
-		        PushStyleColor(ImGuiCol_WindowBg, ColorBackground);
-		        PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+		    PushStyleColor(ImGuiCol_WindowBg, ColorBackground);
+		    PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 		
-		        int DashboardWindowFlags = ImGuiWindowFlags_NoTitleBar;
+		    int DashboardWindowFlags = ImGuiWindowFlags_NoTitleBar;
 			if (!*UiRenderEnabled) DashboardWindowFlags |= ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs;
 
-		        Begin("Dashboard##Inputs", nullptr, DashboardWindowFlags);
+		    Begin("Dashboard##Inputs", nullptr, DashboardWindowFlags);
 		
-		        PopStyleColor();
-		        PopStyleVar();
-		
-		        auto UIDrawList = GetWindowDrawList();
-		        auto CursorPos = GetCursorScreenPos();
-		
-		        float WindowWidth = GetWindowWidth() / 3.f;
-		        float WindowHeight = GetWindowHeight();
-		
-		        float Width = WindowWidth * -InputInfo.Steer;
-		
-		        float OffsettedWidth = abs(WindowWidth - Width);
-		
-		        auto TipSteer = ImVec2();
-		
-		        if (InputInfo.Steer < 0)
-		            TipSteer = ImVec2(CursorPos.x + OffsettedWidth, CursorPos.y + WindowHeight / 2.f);
-		        else if (InputInfo.Steer > 0)
-		            TipSteer = ImVec2(CursorPos.x + WindowWidth * 2 - Width, CursorPos.y + WindowHeight / 2.f);
-		        auto TipBgL = ImVec2(CursorPos.x, CursorPos.y + WindowHeight / 2.f);
-		        auto TipBgR = ImVec2(CursorPos.x + GetWindowWidth(), CursorPos.y + WindowHeight / 2.f);
-		
-		        auto UpperL = ImVec2(CursorPos.x + WindowWidth, CursorPos.y);
-		        auto LowerL = ImVec2(CursorPos.x + WindowWidth, CursorPos.y + WindowHeight);
-		
-		        auto UpperR = ImVec2(CursorPos.x + WindowWidth * 2, CursorPos.y);
-		        auto LowerR = ImVec2(CursorPos.x + WindowWidth * 2, CursorPos.y + WindowHeight);
-		
-		        auto BottomCornerGas = ImVec2(CursorPos.x + WindowWidth * 2, CursorPos.y + WindowHeight / 2.f);
-		        auto TopCornerBrake = ImVec2(CursorPos.x + WindowWidth, CursorPos.y + WindowHeight / 2.f);
+		    PopStyleColor();
+		    PopStyleVar();
 
-			if (InputInfo.Steer != 1)
+			if (StyleName == "Pad")
 			{
+				auto UIDrawList = GetWindowDrawList();
+				auto CursorPos = GetCursorScreenPos();
+
+				float WindowWidth = GetWindowWidth() / 3.f;
+				float WindowHeight = GetWindowHeight();
+
+				float Width = WindowWidth * -InputInfo.Steer;
+
+				float OffsettedWidth = abs(WindowWidth - Width);
+
+				auto UpperL = ImVec2(CursorPos.x + WindowWidth, CursorPos.y);
+				auto LowerL = ImVec2(CursorPos.x + WindowWidth, CursorPos.y + WindowHeight);
+				auto TipL = ImVec2(CursorPos.x, CursorPos.y + WindowHeight / 2.f);
+
+				auto UpperLSteer = Lerp(UpperL, TipL, -InputInfo.Steer);
+				auto LowerLSteer = Lerp(LowerL, TipL, -InputInfo.Steer);
+
+				auto UpperR = ImVec2(CursorPos.x + WindowWidth * 2, CursorPos.y);
+				auto LowerR = ImVec2(CursorPos.x + WindowWidth * 2, CursorPos.y + WindowHeight);
+				auto TipR = ImVec2(CursorPos.x + WindowWidth * 3, CursorPos.y + WindowHeight / 2.f);
+
+				auto UpperRSteer = Lerp(UpperR, TipR, InputInfo.Steer);
+				auto LowerRSteer = Lerp(LowerR, TipR, InputInfo.Steer);
+
+				UIDrawList->AddTriangleFilled(UpperL, LowerL, TipL, ColorConvertFloat4ToU32(ColorSteerI));
+				UIDrawList->AddTriangleFilled(UpperR, LowerR, TipR, ColorConvertFloat4ToU32(ColorSteerI));
+
 				if (InputInfo.Steer > 0)
 				{
-					UIDrawList->AddQuadFilled(UpperR, TipSteer, LowerR, TipBgR, ColorConvertFloat4ToU32(ColorSteerI)); // right one (no AA)
+					UIDrawList->AddQuadFilled(UpperR, UpperRSteer, LowerRSteer, LowerR, ColorConvertFloat4ToU32(ColorSteer));
 				}
-				else
+				else if (InputInfo.Steer < 0)
 				{
-					UIDrawList->AddTriangleFilled(UpperR, LowerR, TipBgR, ColorConvertFloat4ToU32(ColorSteerI));
+					UIDrawList->AddQuadFilled(UpperL, UpperLSteer, LowerLSteer, LowerL, ColorConvertFloat4ToU32(ColorSteer));
 				}
-			}
-			if (InputInfo.Steer != -1)
-			{
-				if (InputInfo.Steer < 0)
-				{
-					UIDrawList->AddQuadFilled(UpperL, TipSteer, LowerL, TipBgL, ColorConvertFloat4ToU32(ColorSteerI)); // left one (AA)
-				}
-				else
-				{
-					UIDrawList->AddTriangleFilled(TipBgL, UpperL, LowerL, ColorConvertFloat4ToU32(ColorSteerI));
-				}
-			}
 
-			if (InputInfo.Steer < 0)
-				UIDrawList->AddTriangleFilled(TipSteer, UpperL, LowerL, ColorConvertFloat4ToU32(ColorSteer));
-			else if (InputInfo.Steer > 0)
-				UIDrawList->AddTriangleFilled(TipSteer, UpperR, LowerR, ColorConvertFloat4ToU32(ColorSteer));
-		
-		        UIDrawList->AddRectFilled(ImVec2(UpperL.x + 6.f, UpperL.y), ImVec2(BottomCornerGas.x - 6.f, BottomCornerGas.y - 3.f), InputInfo.get_Gas() ? ColorConvertFloat4ToU32(ColorAccel) : ColorConvertFloat4ToU32(ColorAccelI));
-		        UIDrawList->AddRectFilled(ImVec2(TopCornerBrake.x + 6.f, TopCornerBrake.y + 3.f), ImVec2(LowerR.x - 6.f, LowerR.y), InputInfo.get_Brake() ? ColorConvertFloat4ToU32(ColorBrake) : ColorConvertFloat4ToU32(ColorBrakeI));
-		
-		        End();
+				auto BottomCornerGas = ImVec2(CursorPos.x + WindowWidth * 2, CursorPos.y + WindowHeight / 2.f);
+				auto TopCornerBrake = ImVec2(CursorPos.x + WindowWidth, CursorPos.y + WindowHeight / 2.f);
+
+				UIDrawList->AddRectFilled(ImVec2(UpperL.x + 6.f, UpperL.y), ImVec2(BottomCornerGas.x - 6.f, BottomCornerGas.y - 3.f), InputInfo.get_Gas() ? ColorConvertFloat4ToU32(ColorAccel) : ColorConvertFloat4ToU32(ColorAccelI));
+				UIDrawList->AddRectFilled(ImVec2(TopCornerBrake.x + 6.f, TopCornerBrake.y + 3.f), ImVec2(LowerR.x - 6.f, LowerR.y), InputInfo.get_Brake() ? ColorConvertFloat4ToU32(ColorBrake) : ColorConvertFloat4ToU32(ColorBrakeI));
+			}
+			else if (StyleName == "Keyboard")
+			{
+				auto UIDrawList = GetWindowDrawList();
+				auto CursorPos = GetCursorScreenPos();
+
+				float WindowWidth = GetWindowWidth() / 3.f;
+				float WindowHeight = GetWindowHeight();
+
+				float Width = WindowWidth * -InputInfo.Steer;
+
+				float OffsettedWidth = abs(WindowWidth - Width);
+
+				auto UpperL = ImVec2(CursorPos.x + WindowWidth, CursorPos.y);
+				auto LowerL = ImVec2(CursorPos.x + WindowWidth, CursorPos.y + WindowHeight);
+				auto TipL = ImVec2(CursorPos.x, CursorPos.y + 3.f + WindowHeight / 2.f);
+
+				auto UpperR = ImVec2(CursorPos.x + WindowWidth * 2, CursorPos.y);
+				auto LowerR = ImVec2(CursorPos.x + WindowWidth * 2, CursorPos.y + WindowHeight);
+				auto TipR = ImVec2(CursorPos.x + WindowWidth * 3, CursorPos.y + 3.f + WindowHeight / 2.f);
+
+				UIDrawList->AddRectFilled(LowerL, TipL, ColorConvertFloat4ToU32(ColorSteerI));
+				UIDrawList->AddRectFilled(LowerR, TipR, ColorConvertFloat4ToU32(ColorSteerI));
+
+				auto BottomCornerGas = ImVec2(CursorPos.x + WindowWidth * 2, CursorPos.y + WindowHeight / 2.f);
+				auto TopCornerBrake = ImVec2(CursorPos.x + WindowWidth, CursorPos.y + WindowHeight / 2.f);
+
+				UIDrawList->AddRectFilled(ImVec2(UpperL.x + 6.f, UpperL.y), ImVec2(BottomCornerGas.x - 6.f, BottomCornerGas.y - 3.f), InputInfo.get_Gas() ? ColorConvertFloat4ToU32(ColorAccel) : ColorConvertFloat4ToU32(ColorAccelI));
+				UIDrawList->AddRectFilled(ImVec2(TopCornerBrake.x + 6.f, TopCornerBrake.y + 3.f), ImVec2(LowerR.x - 6.f, LowerR.y), InputInfo.get_Brake() ? ColorConvertFloat4ToU32(ColorBrake) : ColorConvertFloat4ToU32(ColorBrakeI));
+			}
+		    End();
 		}
 	}
 
@@ -125,6 +180,9 @@ public:
 			Separator();
 
 			ColorEdit4("Background color", &ColorBackground.x, ImGuiColorEditFlags_NoInputs);
+
+			Combo("Style", &StyleIdx, DashboardStyleNames, IM_ARRAYSIZE(DashboardStyleNames));
+			StyleName = DashboardStyleNames[StyleIdx];
 			
 			EndTabItem();
 		}
@@ -151,6 +209,8 @@ public:
 		Settings["Dashboard"]["Input display background color"].GetAsVec4(&ColorBackground);
 
 		Settings["Dashboard"]["Enable input display"].GetAsBool(&Enabled);
+
+		Settings["Dashboard"]["Style"].GetAsString(&StyleName);
 	}
 
 	virtual void SettingsSave(SettingMgr& Settings) 
@@ -166,5 +226,7 @@ public:
 		Settings["Dashboard"]["Input display background color"].Set(ColorBackground);
 
 		Settings["Dashboard"]["Enable input display"].Set(Enabled);
+
+		Settings["Dashboard"]["Style"].Set(StyleName);
 	}
 };

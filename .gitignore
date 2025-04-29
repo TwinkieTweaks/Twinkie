@@ -366,3 +366,5 @@ FodyWeavers.xsd
 United/
 Nations/
 Release/
+Debug/
+Twinkie/Modules/AppExplorer.h

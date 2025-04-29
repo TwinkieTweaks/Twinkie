@@ -22,6 +22,8 @@ public:
 		Text("ExeBaseAddr: %x", Twinkie->GetExeBaseAddr());
 		Text("CTrackMania: %x", Twinkie->GetTrackmania());
 
+		Separator();
+
 		End();
 	}
 
