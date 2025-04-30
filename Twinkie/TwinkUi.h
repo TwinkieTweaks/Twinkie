@@ -271,11 +271,11 @@ public:
                 {
                     Logger.EnableLog = !Logger.EnableLog;
                 }
-#ifdef BUILD_DEBUG
                 for (IModule* Module : Modules)
                 {
                     if (Module->IsDebug()) Module->RenderMenuItem();
                 }
+#ifdef BUILD_DEBUG
                 if (MenuItem("ImGui Demo", "", EnableImGuiDemo))
                 {
                     EnableImGuiDemo = !EnableImGuiDemo;

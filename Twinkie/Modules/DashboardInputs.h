@@ -155,15 +155,15 @@ public:
 
 				if (InputInfo.Steer > 0)
 				{
-					auto LerpedUpperR = Lerp(UpperR, UpperTipR, InputInfo.Steer);
-					auto LerpedLowerR = Lerp(LowerR, LowerTipR, InputInfo.Steer);
+					auto LerpedUpperR = Lerp(ImVec2(UpperR.x, UpperTipR.y), UpperTipR, InputInfo.Steer);
+					auto LerpedLowerR = Lerp(ImVec2(LowerR.x, LowerTipR.y), LowerTipR, InputInfo.Steer);
 
 					UIDrawList->AddRectFilled(LowerR, LerpedUpperR, ColorConvertFloat4ToU32(ColorSteer));
 				}
 				else if (InputInfo.Steer < 0)
 				{
-					auto LerpedUpperL = Lerp(UpperL, UpperTipL, abs(InputInfo.Steer));
-					auto LerpedLowerL = Lerp(LowerL, LowerTipL, abs(InputInfo.Steer));
+					auto LerpedUpperL = Lerp(ImVec2(UpperL.x, UpperTipL.y), UpperTipL, abs(InputInfo.Steer));
+					auto LerpedLowerL = Lerp(ImVec2(LowerL.x, LowerTipL.y), LowerTipL, abs(InputInfo.Steer));
 
 					UIDrawList->AddRectFilled(LowerL, LerpedUpperL, ColorConvertFloat4ToU32(ColorSteer));
 				}
