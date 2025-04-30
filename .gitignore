@@ -365,4 +365,9 @@ FodyWeavers.xsd
 # Twinkie specific stuff
 United/
 Nations/
+Modloader/
+Debug/
+Release/
 /Twinkie/Modules/AppExplorer.h
+*.c
+/Modloader/TwinkieModloader.dll
