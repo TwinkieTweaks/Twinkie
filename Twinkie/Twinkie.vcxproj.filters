@@ -135,6 +135,15 @@
     <ClInclude Include="Modules\AppExplorer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="nvg-dx9\fontstash.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="nvg-dx9\stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="nvg-dx9\stb_truetype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">

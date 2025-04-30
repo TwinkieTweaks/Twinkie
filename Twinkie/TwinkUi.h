@@ -25,6 +25,8 @@
 // #include "Modules/HuntingStats.h"
 #ifdef BUILD_DEBUG
 #include "Modules/PlayerInfo.h"
+#endif
+#ifdef BUILD_PREMIUM
 #include "Modules/AppExplorer.h"
 #endif
 
@@ -92,6 +94,12 @@ public:
         Logger.PrintInternal(":3c");
         Logger.PrintInternalArgs("Twinkie for TrackMania Forever. Version {}", Versions.TwinkieVer);
 
+#ifdef BUILD_DEBUG
+        Modules.push_back(new PlayerInfoModule(TrackmaniaMgr, Logger, &DoRender));
+#endif
+#ifdef BUILD_PREMIUM
+        Modules.push_back(new AppExplorerModule(TrackmaniaMgr, Logger, &DoRender));
+#endif
         Modules.push_back(new AboutModule(TrackmaniaMgr, Logger, &DoRender));
         //
         Modules.push_back(new DashboardInputsModule(TrackmaniaMgr, Logger, &DoRender));
@@ -104,11 +112,6 @@ public:
         //
         Modules.push_back(new GhostEditorModule(TrackmaniaMgr, Logger, &DoRender));
         Modules.push_back(new TweakerModule(TrackmaniaMgr, Logger, &DoRender));
-        //
-#ifdef BUILD_DEBUG
-        Modules.push_back(new PlayerInfoModule(TrackmaniaMgr, Logger, &DoRender));
-		Modules.push_back(new AppExplorerModule(TrackmaniaMgr, Logger, &DoRender));
-#endif
 
         Logger.PrintInternalArgs("{} module{} initialized.", Modules.size(), Modules.size() == 1 ? "" : "s");
 

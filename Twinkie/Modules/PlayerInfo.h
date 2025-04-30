@@ -94,7 +94,8 @@ public:
 
 			VehicleInputs InputInfo = Twinkie->GetInputInfo();
 
-			Text("Steer: %f", InputInfo.Steer);
+			// Text("Steer: %f", InputInfo.Steer);
+			SliderFloat("Steer", (float*)(Twinkie->CurPlayerInfo.Vehicle + 88), -1.f, 1.f);
 			Text("Gas: %f", InputInfo.fGas);
 			Text("Brake: %f", InputInfo.fBrake);
 

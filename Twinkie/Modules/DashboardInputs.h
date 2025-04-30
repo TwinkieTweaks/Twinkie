@@ -52,9 +52,8 @@ public:
 	ImVec4 ColorBrakeI = ImVec4(1.f, 1.f, 1.f, 0.5f);
 	ImVec4 ColorBackground = ImVec4(0.f, 0.f, 0.f, 0.f);
 
-	std::string StyleName = "Pad";
-
-	int StyleIdx = 0;
+	std::string StyleName = "Keyboard";
+	int StyleIdx = 1;
 
 	DashboardInputsModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled)
 	{
@@ -143,14 +142,31 @@ public:
 
 				auto UpperL = ImVec2(CursorPos.x + WindowWidth, CursorPos.y);
 				auto LowerL = ImVec2(CursorPos.x + WindowWidth, CursorPos.y + WindowHeight);
-				auto TipL = ImVec2(CursorPos.x, CursorPos.y + 3.f + WindowHeight / 2.f);
+				auto UpperTipL = ImVec2(CursorPos.x + 13.f, CursorPos.y + 3.f + WindowHeight / 2.f);
+				auto LowerTipL = ImVec2(CursorPos.x + 6.f, CursorPos.y + WindowHeight / 2.f);
 
 				auto UpperR = ImVec2(CursorPos.x + WindowWidth * 2, CursorPos.y);
 				auto LowerR = ImVec2(CursorPos.x + WindowWidth * 2, CursorPos.y + WindowHeight);
-				auto TipR = ImVec2(CursorPos.x + WindowWidth * 3, CursorPos.y + 3.f + WindowHeight / 2.f);
+				auto UpperTipR = ImVec2(CursorPos.x + WindowWidth * 3 - 13.f, CursorPos.y + 3.f + WindowHeight / 2.f);
+				auto LowerTipR = ImVec2(CursorPos.x + WindowWidth * 3 - 6.f, CursorPos.y + WindowHeight / 2.f);
 
-				UIDrawList->AddRectFilled(LowerL, TipL, ColorConvertFloat4ToU32(ColorSteerI));
-				UIDrawList->AddRectFilled(LowerR, TipR, ColorConvertFloat4ToU32(ColorSteerI));
+				UIDrawList->AddRectFilled(LowerL, UpperTipL, ColorConvertFloat4ToU32(ColorSteerI));
+				UIDrawList->AddRectFilled(LowerR, UpperTipR, ColorConvertFloat4ToU32(ColorSteerI));
+
+				if (InputInfo.Steer > 0)
+				{
+					auto LerpedUpperR = Lerp(UpperR, UpperTipR, InputInfo.Steer);
+					auto LerpedLowerR = Lerp(LowerR, LowerTipR, InputInfo.Steer);
+
+					UIDrawList->AddRectFilled(LowerR, LerpedUpperR, ColorConvertFloat4ToU32(ColorSteer));
+				}
+				else if (InputInfo.Steer < 0)
+				{
+					auto LerpedUpperL = Lerp(UpperL, UpperTipL, abs(InputInfo.Steer));
+					auto LerpedLowerL = Lerp(LowerL, LowerTipL, abs(InputInfo.Steer));
+
+					UIDrawList->AddRectFilled(LowerL, LerpedUpperL, ColorConvertFloat4ToU32(ColorSteer));
+				}
 
 				auto BottomCornerGas = ImVec2(CursorPos.x + WindowWidth * 2, CursorPos.y + WindowHeight / 2.f);
 				auto TopCornerBrake = ImVec2(CursorPos.x + WindowWidth, CursorPos.y + WindowHeight / 2.f);
@@ -211,6 +227,7 @@ public:
 		Settings["Dashboard"]["Enable input display"].GetAsBool(&Enabled);
 
 		Settings["Dashboard"]["Style"].GetAsString(&StyleName);
+		StyleIdx = DashboardStyleNames[0] == StyleName.c_str() ? 0 : 1;
 	}
 
 	virtual void SettingsSave(SettingMgr& Settings) 

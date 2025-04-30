@@ -291,6 +291,9 @@
       <EnableUAC>false</EnableUAC>
       <AdditionalDependencies>d3d9.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <FxCompile>
+      <ShaderType>Effect</ShaderType>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -419,6 +422,9 @@
     <ClInclude Include="Modules\Medals.h" />
     <ClInclude Include="Modules\PlayerInfo.h" />
     <ClInclude Include="Modules\Tweaker.h" />
+    <ClInclude Include="nvg-dx9\fontstash.h" />
+    <ClInclude Include="nvg-dx9\stb_image.h" />
+    <ClInclude Include="nvg-dx9\stb_truetype.h" />
     <ClInclude Include="Release\Settings.h" />
     <ClInclude Include="SettingMgr.h" />
     <ClInclude Include="TrackMania.h" />

@@ -11,6 +11,8 @@ Global
 		Debug|x86 = Debug|x86
 		Modloader|x64 = Modloader|x64
 		Modloader|x86 = Modloader|x86
+		ModloaderDebug|x64 = ModloaderDebug|x64
+		ModloaderDebug|x86 = ModloaderDebug|x86
 		Nations|x64 = Nations|x64
 		Nations|x86 = Nations|x86
 		Release|x64 = Release|x64
@@ -21,12 +23,15 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Debug|x64.ActiveCfg = Debug|x64
 		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Debug|x64.Build.0 = Debug|x64
-		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Debug|x86.ActiveCfg = Debug|Win32
-		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Debug|x86.Build.0 = Debug|Win32
+		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Debug|x86.ActiveCfg = Modloader|Win32
+		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Debug|x86.Build.0 = Modloader|Win32
 		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Modloader|x64.ActiveCfg = Modloader|x64
 		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Modloader|x64.Build.0 = Modloader|x64
 		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Modloader|x86.ActiveCfg = Modloader|Win32
 		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Modloader|x86.Build.0 = Modloader|Win32
+		{E43A687A-2577-4CD5-A45C-EA35254221E9}.ModloaderDebug|x64.ActiveCfg = ModloaderDebug|Win32
+		{E43A687A-2577-4CD5-A45C-EA35254221E9}.ModloaderDebug|x86.ActiveCfg = Nations|Win32
+		{E43A687A-2577-4CD5-A45C-EA35254221E9}.ModloaderDebug|x86.Build.0 = Nations|Win32
 		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Nations|x64.ActiveCfg = Nations|x64
 		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Nations|x64.Build.0 = Nations|x64
 		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Nations|x86.ActiveCfg = Nations|Win32
