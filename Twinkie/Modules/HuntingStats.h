@@ -84,14 +84,14 @@ struct PerMapStats
 		}
 	}
 
-	void RenderStatistic()
+	void RenderStatistic(unsigned long long OffsetTime)
 	{
 		using namespace ImGui;
 		Text("Finishes: %d / %d", CurrentFinishes, TotalFinishes);
 		Text("Attempts: %d / %d", CurrentAttempts, TotalAttempts);
 		Text("Respawns: %d / %d", CurrentRespawns, TotalRespawns);
-		Text(std::format("Total time: {}", FormatTmDuration(TotalTime)).c_str());
-		Text(std::format("Session time: {}", FormatTmDuration(TotalTime)).c_str());
+		Text(std::format("Total time: {}", FormatTmDuration(TotalTime + OffsetTime)).c_str());
+		Text(std::format("Session time: {}", FormatTmDuration(CurrentTime + OffsetTime)).c_str());
 	}
 };
 
@@ -104,8 +104,7 @@ public:
 	TM::RaceState LastState = TM::RaceState::BeforeStart;
 	TM::RaceState CurrentState = TM::RaceState::BeforeStart;
 
-	int LastRaceTime = 0;
-	int CurrentRaceTime = 0;
+	long long CurrentRaceTime = 0;
 
 	PerMapStats* CurrentStatistics = nullptr;
 
@@ -126,21 +125,22 @@ public:
 
 		if (!Twinkie->GetChallenge()) return;
 
-		Begin("HuntingStatsDbg", &Enabled);
+		Begin("Hunting Stats", &Enabled, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize);
+
+		if (CurrentState == TM::RaceState::BeforeStart)
+		{
+			CurrentRaceTime = 0;
+		}
 
 		if (Stats.contains(Twinkie->GetChallengeUID()))
 		{
 			CurrentStatistics = &Stats[Twinkie->GetChallengeUID()];
-			CurrentStatistics->RenderStatistic();
-
-			Text("RaceState: %d", (int)CurrentState);
+			CurrentStatistics->RenderStatistic(CurrentRaceTime);
 		}
 		else
 		{
 			Stats[Twinkie->GetChallengeUID()] = {};
 		}
-
-		Text("%d, %d", CurrentRaceTime, LastRaceTime);
 
 		End();
 	}
@@ -152,20 +152,21 @@ public:
 
 		CurrentRespawns = Twinkie->GetRespawns();
 		CurrentState = Twinkie->GetState();
-		Logger->PrintArgs("RaceTime: {}", CurrentRaceTime);
 		CurrentRaceTime = Twinkie->GetRaceTime();
-		Logger->PrintArgs("RaceTime: {}", CurrentRaceTime);
 
 		if (Stats.contains(Twinkie->GetChallengeUID()))
 		{
 			CurrentStatistics = &Stats[Twinkie->GetChallengeUID()];
 
-			if (LastState != CurrentState and CurrentState == TM::RaceState::Finished and CurrentRaceTime != 0)
+			if (LastState != CurrentState and CurrentState == TM::RaceState::Finished and CurrentRaceTime != 0 and CurrentRaceTime != -1) // ULL_MAX
 			{
 				CurrentStatistics->CurrentFinishes++;
+
+				CurrentStatistics->CurrentTime += CurrentRaceTime;
+				CurrentStatistics->TotalTime += CurrentRaceTime;
 			}
 
-			if (LastState != CurrentState and CurrentState == TM::RaceState::BeforeStart and CurrentRaceTime != 0)
+			if (LastState != CurrentState and CurrentState == TM::RaceState::BeforeStart and CurrentRaceTime != 0 and CurrentRaceTime != -1) // ULL_MAX
 			{
 				// the Twinkie->GetRaceTime() != 0 might seem nonsensical, since when you begin the race then your racetime should reset
 				// however it is *only* reset *after* you begin the race
@@ -179,12 +180,9 @@ public:
 				// the reason we do not want the racetime to be 0 is that it is 0 when we first load the map
 
 				CurrentStatistics->CurrentAttempts++;
-			}
 
-			if (LastRaceTime != CurrentRaceTime and CurrentRaceTime > LastRaceTime)
-			{
-				auto Diff = CurrentRaceTime - LastRaceTime;
-				CurrentStatistics->CurrentTime += Diff;
+				CurrentStatistics->CurrentTime += CurrentRaceTime;
+				CurrentStatistics->TotalTime += CurrentRaceTime;
 			}
 
 			if (LastRespawns != CurrentRespawns and CurrentRespawns > LastRespawns)
@@ -201,7 +199,6 @@ public:
 
 		Stats[Twinkie->GetChallengeUID()] = *CurrentStatistics;
 
-		LastRaceTime = CurrentRaceTime;
 		LastState = CurrentState;
 		LastRespawns = CurrentRespawns;
 	}
@@ -226,6 +223,8 @@ public:
 
 			Stats[Key.Name].LoadFromString(Key.Value);
 		}
+
+		Section["Enable"].GetAsBool(&Enabled);
 	}
 
 	virtual void SettingsSave(SettingMgr& Settings)
@@ -237,6 +236,8 @@ public:
 			Stat.second.MergeCurrentWithTotal();
 			Section[Stat.first].Value = Stat.second.ToString();
 		}
+
+		Section["Enable"].Set(Enabled);
 	}
 
 	virtual bool HasSettings() { return false; }

@@ -22,7 +22,7 @@
 #include "Modules/GhostEditor.h"
 #include "Modules/DashboardGears.h"
 #include "Modules/Tweaker.h"
-// #include "Modules/HuntingStats.h"
+#include "Modules/HuntingStats.h"
 #ifdef BUILD_DEBUG
 #include "Modules/PlayerInfo.h"
 #endif
@@ -108,6 +108,7 @@ public:
         //
         Modules.push_back(new CheckpointCounterModule(TrackmaniaMgr, Logger, &DoRender));
         //
+        Modules.push_back(new HuntingStatsModule(TrackmaniaMgr, Logger, &DoRender));
         Modules.push_back(new MedalsModule(TrackmaniaMgr, Logger, &DoRender));
         //
         Modules.push_back(new GhostEditorModule(TrackmaniaMgr, Logger, &DoRender));

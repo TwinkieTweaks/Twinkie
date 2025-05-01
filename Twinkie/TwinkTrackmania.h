@@ -10,11 +10,11 @@
 
 struct ChallengeInfo
 {
-    unsigned int AuthorScore;
-    unsigned int AuthorTime;
-    unsigned int GoldTime;
-    unsigned int SilverTime;
-    unsigned int BronzeTime;
+    int AuthorScore;
+    int AuthorTime;
+    int GoldTime;
+    int SilverTime;
+    int BronzeTime;
     int ChallengeType;
     unsigned int CheckpointCount;
     uintptr_t Challenge;
@@ -347,7 +347,7 @@ public:
         // technically, the racetime is unsigned
         // but unless someone takes ~24 days to finish a run
         // this shouldn't be an issue
-        return -1;
+        return 0;
     }
 
     float GetDisplaySpeed()

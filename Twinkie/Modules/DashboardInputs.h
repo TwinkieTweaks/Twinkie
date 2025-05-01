@@ -111,15 +111,16 @@ public:
 				auto LowerRSteer = Lerp(LowerR, TipR, InputInfo.Steer);
 
 				UIDrawList->AddTriangleFilled(UpperL, LowerL, TipL, ColorConvertFloat4ToU32(ColorSteerI));
-				UIDrawList->AddTriangleFilled(UpperR, LowerR, TipR, ColorConvertFloat4ToU32(ColorSteerI));
+				// HACK: dawg what is this...
+				UIDrawList->AddQuadFilled(UpperR, ImVec2(TipR.x, TipR.y - 1.f), ImVec2(TipR.x, TipR.y + 1.f), LowerR, ColorConvertFloat4ToU32(ColorSteerI));
 
 				if (InputInfo.Steer > 0)
 				{
-					UIDrawList->AddQuadFilled(UpperR, UpperRSteer, LowerRSteer, LowerR, ColorConvertFloat4ToU32(ColorSteer));
+					UIDrawList->AddQuadFilled(UpperRSteer, LowerRSteer, LowerR, UpperR, ColorConvertFloat4ToU32(ColorSteer));
 				}
 				else if (InputInfo.Steer < 0)
 				{
-					UIDrawList->AddQuadFilled(UpperL, UpperLSteer, LowerLSteer, LowerL, ColorConvertFloat4ToU32(ColorSteer));
+					UIDrawList->AddQuadFilled(UpperL, LowerL, LowerLSteer, UpperLSteer, ColorConvertFloat4ToU32(ColorSteer));
 				}
 
 				auto BottomCornerGas = ImVec2(CursorPos.x + WindowWidth * 2, CursorPos.y + WindowHeight / 2.f);
@@ -197,6 +198,8 @@ public:
 
 			ColorEdit4("Background color", &ColorBackground.x, ImGuiColorEditFlags_NoInputs);
 
+			Separator();
+
 			Combo("Style", &StyleIdx, DashboardStyleNames, IM_ARRAYSIZE(DashboardStyleNames));
 			StyleName = DashboardStyleNames[StyleIdx];
 			
@@ -226,8 +229,8 @@ public:
 
 		Settings["Dashboard"]["Enable input display"].GetAsBool(&Enabled);
 
-		Settings["Dashboard"]["Style"].GetAsString(&StyleName);
-		StyleIdx = DashboardStyleNames[0] == StyleName.c_str() ? 0 : 1;
+		Settings["Dashboard"]["Input display style"].GetAsString(&StyleName);
+		StyleIdx = std::string(DashboardStyleNames[0]) == StyleName ? 0 : 1;
 	}
 
 	virtual void SettingsSave(SettingMgr& Settings) 
@@ -244,6 +247,6 @@ public:
 
 		Settings["Dashboard"]["Enable input display"].Set(Enabled);
 
-		Settings["Dashboard"]["Style"].Set(StyleName);
+		Settings["Dashboard"]["Input display style"].Set(StyleName);
 	}
 };

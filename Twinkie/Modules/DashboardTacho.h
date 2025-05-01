@@ -83,11 +83,12 @@ public:
 		if (BeginTabItem(FancyName.c_str()))
 		{
 			ColorEdit4("Upshift", &ColorUpshift.x, ImGuiColorEditFlags_NoInputs);
-			ColorEdit4("Downshift", &ColorDownshift.x, ImGuiColorEditFlags_NoInputs);
 			ColorEdit4("Middle", &ColorMiddle.x, ImGuiColorEditFlags_NoInputs);
+			ColorEdit4("Downshift", &ColorDownshift.x, ImGuiColorEditFlags_NoInputs);
 			ColorEdit4("Default", &ColorDefault.x, ImGuiColorEditFlags_NoInputs);
 
 			Separator();
+
 			ColorEdit4("Background color", &ColorBackground.x, ImGuiColorEditFlags_NoInputs);
 
 			Separator();
