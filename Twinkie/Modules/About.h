@@ -32,6 +32,7 @@ public:
 #endif
 			Separator();
 			TextLinkOpenURL("https://github.com/TwinkieTweaks/Twinkie");
+			TextLinkOpenURL("https://discord.gg/kRZ4MdCkVf");
 		}
 		End();
 	}
