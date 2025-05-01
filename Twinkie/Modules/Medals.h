@@ -87,32 +87,30 @@ public:
 				if (Twinkie->GetBestTime() != MAXDWORD)
 				{
 					SameLine();
-					TextColored(InfoStructDiff.AuthorTime > 0 ? ColorTextBadDelta : ColorTextGoodDelta, ((InfoStructDiff.AuthorTime > 0 ? "+" : "-") + std::to_string(abs(InfoStructDiff.AuthorTime))).c_str());
+					TextColored((InfoStruct.ChallengeType == 5 ? InfoStructDiff.AuthorTime > 0 : InfoStructDiff.AuthorTime < 0) ? ColorTextBadDelta : ColorTextGoodDelta, (((InfoStruct.ChallengeType == 5 ? InfoStructDiff.AuthorTime > 0 : InfoStructDiff.AuthorTime < 0) ? "+" : "-") + std::to_string(abs(InfoStructDiff.AuthorTime))).c_str());
 				}
 
 				TextColored(ColorTextMedals, "Gold: %lu", InfoStruct.GoldTime);
 				if (Twinkie->GetBestTime() != MAXDWORD)
 				{
 					SameLine();
-					TextColored(InfoStructDiff.GoldTime > 0 ? ColorTextBadDelta : ColorTextGoodDelta, ((InfoStructDiff.GoldTime > 0 ? "+" : "-") + std::to_string(abs(InfoStructDiff.GoldTime))).c_str());
+					TextColored((InfoStruct.ChallengeType == 5 ? InfoStructDiff.GoldTime > 0 : InfoStructDiff.GoldTime < 0) ? ColorTextBadDelta : ColorTextGoodDelta, (((InfoStruct.ChallengeType == 5 ? InfoStructDiff.GoldTime > 0 : InfoStructDiff.GoldTime < 0) ? "+" : "-") + std::to_string(abs(InfoStructDiff.GoldTime))).c_str());
 				}
 
 				TextColored(ColorTextMedals, "Silver: %lu", InfoStruct.SilverTime);
 				if (Twinkie->GetBestTime() != MAXDWORD)
 				{
 					SameLine();
-					TextColored(InfoStructDiff.SilverTime > 0 ? ColorTextBadDelta : ColorTextGoodDelta, ((InfoStructDiff.SilverTime > 0 ? "+" : "-") + std::to_string(abs(InfoStructDiff.SilverTime))).c_str());
+					TextColored((InfoStruct.ChallengeType == 5 ? InfoStructDiff.SilverTime > 0 : InfoStructDiff.SilverTime < 0) ? ColorTextBadDelta : ColorTextGoodDelta, (((InfoStruct.ChallengeType == 5 ? InfoStructDiff.SilverTime > 0 : InfoStructDiff.SilverTime < 0) ? "+" : "-") + std::to_string(abs(InfoStructDiff.SilverTime))).c_str());
 				}
 
 				TextColored(ColorTextMedals, "Bronze: %lu", InfoStruct.BronzeTime);
 				if (Twinkie->GetBestTime() != MAXDWORD)
 				{
 					SameLine();
-					TextColored(InfoStructDiff.BronzeTime > 0 ? ColorTextBadDelta : ColorTextGoodDelta, ((InfoStructDiff.BronzeTime > 0 ? "+" : "-") + std::to_string(abs(InfoStructDiff.BronzeTime))).c_str());
+					TextColored((InfoStruct.ChallengeType == 5 ? InfoStructDiff.BronzeTime > 0 : InfoStructDiff.BronzeTime < 0) ? ColorTextBadDelta : ColorTextGoodDelta, (((InfoStruct.ChallengeType == 5 ? InfoStructDiff.BronzeTime > 0 : InfoStructDiff.BronzeTime < 0) ? "+" : "-") + std::to_string(abs(InfoStructDiff.BronzeTime))).c_str());
 				}
 			}
-
-			Text("%d", InfoStruct.ChallengeType);
 
 			End();
 		}

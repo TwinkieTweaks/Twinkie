@@ -233,6 +233,8 @@ public:
 
     bool ChallengeUsesScore()
     {
+        // 5 -> Stunt
+		// 1 -> Platform
         return GetChallengeInfo().ChallengeType == 1 or GetChallengeInfo().ChallengeType == 5;
     }
 
