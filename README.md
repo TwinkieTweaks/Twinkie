@@ -21,8 +21,8 @@ GreffMASTER also provided me with a helpful list of class members and their offs
 - Medal.tv randomly works and randomly doesn't
 
 ## Screenshots
-![In island](https://github.com/user-attachments/assets/71a7a99f-a526-40ee-a090-83ccfc547471)
-![In stadium](https://github.com/user-attachments/assets/a66e8add-b8a2-4143-a121-1bcb3bf010e3)
+![In island](https://github.com/user-attachments/assets/f28186ec-e62b-4a3b-9c2a-444ee05aaac6)
+![In stadium](https://github.com/user-attachments/assets/b93b3ab0-580a-4346-85f1-046398d7f320)
 
 ## Contribute
 To know how to make new modules, check out [`CreatingModules.md`](https://github.com/TwinkieTweaks/Twinkie/blob/master/CreatingModules.md)
