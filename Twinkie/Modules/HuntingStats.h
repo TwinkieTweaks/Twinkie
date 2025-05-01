@@ -188,7 +188,6 @@ public:
 			if (LastRespawns != CurrentRespawns and CurrentRespawns > LastRespawns)
 			{
 				CurrentStatistics->CurrentRespawns++;
-				Logger->Print("Respawn");
 			}
 		}
 		else
