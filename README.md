@@ -14,6 +14,7 @@ GreffMASTER also provided me with a helpful list of class members and their offs
 - Checkpoint counter, does what it says right on the tin
 - Medals window, for easily viewing medals
 - Tweaker, for customizing your render distance (even though TMUnlimiter already does that)
+- **Hunting Stats**, a module that keeps track of your progress for each map
 
 ## Limitations
 - For some people, the F3 keybind to close the UI bar doesn't work
