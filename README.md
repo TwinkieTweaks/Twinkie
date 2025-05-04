@@ -14,14 +14,15 @@ GreffMASTER also provided me with a helpful list of class members and their offs
 - Checkpoint counter, does what it says right on the tin
 - Medals window, for easily viewing medals
 - Tweaker, for customizing your render distance (even though TMUnlimiter already does that)
+- **Hunting Stats**, a module that keeps track of your progress for each map
 
 ## Limitations
 - For some people, the F3 keybind to close the UI bar doesn't work
 - Medal.tv randomly works and randomly doesn't
 
 ## Screenshots
-![In island](https://github.com/user-attachments/assets/71a7a99f-a526-40ee-a090-83ccfc547471)
-![In stadium](https://github.com/user-attachments/assets/a66e8add-b8a2-4143-a121-1bcb3bf010e3)
+![In island](https://github.com/user-attachments/assets/f28186ec-e62b-4a3b-9c2a-444ee05aaac6)
+![In stadium](https://github.com/user-attachments/assets/b93b3ab0-580a-4346-85f1-046398d7f320)
 
 ## Contribute
 To know how to make new modules, check out [`CreatingModules.md`](https://github.com/TwinkieTweaks/Twinkie/blob/master/CreatingModules.md)
@@ -35,3 +36,6 @@ Building for United and Nations is not currently supported. Only Modloader build
 
 ## Support me
 There currently aren't any monetary ways of supporting me, so if you like Twinkie and you have a github account, please star it so that more people see it, or be kind enough to share it with your friends.
+
+## Font
+The font Twinkie uses is Cascadia Mono, see its license [here](https://fonts.google.com/specimen/Cascadia+Mono/license) (Google Fonts), and [here](https://openfontlicense.org/open-font-license-official-text/) (openfontlicense.org).
