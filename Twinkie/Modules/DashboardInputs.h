@@ -73,10 +73,10 @@ public:
 			static bool IsPrevHovered = false;
 			VehicleInputs InputInfo = Twinkie->GetInputInfo();
 			
-		    PushStyleColor(ImGuiCol_WindowBg, ColorBackground);
-		    PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+			PushStyleColor(ImGuiCol_WindowBg, ColorBackground);
+			PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 		
-		    int DashboardWindowFlags = ImGuiWindowFlags_NoTitleBar;
+			int DashboardWindowFlags = ImGuiWindowFlags_NoTitleBar;
 			if (!*UiRenderEnabled) DashboardWindowFlags |= ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs;
 			
 			if (StyleName == "TMViz")
