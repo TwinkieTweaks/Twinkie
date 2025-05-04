@@ -35,7 +35,7 @@
 #include "kiero/kiero.h"
 #include "kiero/minhook/include/MinHook.h"
 
-typedef LRESULT(CALLBACK* WNDPROC)(HWND, UINT, WPARAM, LPARAM);
+using WNDPROC = LRESULT(CALLBACK*)(HWND, UINT, WPARAM, LPARAM);
 using ResetFn = HRESULT(APIENTRY*)(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pPresentationParameters);
 using PresentFn = long(__stdcall*)(LPDIRECT3DDEVICE9 pDevice, LPVOID, LPVOID, HWND, LPVOID);
 

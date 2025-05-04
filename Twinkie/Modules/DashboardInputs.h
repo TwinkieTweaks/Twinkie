@@ -2,7 +2,7 @@
 
 #include "../IModule.h"
 
-const char* DashboardStyleNames[] = { "Pad", "Keyboard" };
+const char* DashboardStyleNames[] = { "Pad", "Keyboard", "TMViz" };
 
 // thank you omar very cool
 struct Vec2
@@ -78,6 +78,12 @@ public:
 		
 		    int DashboardWindowFlags = ImGuiWindowFlags_NoTitleBar;
 			if (!*UiRenderEnabled) DashboardWindowFlags |= ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs;
+			
+			if (StyleName == "TMViz")
+			{
+				DashboardWindowFlags |= ImGuiWindowFlags_NoResize;
+				SetNextWindowSize(ImVec2(256, 140));
+			}
 
 		    Begin("Dashboard##Inputs", nullptr, DashboardWindowFlags);
 		
@@ -111,8 +117,7 @@ public:
 				auto LowerRSteer = Lerp(LowerR, TipR, InputInfo.Steer);
 
 				UIDrawList->AddTriangleFilled(UpperL, LowerL, TipL, ColorConvertFloat4ToU32(ColorSteerI));
-				// HACK: dawg what is this...
-				UIDrawList->AddQuadFilled(UpperR, ImVec2(TipR.x, TipR.y - 1.f), ImVec2(TipR.x, TipR.y + 1.f), LowerR, ColorConvertFloat4ToU32(ColorSteerI));
+				UIDrawList->AddTriangleFilled(TipR, LowerR, UpperR, ColorConvertFloat4ToU32(ColorSteerI));
 
 				if (InputInfo.Steer > 0)
 				{
@@ -175,6 +180,67 @@ public:
 				UIDrawList->AddRectFilled(ImVec2(UpperL.x + 6.f, UpperL.y), ImVec2(BottomCornerGas.x - 6.f, BottomCornerGas.y - 3.f), InputInfo.get_Gas() ? ColorConvertFloat4ToU32(ColorAccel) : ColorConvertFloat4ToU32(ColorAccelI));
 				UIDrawList->AddRectFilled(ImVec2(TopCornerBrake.x + 6.f, TopCornerBrake.y + 3.f), ImVec2(LowerR.x - 6.f, LowerR.y), InputInfo.get_Brake() ? ColorConvertFloat4ToU32(ColorBrake) : ColorConvertFloat4ToU32(ColorBrakeI));
 			}
+			else if (StyleName == "TMViz")
+			{
+				// I hope I don't forget how this code works when I have to debug it
+
+				auto UIDrawList = GetWindowDrawList();
+				auto CursorPos = GetCursorScreenPos();
+
+				float WindowWidth = GetWindowWidth();
+				float WindowHeight = GetWindowHeight();
+
+				auto CornerTop = ImVec2(CursorPos.x + WindowWidth / 2.f, CursorPos.y);
+				auto CornerBottom = ImVec2(CursorPos.x + WindowWidth / 2.f, CursorPos.y + WindowHeight);
+				auto CornerLeft = ImVec2(CursorPos.x, CursorPos.y + WindowHeight / 2.f);
+				auto CornerRight = ImVec2(CursorPos.x + WindowWidth, CursorPos.y + WindowHeight / 2.f);
+
+				auto MidTopLeft1 = Lerp(CornerTop, CornerLeft, 3.0 / 16.0);
+				auto MidTopLeft2 = Lerp(CornerTop, CornerLeft, 4.0 / 16.0);
+
+				auto MidBottomLeft1 = Lerp(CornerBottom, CornerLeft, 3.0 / 16.0);
+				auto MidBottomLeft2 = Lerp(CornerBottom, CornerLeft, 4.0 / 16.0);
+
+				auto MidTopRight1 = Lerp(CornerTop, CornerRight, 3.0 / 16.0);
+				auto MidTopRight2 = Lerp(CornerTop, CornerRight, 4.0 / 16.0);
+
+				auto MidBottomRight1 = Lerp(CornerBottom, CornerRight, 3.0 / 16.0);
+				auto MidBottomRight2 = Lerp(CornerBottom, CornerRight, 4.0 / 16.0);
+
+				auto ExactMid = ImVec2(CursorPos.x + WindowWidth / 2.f, CursorPos.y + WindowHeight / 2.f);
+
+				auto MidTopLeft = ImVec2(ExactMid.x - 24.f, ExactMid.y - 4.f);
+				auto MidBottomLeft = ImVec2(ExactMid.x - 24.f, ExactMid.y + 4.f);
+				auto MidTopRight = ImVec2(ExactMid.x + 24.f, ExactMid.y - 4.f);
+				auto MidBottomRight = ImVec2(ExactMid.x + 24.f, ExactMid.y + 4.f);
+
+				UIDrawList->AddTriangleFilled(CornerLeft, MidTopLeft2, MidBottomLeft2, ColorConvertFloat4ToU32(ColorSteerI));
+				UIDrawList->AddTriangleFilled(MidTopRight2, CornerRight, MidBottomRight2, ColorConvertFloat4ToU32(ColorSteerI));
+
+				// UIDrawList->AddTriangleFilled(CornerTop, MidTopRight1, MidTopLeft1, ColorConvertFloat4ToU32(ColorAccelI));
+				// UIDrawList->AddRectFilled(MidTopLeft1, MidTopRight, ColorConvertFloat4ToU32(ColorAccelI));
+
+				std::vector<ImVec2> PointsAccel = { CornerTop, MidTopRight1, MidTopRight, MidTopLeft, MidTopLeft1 };
+				UIDrawList->AddConvexPolyFilled(PointsAccel.data(), PointsAccel.size(), ColorConvertFloat4ToU32(InputInfo.get_Gas() ? ColorAccel : ColorAccelI));
+
+				std::vector<ImVec2> PointsBrake = { CornerBottom, MidBottomLeft1, MidBottomLeft, MidBottomRight, MidBottomRight1 };
+				UIDrawList->AddConvexPolyFilled(PointsBrake.data(), PointsBrake.size(), ColorConvertFloat4ToU32(InputInfo.get_Brake() ? ColorBrake : ColorBrakeI));
+			    
+				if (InputInfo.Steer < 0)
+				{
+					auto SteerTop = Lerp(MidTopLeft2, CornerLeft, abs(InputInfo.Steer));
+					auto SteerBottom = Lerp(MidBottomLeft2, CornerLeft, abs(InputInfo.Steer));
+
+					UIDrawList->AddQuadFilled(SteerBottom, SteerTop, MidTopLeft2, MidBottomLeft2, ColorConvertFloat4ToU32(ColorSteer));
+				}
+				else if (InputInfo.Steer > 0)
+				{
+					auto SteerTop = Lerp(MidTopRight2, CornerRight, InputInfo.Steer);
+					auto SteerBottom = Lerp(MidBottomRight2, CornerRight, InputInfo.Steer);
+
+					UIDrawList->AddQuadFilled(MidBottomRight2, MidTopRight2, SteerTop, SteerBottom, ColorConvertFloat4ToU32(ColorSteer));
+				}
+			}
 		    End();
 		}
 	}
@@ -230,7 +296,7 @@ public:
 		Settings["Dashboard"]["Enable input display"].GetAsBool(&Enabled);
 
 		Settings["Dashboard"]["Input display style"].GetAsString(&StyleName);
-		StyleIdx = std::string(DashboardStyleNames[0]) == StyleName ? 0 : 1;
+		StyleIdx = std::string(DashboardStyleNames[0]) == StyleName ? 0 : (std::string(DashboardStyleNames[1]) == StyleName ? 1 : 2);
 	}
 
 	virtual void SettingsSave(SettingMgr& Settings) 
