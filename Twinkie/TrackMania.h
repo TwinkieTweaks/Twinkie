@@ -28,6 +28,12 @@ namespace TM
 		char* Cstr;
 	};
 
+	struct CFastStringInt
+	{
+		int Size;
+		wchar_t* Cstr;
+	};
+
 	struct GmVec3
 	{
 		float x;
@@ -52,7 +58,7 @@ namespace TM
 
 	struct CMwId
 	{
-		int Value;
+		unsigned int Value;
 	};
 
 	enum GameType

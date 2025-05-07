@@ -1,6 +1,6 @@
 #define WIN32_LEAN_AND_MEAN
-// #define BUILD_DEBUG
-// #define BUILD_PREMIUM
+#define BUILD_DEBUG
+#define BUILD_PREMIUM
 
 #include <iostream>
 #include "TwinkUi.h"

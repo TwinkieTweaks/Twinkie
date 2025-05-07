@@ -217,9 +217,6 @@ public:
 				UIDrawList->AddTriangleFilled(CornerLeft, MidTopLeft2, MidBottomLeft2, ColorConvertFloat4ToU32(ColorSteerI));
 				UIDrawList->AddTriangleFilled(MidTopRight2, CornerRight, MidBottomRight2, ColorConvertFloat4ToU32(ColorSteerI));
 
-				// UIDrawList->AddTriangleFilled(CornerTop, MidTopRight1, MidTopLeft1, ColorConvertFloat4ToU32(ColorAccelI));
-				// UIDrawList->AddRectFilled(MidTopLeft1, MidTopRight, ColorConvertFloat4ToU32(ColorAccelI));
-
 				std::vector<ImVec2> PointsAccel = { CornerTop, MidTopRight1, MidTopRight, MidTopLeft, MidTopLeft1 };
 				UIDrawList->AddConvexPolyFilled(PointsAccel.data(), PointsAccel.size(), ColorConvertFloat4ToU32(InputInfo.get_Gas() ? ColorAccel : ColorAccelI));
 
@@ -250,6 +247,11 @@ public:
 		using namespace ImGui;
 		if (BeginTabItem(FancyName.c_str()))
 		{
+			Combo("Style", &StyleIdx, DashboardStyleNames, IM_ARRAYSIZE(DashboardStyleNames));
+			StyleName = DashboardStyleNames[StyleIdx];
+
+			Separator();
+
 			ColorEdit4("Steering", &ColorSteer.x, ImGuiColorEditFlags_NoInputs);
 			ColorEdit4("Acceleration", &ColorAccel.x, ImGuiColorEditFlags_NoInputs);
 			ColorEdit4("Brake", &ColorBrake.x, ImGuiColorEditFlags_NoInputs);
@@ -263,11 +265,6 @@ public:
 			Separator();
 
 			ColorEdit4("Background color", &ColorBackground.x, ImGuiColorEditFlags_NoInputs);
-
-			Separator();
-
-			Combo("Style", &StyleIdx, DashboardStyleNames, IM_ARRAYSIZE(DashboardStyleNames));
-			StyleName = DashboardStyleNames[StyleIdx];
 			
 			EndTabItem();
 		}
