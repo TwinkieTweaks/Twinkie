@@ -30,7 +30,7 @@ void AlwaysOfficialModule::RenderMenuItem()
 		Enabled = !Enabled;
 	}
 
-	if (IsItemHovered() and !Twinkie->IsProfileUnited())
+	if (IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled) and !Twinkie->IsProfileUnited())
 	{
 		SetTooltip("This module is deactivated because you are not logged in/have a Nations account.");
 	}
