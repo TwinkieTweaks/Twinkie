@@ -2,7 +2,11 @@
 
 void AlwaysOfficialModule::RenderAnyways()
 {
-	if (Twinkie->GetPlayerInfo().TrackmaniaRace)
+	if (!Twinkie->IsProfileUnited()) return;
+	if (!Twinkie->IsPlaying()) return;
+	if (!Twinkie->GetPlayerInfo().TrackmaniaRace) return;
+
+	if (!Twinkie->IsOnline())
 	{
 		CurrentState = Twinkie->GetState();
 
@@ -15,12 +19,31 @@ void AlwaysOfficialModule::RenderAnyways()
 	}
 }
 
+void AlwaysOfficialModule::RenderMenuItem()
+{
+	using namespace ImGui;
+
+	BeginDisabled(!Twinkie->IsProfileUnited());
+
+	if (MenuItem("Always Official", "", Enabled))
+	{
+		Enabled = !Enabled;
+	}
+
+	if (IsItemHovered() and !Twinkie->IsProfileUnited())
+	{
+		SetTooltip("This module is deactivated because you are not logged in/have a Nations account.");
+	}
+
+	EndDisabled();
+}
+
 void AlwaysOfficialModule::SettingsInit(SettingMgr& Settings)
 {
-	Settings["Always Offical"]["Enabled"].GetAsBool(&Enabled);
+	Settings["Always Official"]["Enabled"].GetAsBool(&Enabled);
 }
 
 void AlwaysOfficialModule::SettingsSave(SettingMgr& Settings)
 {
-	Settings["Always Offical"]["Enabled"].Set(Enabled);
+	Settings["Always Official"]["Enabled"].Set(Enabled);
 }

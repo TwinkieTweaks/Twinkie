@@ -142,6 +142,17 @@ public:
         return Read<TM::CFastArray<uintptr_t>>(GetInputPort() + 0x2c);
     }
 
+    uintptr_t GetProfile()
+    {
+        return Read<uintptr_t>(GetTrackmania() + 0x168);
+    }
+
+    bool IsProfileUnited()
+    {
+        if (!GetProfile()) return false;
+		return Read<unsigned int>(GetProfile() + 756) == 1;
+    }
+
     void ForceDevicePoll(uintptr_t Device, int MustNotPoll)
     {
         Write<int>(MustNotPoll, Device + 0x1c);
@@ -180,6 +191,11 @@ public:
         {
 			reinterpret_cast<SetOfficialRaceFn>(SetOfficialRacePtr)(GetPlayerInfo().TrackmaniaRace);
         }
+    }
+
+    bool IsOnline()
+    {
+		return (Read<unsigned int>(GetTrackmania() + 0x418) & 16) == 16;
     }
 
     bool IsHmsPocHmsCamera(uintptr_t HmsPoc)

@@ -23,6 +23,7 @@
 #include "Modules/DashboardGears.h"
 #include "Modules/Tweaker.h"
 // #include "Modules/HuntingStats.h"
+#include "Modules/AlwaysOfficial/AlwaysOfficial.h"
 #ifdef BUILD_DEBUG
 #include "Modules/PlayerInfo.h"
 #endif
@@ -113,6 +114,7 @@ public:
         //
         Modules.push_back(new GhostEditorModule(TrackmaniaMgr, Logger, &DoRender));
         Modules.push_back(new TweakerModule(TrackmaniaMgr, Logger, &DoRender));
+        Modules.push_back(new AlwaysOfficialModule(TrackmaniaMgr, Logger, &DoRender));
 
         Logger.PrintInternalArgs("{} module{} initialized.", Modules.size(), Modules.size() == 1 ? "" : "s");
 
