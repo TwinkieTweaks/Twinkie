@@ -195,6 +195,7 @@ public:
 
     bool IsOnline()
     {
+        // GetTrackmania() + 0x418 is ChallengeType
 		return (Read<unsigned int>(GetTrackmania() + 0x418) & 16) == 16;
     }
 
@@ -266,7 +267,7 @@ public:
 
     PlayerInfo GetPlayerInfo()
     {
-        // code graciously provided by brokenphilip
+        // code graciously yoinked from brokenphilip
         PlayerInfo InfoStruct{ 0,0,0,0,0,false };
 
         auto GameApp = GetTrackmania();
