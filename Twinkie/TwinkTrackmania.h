@@ -172,7 +172,7 @@ public:
         return Read<uintptr_t>(GetSceneCamera() + 0x30);
     }
 
-    void CallSetOfficalRace()
+    void CallSetOfficialRace()
     {
 		using SetOfficialRaceFn = void(__thiscall*)(uintptr_t);
 		uintptr_t SetOfficialRacePtr = GetExeBaseAddr() + 0x7B5F0;

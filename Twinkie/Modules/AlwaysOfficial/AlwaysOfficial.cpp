@@ -1,6 +1,6 @@
-#include "AlwaysOffical.h"
+#include "AlwaysOfficial.h"
 
-void AlwaysOfficalModule::RenderAnyways()
+void AlwaysOfficialModule::RenderAnyways()
 {
 	if (Twinkie->GetPlayerInfo().TrackmaniaRace)
 	{
@@ -8,19 +8,19 @@ void AlwaysOfficalModule::RenderAnyways()
 
 		if (CurrentState == TM::RaceState::BeforeStart and CurrentState != PreviousState)
 		{
-			Twinkie->CallSetOfficalRace();
+			Twinkie->CallSetOfficialRace();
 		}
 
 		PreviousState = Twinkie->GetState();
 	}
 }
 
-void AlwaysOfficalModule::SettingsInit(SettingMgr& Settings)
+void AlwaysOfficialModule::SettingsInit(SettingMgr& Settings)
 {
 	Settings["Always Offical"]["Enabled"].GetAsBool(&Enabled);
 }
 
-void AlwaysOfficalModule::SettingsSave(SettingMgr& Settings)
+void AlwaysOfficialModule::SettingsSave(SettingMgr& Settings)
 {
 	Settings["Always Offical"]["Enabled"].Set(Enabled);
 }

@@ -144,7 +144,7 @@
     <ClInclude Include="nvg-dx9\stb_truetype.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Modules\AlwaysOffical\AlwaysOffical.h">
+    <ClInclude Include="Modules\AlwaysOfficial\AlwaysOfficial.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -191,7 +191,7 @@
     <ClCompile Include="kiero\minhook\src\trampoline.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Modules\AlwaysOffical\AlwaysOffical.cpp">
+    <ClCompile Include="Modules\AlwaysOfficial\AlwaysOfficial.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
