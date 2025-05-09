@@ -413,6 +413,7 @@
     <ClInclude Include="minhook\buffer.h" />
     <ClInclude Include="mINI\ini.h" />
     <ClInclude Include="Modules\About.h" />
+    <ClInclude Include="Modules\AlwaysOffical\AlwaysOffical.h" />
     <ClInclude Include="Modules\AppExplorer.h" />
     <ClInclude Include="Modules\DashboardInputs.h" />
     <ClInclude Include="Modules\DashboardTacho.h" />
@@ -451,6 +452,7 @@
     <ClCompile Include="kiero\minhook\src\hde\hde64.c" />
     <ClCompile Include="kiero\minhook\src\hook.c" />
     <ClCompile Include="kiero\minhook\src\trampoline.c" />
+    <ClCompile Include="Modules\AlwaysOffical\AlwaysOffical.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="kiero\minhook\dll_resources\MinHook.def" />

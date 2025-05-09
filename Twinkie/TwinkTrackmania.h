@@ -172,6 +172,16 @@ public:
         return Read<uintptr_t>(GetSceneCamera() + 0x30);
     }
 
+    void CallSetOfficalRace()
+    {
+		using SetOfficialRaceFn = void(__thiscall*)(uintptr_t);
+		uintptr_t SetOfficialRacePtr = GetExeBaseAddr() + 0x7B5F0;
+        if (GetPlayerInfo().TrackmaniaRace)
+        {
+			reinterpret_cast<SetOfficialRaceFn>(SetOfficialRacePtr)(GetPlayerInfo().TrackmaniaRace);
+        }
+    }
+
     bool IsHmsPocHmsCamera(uintptr_t HmsPoc)
     {
         return GetMwClassId(HmsPoc) == 0x6001000u;
