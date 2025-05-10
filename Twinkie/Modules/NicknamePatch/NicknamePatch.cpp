@@ -8,17 +8,17 @@ void NicknamePatchModule::RenderMenuItem()
 		
 		auto MenuManagerMenus = Twinkie->Read<uintptr_t>(Twinkie->GetMenuManager() + 0x788);
 		
-		TM::CFastArray<uintptr_t>* Frames = (TM::CFastArray<uintptr_t>*)(MenuManagerMenus + 104);
-		auto FrameProfile2 = Frames->Ptr[4];
+		TM::CFastArray<uintptr_t> Frames = Twinkie->Read<TM::CFastArray<uintptr_t>>(MenuManagerMenus + 104);
+		auto FrameProfile2 = Frames.Ptr[4];
 		
 		uintptr_t CurrentFrame = FrameProfile2;
 		for (int Idx : IndiciesToNicknameEntry)
 		{
-			CurrentFrame = ((TM::CFastArray<uintptr_t>*)(CurrentFrame + 324))->Ptr[Idx];
+			CurrentFrame = (Twinkie->Read<TM::CFastArray<uintptr_t>>(CurrentFrame + 324)).Ptr[Idx];
 		}
 		uintptr_t NicknameEntry = CurrentFrame;
 
-		*(int*)(NicknameEntry + 0x150) = 70;
+		Twinkie->Write<int>(NicknameEntry + 0x150, 70);
 
 		Logger->PrintInternal("NicknamePatch: patched.");
 	}
