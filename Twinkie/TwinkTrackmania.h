@@ -147,6 +147,26 @@ public:
         return Read<uintptr_t>(GetTrackmania() + 0x168);
     }
 
+    void PatchNicknameEntry()
+    {
+        std::vector<int> IndiciesToNicknameEntry = { 0, 0, 1, 1, 1 };
+
+        auto MenuManagerMenus = Read<uintptr_t>(GetMenuManager() + 0x788);
+
+        TM::CFastArray<uintptr_t>* Frames = (TM::CFastArray<uintptr_t>*)(MenuManagerMenus + 104);
+
+        auto FrameProfile2 = Frames->Ptr[4];
+
+        uintptr_t CurrentFrame = FrameProfile2;
+        for (int Idx : IndiciesToNicknameEntry)
+        {
+            CurrentFrame = ((TM::CFastArray<uintptr_t>*)(CurrentFrame + 324))->Ptr[Idx];
+        }
+        uintptr_t NicknameEntry = CurrentFrame;
+
+        *(int*)(NicknameEntry + 0x150) = 75;
+    }
+
     bool IsProfileUnited()
     {
         if (!GetProfile()) return false;
