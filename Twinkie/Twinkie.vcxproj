@@ -421,6 +421,7 @@
     <ClInclude Include="Modules\GhostEditor.h" />
     <ClInclude Include="Modules\HuntingStats.h" />
     <ClInclude Include="Modules\Medals.h" />
+    <ClInclude Include="Modules\NicknamePatch\NicknamePatch.h" />
     <ClInclude Include="Modules\PlayerInfo.h" />
     <ClInclude Include="Modules\Tweaker.h" />
     <ClInclude Include="nvg-dx9\fontstash.h" />
@@ -453,6 +454,7 @@
     <ClCompile Include="kiero\minhook\src\hook.c" />
     <ClCompile Include="kiero\minhook\src\trampoline.c" />
     <ClCompile Include="Modules\AlwaysOfficial\AlwaysOfficial.cpp" />
+    <ClCompile Include="Modules\NicknamePatch\NicknamePatch.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="kiero\minhook\dll_resources\MinHook.def" />

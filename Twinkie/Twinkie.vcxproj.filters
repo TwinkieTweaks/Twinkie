@@ -147,6 +147,9 @@
     <ClInclude Include="Modules\AlwaysOfficial\AlwaysOfficial.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Modules\NicknamePatch\NicknamePatch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -192,6 +195,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Modules\AlwaysOfficial\AlwaysOfficial.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules\NicknamePatch\NicknamePatch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
