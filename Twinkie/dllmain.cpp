@@ -66,7 +66,7 @@ static LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 {
 	if (!Twinkie.Initialized) return CallWindowProcA(Twinkie.oWndProc, hWnd, uMsg, wParam, lParam);
 
-	if (GetAsyncKeyState(VK_F3) & 1) Twinkie.DoRender = !Twinkie.DoRender;
+	// if (GetAsyncKeyState(VK_F3) & 1) Twinkie.DoRender = !Twinkie.DoRender;
 
 	auto& ImIo = ImGui::GetIO();
 
@@ -74,6 +74,12 @@ static LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 	if (ImWndProcResult)
 	{
 		return ImWndProcResult;
+	}
+
+	if (uMsg == WM_KEYDOWN)
+	{
+		if (wParam == VK_F3 and !(lParam & 0xFF000000))
+			Twinkie.DoRender = !Twinkie.DoRender;
 	}
 
 	if ((uMsg >= WM_KEYFIRST && uMsg <= WM_KEYLAST && ImIo.WantCaptureKeyboard) || (uMsg >= WM_MOUSEFIRST && uMsg <= WM_MOUSELAST && ImIo.WantCaptureMouse))
