@@ -16,6 +16,7 @@ GreffMASTER also provided me with a helpful list of class members and their offs
 - Tweaker, for customizing your render distance (even though TMUnlimiter already does that)
 - ~~**Hunting Stats**, a module that keeps track of your progress for each map~~
 - **Always official**, that brings up the Official Mode menu when you reset (only for United accounts)
+- **Nickname patch**, sets the nickname text box to have a larger size than normal
 
 ## Limitations
 - For some people, the F3 keybind to close the UI bar doesn't work
