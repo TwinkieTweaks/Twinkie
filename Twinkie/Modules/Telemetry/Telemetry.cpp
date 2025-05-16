@@ -85,6 +85,26 @@ void TelemetryModule::UpdateTelemetry()
 			strcpy_s(Telemetry.Game.MapName, Twinkie->GetChallengeName().c_str());
 			strcpy_s(Telemetry.Game.MapId, Twinkie->GetChallengeUID().c_str());
 		}
+
+		// Race
+		if (Twinkie->IsPlaying())
+		{
+			Telemetry.Race.State = (NManiaPlanet::STelemetry::ERaceState)(int)Twinkie->GetState();
+		}
+
+		// Vehicle
+		if (Twinkie->IsPlaying())
+		{
+			Telemetry.Vehicle.Timestamp = (int)Now();
+			Telemetry.Vehicle.InputSteer = Twinkie->GetInputInfo().Steer;
+			Telemetry.Vehicle.InputGasPedal = Twinkie->GetInputInfo().fGas;
+			Telemetry.Vehicle.InputIsBraking = Twinkie->GetInputInfo().get_Brake();
+			Telemetry.Vehicle.EngineRpm = Twinkie->GetRpm();
+			Telemetry.Vehicle.EngineCurGear = Twinkie->GetGear();
+			Telemetry.Vehicle.EngineTurboRatio = *((bool*)Twinkie->CurPlayerInfo.Vehicle + 948) ? 1.0 : 0.0;
+			Telemetry.Vehicle.EngineFreeWheeling = *((bool*)Twinkie->CurPlayerInfo.Vehicle + 1548) ? 1 : 0;
+			Telemetry.Vehicle.IsInWater = Twinkie->GetWaterPhysicsApplied();
+		}
 	}
 
 	CopyMemory(FileView, &Telemetry, sizeof(Telemetry));
