@@ -14,3 +14,5 @@ D:\Repos\Twinkie\Twinkie\kiero\minhook\src\hook.c;D:\Repos\Twinkie\Twinkie\Modlo
 D:\Repos\Twinkie\Twinkie\kiero\minhook\src\trampoline.c;D:\Repos\Twinkie\Twinkie\Modloader\trampoline.obj
 D:\Repos\Twinkie\Twinkie\Modules\AlwaysOfficial\AlwaysOfficial.cpp;D:\Repos\Twinkie\Twinkie\Modloader\AlwaysOfficial.obj
 D:\Repos\Twinkie\Twinkie\Modules\NicknamePatch\NicknamePatch.cpp;D:\Repos\Twinkie\Twinkie\Modloader\NicknamePatch.obj
+D:\Repos\Twinkie\Twinkie\Modules\Telemetry\Telemetry.cpp;D:\Repos\Twinkie\Twinkie\Modloader\Telemetry.obj
+D:\Repos\Twinkie\Twinkie\Modules\ViewValidation\ViewValidation.cpp;D:\Repos\Twinkie\Twinkie\Modloader\ViewValidation.obj

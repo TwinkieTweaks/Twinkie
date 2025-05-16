@@ -150,6 +150,15 @@
     <ClInclude Include="Modules\NicknamePatch\NicknamePatch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Telemetry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Modules\ViewValidation\ViewValidation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Modules\Telemetry\Telemetry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -198,6 +207,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Modules\NicknamePatch\NicknamePatch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules\ViewValidation\ViewValidation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules\Telemetry\Telemetry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

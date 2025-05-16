@@ -25,6 +25,8 @@
 // #include "Modules/HuntingStats.h"
 #include "Modules/AlwaysOfficial/AlwaysOfficial.h"
 #include "Modules/NicknamePatch/NicknamePatch.h"
+#include "Modules/ViewValidation/ViewValidation.h"
+#include "Modules/Telemetry/Telemetry.h"
 #ifdef BUILD_DEBUG
 #include "Modules/PlayerInfo.h"
 #endif
@@ -117,6 +119,8 @@ public:
         Modules.push_back(new TweakerModule(TrackmaniaMgr, Logger, &DoRender));
         Modules.push_back(new AlwaysOfficialModule(TrackmaniaMgr, Logger, &DoRender));
         Modules.push_back(new NicknamePatchModule(TrackmaniaMgr, Logger, &DoRender));
+        Modules.push_back(new ViewValidationModule(TrackmaniaMgr, Logger, &DoRender));
+        Modules.push_back(new TelemetryModule(TrackmaniaMgr, Logger, &DoRender));
 
         Logger.PrintInternalArgs("{} module{} initialized.", Modules.size(), Modules.size() == 1 ? "" : "s");
 

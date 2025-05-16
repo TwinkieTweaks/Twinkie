@@ -410,6 +410,9 @@
     <ClInclude Include="kiero\minhook\src\hde\table32.h" />
     <ClInclude Include="kiero\minhook\src\hde\table64.h" />
     <ClInclude Include="kiero\minhook\src\trampoline.h" />
+    <ClInclude Include="Modules\Telemetry\Telemetry.h" />
+    <ClInclude Include="Modules\ViewValidation\ViewValidation.h" />
+    <ClInclude Include="Telemetry.h" />
     <ClInclude Include="minhook\buffer.h" />
     <ClInclude Include="mINI\ini.h" />
     <ClInclude Include="Modules\About.h" />
@@ -455,6 +458,8 @@
     <ClCompile Include="kiero\minhook\src\trampoline.c" />
     <ClCompile Include="Modules\AlwaysOfficial\AlwaysOfficial.cpp" />
     <ClCompile Include="Modules\NicknamePatch\NicknamePatch.cpp" />
+    <ClCompile Include="Modules\Telemetry\Telemetry.cpp" />
+    <ClCompile Include="Modules\ViewValidation\ViewValidation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="kiero\minhook\dll_resources\MinHook.def" />

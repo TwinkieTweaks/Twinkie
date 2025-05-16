@@ -37,13 +37,3 @@ void AlwaysOfficialModule::RenderMenuItem()
 
 	EndDisabled();
 }
-
-void AlwaysOfficialModule::SettingsInit(SettingMgr& Settings)
-{
-	Settings["Always Official"]["Enabled"].GetAsBool(&Enabled);
-}
-
-void AlwaysOfficialModule::SettingsSave(SettingMgr& Settings)
-{
-	Settings["Always Official"]["Enabled"].Set(Enabled);
-}

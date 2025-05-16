@@ -53,6 +53,130 @@ struct VehicleInputs
     }
 };
 
+typedef int Integer;
+typedef unsigned int Bool;
+typedef unsigned char Nat8;
+typedef unsigned short Nat16;
+typedef unsigned int Natural, Nat32;
+typedef unsigned __int64 Nat64;
+typedef float Real, Real32;
+
+typedef void(*pFun)(void*);
+
+struct CMwParam {
+    void* ptr;
+};
+
+struct CMwMemberInfo
+{
+    enum eType
+    {
+        ACTION = 0,
+        BOOL = 1,
+        BOOLARRAY = 2,
+        BOOLBUFFER = 3,
+        BOOLBUFFERCAT = 4,
+        CLASS = 5,
+        CLASSARRAY = 6,
+        CLASSBUFFER = 7,
+        CLASSBUFFERCAT = 8,
+        COLOR = 9,
+        COLORARRAY = 10,
+        COLORBUFFER = 11,
+        COLORBUFFERCAT = 12,
+        ENUM = 13,
+
+        INT = 14,
+        INTARRAY = 15,
+        INTBUFFER = 16,
+        INTBUFFERCAT = 17,
+        INTRANGE = 18,
+        ISO4 = 19,
+        ISO4ARRAY = 20,
+        ISO4BUFFER = 21,
+        ISO4BUFFERCAT = 22,
+        ISO3 = 23,
+        ISO3ARRAY = 24,
+        ISO3BUFFER = 25,
+        ISO3BUFFERCAT = 26,
+        ID = 27,
+        IDARRAY = 28,
+        IDBUFFER = 29,
+        IDBUFFERCAT = 30,
+        NATURAL = 31,
+        NATURALARRAY = 32,
+        NATURALBUFFER = 33,
+        NATURALBUFFERCAT = 34,
+        NATURALRANGE = 35,
+        REAL = 36,
+        REALARRAY = 37,
+        REALBUFFER = 38,
+        REALBUFFERCAT = 39,
+        REALRANGE = 40,
+        STRING = 41,
+        STRINGARRAY = 42,
+        STRINGBUFFER = 43,
+        STRINGBUFFERCAT = 44,
+        STRINGINT = 45,
+        STRINGINTARRAY = 46,
+        STRINGINTBUFFER = 47,
+        STRINGINTBUFFERCAT = 48,
+        VEC2 = 49,
+        VEC2ARRAY = 50,
+        VEC2BUFFER = 51,
+        VEC2BUFFERCAT = 52,
+        VEC3 = 53,
+        VEC3ARRAY = 54,
+        VEC3BUFFER = 55,
+        VEC3BUFFERCAT = 56,
+        VEC4 = 57,
+        VEC4ARRAY = 58,
+        VEC4BUFFER = 59,
+        VEC4BUFFERCAT = 60,
+        INT3 = 61,
+        INT3ARRAY = 62,
+        INT3BUFFER = 63,
+        INT3BUFFERCAT = 64,
+        PROC = 65
+    };
+
+    enum eFlags {
+        READ = 0b00000001,
+        WRITE = 0b00000010,
+        U1 = 0b00000100,
+        U2 = 0b00001000,
+        VIRTUAL_GET = 0b00010000,
+        VIRTUAL_SET = 0b00100000,
+        VIRTUAL_ADD = 0b01000000,
+        VIRTUAL_SUB = 0b10000000,
+    };
+
+    eType type;
+    int memberID;
+    CMwParam* pParam;     
+    int fieldOffset;
+    const char* pszName;
+    int flags;
+    int flags2;
+};
+
+class CMwStack {
+public:
+    pFun* vftable;
+    int u2;
+    int u3;
+    int m_Size;
+    CMwMemberInfo** ppMemberInfos;
+    int* ppTypes;
+    int iCurrentPos;
+};
+
+class CMwValueStd {
+public:
+    void* pValue = nullptr;
+    void* pValue2 = nullptr;
+};
+
 class TwinkTrackmania
 {
 public:
@@ -75,6 +199,15 @@ public:
 		{
 			TMType = TM::GameType::United;
 		}
+    }
+
+    std::string WStringToUTF8(const std::wstring& wstr) {
+        if (wstr.empty()) return {};
+
+        int size_needed = WideCharToMultiByte(CP_UTF8, 0, wstr.data(), (int)wstr.size(), nullptr, 0, nullptr, nullptr);
+        std::string strTo(size_needed, 0);
+        WideCharToMultiByte(CP_UTF8, 0, wstr.data(), (int)wstr.size(), &strTo[0], size_needed, nullptr, nullptr);
+        return strTo;
     }
 
     template <typename T>
@@ -110,6 +243,57 @@ public:
     {
         using GetClassId = int(__thiscall*)(uintptr_t);
         return reinterpret_cast<GetClassId>(Virtual<3>(This))(This);
+    }
+
+    bool VirtualParamGet(uintptr_t Nod, CMwStack* MwStack, void** Value)
+    {
+        CMwValueStd ValueStd;
+        ValueStd.pValue = 0;
+        ValueStd.pValue2 = 0;
+
+        using VirtualParamGetFn = int(__thiscall*)(uintptr_t, CMwStack*, CMwValueStd*);
+        bool ReturnVal = reinterpret_cast<VirtualParamGetFn>(Virtual<9>(Nod))(Nod, MwStack, &ValueStd) == 0;
+
+        *Value = ValueStd.pValue;
+
+        return ReturnVal;
+    }
+
+    std::string GetNameOfNod(uintptr_t Nod)
+    {
+        CMwMemberInfo* MemberInfo = new CMwMemberInfo();
+        MemberInfo->type = CMwMemberInfo::STRING;
+        MemberInfo->fieldOffset = -1;
+        MemberInfo->pszName = "IdName";
+        MemberInfo->memberID = 0x01001000;
+        MemberInfo->pParam = nullptr;
+        MemberInfo->flags = -1;
+        MemberInfo->flags2 = -1;
+
+        CMwStack* MwStack = new CMwStack();
+        MwStack->m_Size = 1;
+        MwStack->ppMemberInfos = new CMwMemberInfo * [MwStack->m_Size] {MemberInfo};
+        MwStack->iCurrentPos = 0;
+
+        TM::CFastString* String = nullptr;
+        if (!VirtualParamGet(Nod, MwStack, (void**)&String))
+        {
+            delete[] MwStack->ppMemberInfos;
+            delete MwStack;
+            delete MemberInfo;
+            return "";
+        }
+        if (!String)
+        {
+            delete[] MwStack->ppMemberInfos;
+            delete MwStack;
+            delete MemberInfo;
+            return "";
+        }
+        delete[] MwStack->ppMemberInfos;
+        delete MwStack;
+        delete MemberInfo;
+        return String->Cstr;
     }
 
     uintptr_t GetMenuManager()
@@ -359,6 +543,16 @@ public:
     uintptr_t GetChallenge()
     {
         return Read<uintptr_t>(GetTrackmania() + 0x198);
+    }
+
+    std::string GetChallengeName()
+    {
+        if (GetChallenge())
+        {
+            TM::CFastStringInt ChallengeName = Read<TM::CFastStringInt>(GetChallenge() + 0x108);
+            return WStringToUTF8(ChallengeName.Cstr);
+        }
+        return "";
     }
 
     int GetBestTime()
