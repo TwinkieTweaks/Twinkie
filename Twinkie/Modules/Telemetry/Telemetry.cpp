@@ -114,7 +114,7 @@ long long Now() {
 	using namespace std::chrono;
 	auto now = system_clock::now();
 	auto duration = now.time_since_epoch();
-	return duration_cast<seconds>(duration).count();
+	return duration_cast<milliseconds>(duration).count();
 }
 
 void TelemetryModule::RenderMenuItem()
