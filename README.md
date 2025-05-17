@@ -1,5 +1,6 @@
 # Twinkie
 Twinkie is a QOL modification for TrackMania Forever.
+[![GitHub all releases](https://img.shields.io/github/downloads/TwinkieTweaks/Twinkie/total?style=for-the-badge)](https://github.com/TwinkieTweaks/Twinkie/releases)
 
 ## Discord
 We have a discord server at https://discord.gg/kRZ4MdCkVf
