@@ -32,6 +32,7 @@ public:
 	TelemetryModule() = default;
 
 	void UpdateTelemetry();
+	NManiaPlanet::STelemetry::EGameState GetGameState();
 
 	virtual void Render();
 	virtual void RenderAnyways() {};

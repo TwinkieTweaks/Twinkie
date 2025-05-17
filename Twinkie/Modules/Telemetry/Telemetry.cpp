@@ -1,5 +1,17 @@
 #include "Telemetry.h"
 
+NManiaPlanet::STelemetry::EGameState TelemetryModule::GetGameState()
+{
+	// NManiaPlanet::STelemetry::EGameState::EState_Starting could mean "the game is Starting", in that case it is never reachable because Twinkie never starts before the game does.
+	// It could also mean "the race is Starting", which makes no sense because ERaceState already covers this.
+	// But because Nadeo, no documentation on this exists, so you'll have to look for it yourself via Maniaplanet.
+	// TODO: Do the above
+
+	if (!Twinkie->IsPlaying()) return NManiaPlanet::STelemetry::EGameState::EState_Menus;
+	if (Twinkie->IsPaused()) return NManiaPlanet::STelemetry::EGameState::EState_Paused;
+	return NManiaPlanet::STelemetry::EGameState::EState_Running;
+}
+
 bool IsHandicapFlagSet(int HandicapFlag, int HandicapBitField)
 {
 	return (HandicapBitField & HandicapFlag) == HandicapFlag;
@@ -79,6 +91,7 @@ void TelemetryModule::UpdateTelemetry()
 		Telemetry.UpdateNumber++;
 
 		// Game
+		Telemetry.Game.State = GetGameState();
 		if (Twinkie->IsPlaying())
 		{
 			strcpy_s(Telemetry.Game.GameplayVariant, Twinkie->GetNameOfNod(Twinkie->GetPlayerInfo().Vehicle).c_str());
@@ -101,7 +114,7 @@ void TelemetryModule::UpdateTelemetry()
 			Telemetry.Vehicle.InputIsBraking = Twinkie->GetInputInfo().get_Brake();
 			Telemetry.Vehicle.EngineRpm = Twinkie->GetRpm();
 			Telemetry.Vehicle.EngineCurGear = Twinkie->GetGear();
-			Telemetry.Vehicle.EngineTurboRatio = *((bool*)Twinkie->CurPlayerInfo.Vehicle + 948) ? 1.0 : 0.0;
+			Telemetry.Vehicle.EngineTurboRatio = *((bool*)Twinkie->CurPlayerInfo.Vehicle + 948) ? 1.f : 0.f;
 			Telemetry.Vehicle.EngineFreeWheeling = *((bool*)Twinkie->CurPlayerInfo.Vehicle + 1548) ? 1 : 0;
 			Telemetry.Vehicle.IsInWater = Twinkie->GetWaterPhysicsApplied();
 		}

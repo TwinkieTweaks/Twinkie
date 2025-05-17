@@ -514,6 +514,7 @@ public:
                 }
             }
         }
+        CurPlayerInfo = InfoStruct;
         return InfoStruct;
     }
 
@@ -624,6 +625,11 @@ public:
     bool GetWaterPhysicsApplied()
     {
         return Read<bool>(CurPlayerInfo.Vehicle + 1508);
+    }
+
+    bool IsPaused()
+    {
+        return Read<bool>(CurPlayerInfo.TrackmaniaRace + 0x48);
     }
 
     int GetCheckpointCount()
