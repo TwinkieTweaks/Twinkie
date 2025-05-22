@@ -1,7 +1,7 @@
 # Twinkie
 [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/TwinkieTweaks/Twinkie?include_prereleases)](https://github.com/TwinkieTweaks/Twinkie/releases)
 [![GitHub all releases](https://img.shields.io/github/downloads/TwinkieTweaks/Twinkie/total)](https://github.com/TwinkieTweaks/Twinkie/releases)\
-Twinkie is a QOL modification for TrackMania Forever.
+Twinkie is a QOL modification for TrackMania Forever, a practical alternative to Openplanet, but for TMNF and TMUF.
 
 ## Discord
 We have a discord server at https://discord.gg/kRZ4MdCkVf
