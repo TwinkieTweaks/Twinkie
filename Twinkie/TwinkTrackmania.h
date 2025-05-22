@@ -331,6 +331,17 @@ public:
         return Read<uintptr_t>(GetTrackmania() + 0x168);
     }
 
+    uintptr_t GetNetwork()
+    {
+        return Read<uintptr_t>(GetTrackmania() + 0x12c);
+    }
+
+    void CallSaveChallengeFromMemory()
+    {
+        using SaveChallengeFromMemoryFn = int(__thiscall*)(uintptr_t);
+        reinterpret_cast<SaveChallengeFromMemoryFn>(GetExeBaseAddr() + 0x278300)(GetNetwork());
+    }
+
     void PatchNicknameEntry()
     {
         std::vector<int> IndiciesToNicknameEntry = { 0, 0, 1, 1, 1 };

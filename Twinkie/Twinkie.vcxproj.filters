@@ -144,9 +144,6 @@
     <ClInclude Include="nvg-dx9\stb_truetype.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Modules\AlwaysOfficial\AlwaysOfficial.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Modules\NicknamePatch\NicknamePatch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -157,6 +154,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Modules\Telemetry\Telemetry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Modules\DownloadServerMaps\DownloadServerMaps.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Modules\AlwaysOfficial\AlwaysOfficial.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -203,9 +206,6 @@
     <ClCompile Include="kiero\minhook\src\trampoline.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Modules\AlwaysOfficial\AlwaysOfficial.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Modules\NicknamePatch\NicknamePatch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -213,6 +213,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Modules\Telemetry\Telemetry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules\AlwaysOfficial\AlwaysOfficial.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules\DownloadServerMaps\DownloadServerMaps.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

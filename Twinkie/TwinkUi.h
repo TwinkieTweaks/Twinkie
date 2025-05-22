@@ -27,6 +27,7 @@
 #include "Modules/NicknamePatch/NicknamePatch.h"
 #include "Modules/ViewValidation/ViewValidation.h"
 #include "Modules/Telemetry/Telemetry.h"
+#include "Modules/DownloadServerMaps/DownloadServerMaps.h"
 #ifdef BUILD_DEBUG
 #include "Modules/PlayerInfo.h"
 #endif
@@ -121,6 +122,7 @@ public:
         Modules.push_back(new NicknamePatchModule(TrackmaniaMgr, Logger, &DoRender));
         Modules.push_back(new ViewValidationModule(TrackmaniaMgr, Logger, &DoRender));
         Modules.push_back(new TelemetryModule(TrackmaniaMgr, Logger, &DoRender));
+        Modules.push_back(new DownloadServerMapsModule(TrackmaniaMgr, Logger, &DoRender));
 
         Logger.PrintInternalArgs("{} module{} initialized.", Modules.size(), Modules.size() == 1 ? "" : "s");
 
