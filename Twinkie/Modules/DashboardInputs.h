@@ -55,6 +55,8 @@ public:
 	std::string StyleName = "Keyboard";
 	int StyleIdx = 1;
 
+	bool ForceTMVizDimensions = false;
+
 	DashboardInputsModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled)
 	{
 		this->UiRenderEnabled = UiRenderEnabled;
@@ -79,7 +81,7 @@ public:
 			int DashboardWindowFlags = ImGuiWindowFlags_NoTitleBar;
 			if (!*UiRenderEnabled) DashboardWindowFlags |= ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs;
 			
-			if (StyleName == "TMViz")
+			if (StyleName == "TMViz" and ForceTMVizDimensions)
 			{
 				DashboardWindowFlags |= ImGuiWindowFlags_NoResize;
 				SetNextWindowSize(ImVec2(256, 140));
@@ -209,10 +211,10 @@ public:
 
 				auto ExactMid = ImVec2(CursorPos.x + WindowWidth / 2.f, CursorPos.y + WindowHeight / 2.f);
 
-				auto MidTopLeft = ImVec2(ExactMid.x - 24.f, ExactMid.y - 4.f);
-				auto MidBottomLeft = ImVec2(ExactMid.x - 24.f, ExactMid.y + 4.f);
-				auto MidTopRight = ImVec2(ExactMid.x + 24.f, ExactMid.y - 4.f);
-				auto MidBottomRight = ImVec2(ExactMid.x + 24.f, ExactMid.y + 4.f);
+				auto MidTopLeft = ImVec2(ExactMid.x - (WindowWidth * 0.09375f), ExactMid.y - (WindowHeight / 35.f));
+				auto MidBottomLeft = ImVec2(ExactMid.x - (WindowWidth * 0.09375f), ExactMid.y + (WindowHeight / 35.f));
+				auto MidTopRight = ImVec2(ExactMid.x + (WindowWidth * 0.09375f), ExactMid.y - (WindowHeight / 35.f));
+				auto MidBottomRight = ImVec2(ExactMid.x + (WindowWidth * 0.09375f), ExactMid.y + (WindowHeight / 35.f));
 
 				UIDrawList->AddTriangleFilled(CornerLeft, MidTopLeft2, MidBottomLeft2, ColorConvertFloat4ToU32(ColorSteerI));
 				UIDrawList->AddTriangleFilled(MidTopRight2, CornerRight, MidBottomRight2, ColorConvertFloat4ToU32(ColorSteerI));
@@ -251,6 +253,12 @@ public:
 			StyleName = DashboardStyleNames[StyleIdx];
 
 			Separator();
+
+			if (StyleName == "TMViz")
+			{
+				Checkbox("Force TMViz default dimensions", &ForceTMVizDimensions);
+				Separator();
+			}
 
 			ColorEdit4("Steering", &ColorSteer.x, ImGuiColorEditFlags_NoInputs);
 			ColorEdit4("Acceleration", &ColorAccel.x, ImGuiColorEditFlags_NoInputs);
@@ -294,6 +302,8 @@ public:
 
 		Settings["Dashboard"]["Input display style"].GetAsString(&StyleName);
 		StyleIdx = std::string(DashboardStyleNames[0]) == StyleName ? 0 : (std::string(DashboardStyleNames[1]) == StyleName ? 1 : 2);
+	
+		Settings["Dashboard"]["Force TMViz dimensions"].GetAsBool(&ForceTMVizDimensions);
 	}
 
 	virtual void SettingsSave(SettingMgr& Settings) 
@@ -311,5 +321,7 @@ public:
 		Settings["Dashboard"]["Enable input display"].Set(Enabled);
 
 		Settings["Dashboard"]["Input display style"].Set(StyleName);
+
+		Settings["Dashboard"]["Force TMViz dimensions"].Set(ForceTMVizDimensions);
 	}
 };
