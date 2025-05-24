@@ -27,3 +27,13 @@ void DownloadServerMapsModule::RenderSettings()
 		EndTabItem();
 	}
 }
+
+void DownloadServerMapsModule::SettingsInit(SettingMgr& Settings)
+{
+	Settings["MapDownloader"]["Enable map downloads on servers"].GetAsBool(&Enabled);
+}
+
+void DownloadServerMapsModule::SettingsSave(SettingMgr& Settings)
+{
+	Settings["MapDownloader"]["Enable map downloads on servers"].Set(Enabled);
+}
