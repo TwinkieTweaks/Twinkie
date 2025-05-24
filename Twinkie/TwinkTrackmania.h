@@ -331,6 +331,12 @@ public:
         return Read<uintptr_t>(GetTrackmania() + 0x168);
     }
 
+    std::string GetChallengeDecorationName()
+    {
+        uintptr_t Decoration = Read<uintptr_t>(GetChallenge() + 0x114);
+        return GetNameOfNod(Decoration);
+    }
+
     uintptr_t GetNetwork()
     {
         return Read<uintptr_t>(GetTrackmania() + 0x12c);

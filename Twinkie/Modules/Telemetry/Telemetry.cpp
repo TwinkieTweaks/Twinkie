@@ -117,6 +117,7 @@ void TelemetryModule::UpdateTelemetry()
 			Telemetry.Vehicle.EngineTurboRatio = *((bool*)Twinkie->CurPlayerInfo.Vehicle + 948) ? 1.f : 0.f;
 			Telemetry.Vehicle.EngineFreeWheeling = *((bool*)Twinkie->CurPlayerInfo.Vehicle + 1548) ? 1 : 0;
 			Telemetry.Vehicle.IsInWater = Twinkie->GetWaterPhysicsApplied();
+			Telemetry.Vehicle.IsLightsOn = Twinkie->GetChallengeDecorationName().find("Night") != std::string::npos or Twinkie->GetChallengeDecorationName().find("Sunset") != std::string::npos;
 		}
 	}
 
@@ -127,28 +128,14 @@ long long Now() {
 	using namespace std::chrono;
 	auto now = system_clock::now();
 	auto duration = now.time_since_epoch();
-	return duration_cast<milliseconds>(duration).count();
+	return duration_cast<seconds>(duration).count();
 }
 
-void TelemetryModule::RenderMenuItem()
+void TelemetryModule::RenderMenuItem() {}
+
+void TelemetryModule::RenderInactive()
 {
-	using namespace ImGui;
-
-	if (MenuItem("TelemetryDbg", "", Enabled))
-	{
-		Enabled = !Enabled;
-	}
-}
-
-void TelemetryModule::Render()
-{
-	using namespace ImGui;
-
-	Begin("TelemetryDbg", &Enabled);
-
-	RenderFromState(Telemetry);
-
-	End();
+	if (Enabled) UpdateTelemetry();
 }
 
 TelemetryModule::TelemetryModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled)
@@ -175,4 +162,26 @@ TelemetryModule::TelemetryModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, co
 
 	if (TelemetryFileMapping != NULL and FileView != nullptr) UpdateTelemetry();
 	Inited = true;
+}
+
+void TelemetryModule::RenderSettings()
+{
+	using namespace ImGui;
+
+	if (BeginTabItem("Telemetry"))
+	{
+		Checkbox("Opt in", &Enabled);
+
+		EndTabItem();
+	}
+}
+
+void TelemetryModule::SettingsInit(SettingMgr& Settings)
+{
+	Settings["Telemetry"]["Opt in"].GetAsBool(&Enabled);
+}
+
+void TelemetryModule::SettingsSave(SettingMgr& Settings)
+{
+	Settings["Telemetry"]["Opt in"].Set(Enabled);
 }
