@@ -110,6 +110,34 @@ public:
 			Checkbox("Turbo", (bool*)Twinkie->CurPlayerInfo.Vehicle + 948);
 			Text("Turbo factor: %f", *((float*)Twinkie->CurPlayerInfo.Vehicle + 0x182) + 1.0f);
 
+			SeparatorText("Wheels");
+
+			Indent();
+
+			auto WheelBuf = Twinkie->GetVehicleWheels();
+
+			Text("BufferPtr: %x", WheelBuf.Ptr);
+
+			for (int Idx = 0; Idx < WheelBuf.Size; Idx++)
+			{
+				auto Wheel = WheelBuf[Idx];
+
+				PushID(Idx);
+
+				Text("Wheel #%d", Idx);
+				Text("%x", Wheel);
+				SameLine();
+				if (Button("Copy"))
+				{
+					SetClipboardText(ToHex((unsigned int)(uintptr_t)Wheel).c_str());
+					OffsetAddr = (uintptr_t)Wheel;
+				}
+
+				PopID();
+			}
+
+			Unindent();
+
 			SeparatorText("Offset Testing");
 
 			Checkbox("Show", &ShowOffsetTesting);

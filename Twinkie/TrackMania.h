@@ -9,9 +9,9 @@ namespace TM
 		T* Ptr = nullptr;
 		int Capacity = 0;
 
-		T operator[](int Idx)
+		T* operator[](int Idx)
 		{
-			return Ptr[Idx];
+			return (T*)((Idx + sizeof(T)) + Ptr);
 		}
 	};
 

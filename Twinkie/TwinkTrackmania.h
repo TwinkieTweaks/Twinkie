@@ -586,14 +586,14 @@ public:
         return Read<TM::CFastBuffer<SSimulationWheel>>(CurPlayerInfo.Vehicle + 744);
     }
 
-    bool GetVehicleWheelIsContacting(SSimulationWheel Wheel)
+    bool GetVehicleWheelIsContacting(SSimulationWheel* Wheel)
     {
-        return Read<unsigned int>((uintptr_t)(&Wheel + 480)) == 1;
+        return Read<unsigned int>((uintptr_t)(Wheel + 480)) == 1;
     }
 
-    unsigned int GetVehicleWheelMatId(SSimulationWheel Wheel)
+    unsigned int GetVehicleWheelMatId(SSimulationWheel* Wheel)
     {
-        return Read<unsigned int>((uintptr_t)(&Wheel + 576));
+        return Read<unsigned int>((uintptr_t)(Wheel + 576));
     }
 
     VehicleInputs GetInputInfo()
