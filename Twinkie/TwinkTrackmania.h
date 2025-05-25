@@ -8,6 +8,11 @@
 #include <sstream>
 #include <Windows.h>
 
+struct SSimulationWheel
+{
+    char _[0x2fc];
+};
+
 struct ChallengeInfo
 {
     int AuthorScore;
@@ -296,6 +301,47 @@ public:
         return String->Cstr;
     }
 
+    int GetSignedRaceTime()
+    {
+        if (!IsPlaying()) return 0;
+
+        uintptr_t Nod = CurPlayerInfo.TrackmaniaRace;
+
+        CMwMemberInfo* MemberInfo = new CMwMemberInfo();
+        MemberInfo->type = CMwMemberInfo::NATURAL;
+        MemberInfo->fieldOffset = -1;
+        MemberInfo->pszName = "CurrentTime";
+        MemberInfo->memberID = 0x2401400d;
+        MemberInfo->pParam = nullptr;
+        MemberInfo->flags = -1;
+        MemberInfo->flags2 = -1;
+
+        CMwStack* MwStack = new CMwStack();
+        MwStack->m_Size = 1;
+        MwStack->ppMemberInfos = new CMwMemberInfo * [MwStack->m_Size] {MemberInfo};
+        MwStack->iCurrentPos = 0;
+
+        int* RaceTime = nullptr;
+        if (!VirtualParamGet(Nod, MwStack, (void**)&RaceTime))
+        {
+            delete[] MwStack->ppMemberInfos;
+            delete MwStack;
+            delete MemberInfo;
+            return 0;
+        }
+        if (!RaceTime)
+        {
+            delete[] MwStack->ppMemberInfos;
+            delete MwStack;
+            delete MemberInfo;
+            return 0;
+        }
+        delete[] MwStack->ppMemberInfos;
+        delete MwStack;
+        delete MemberInfo;
+        return *RaceTime;
+    }
+
     uintptr_t GetMenuManager()
     {
         return Read<uintptr_t>(GetTrackmania() + 0x194);
@@ -533,6 +579,21 @@ public:
         }
         CurPlayerInfo = InfoStruct;
         return InfoStruct;
+    }
+
+    TM::CFastBuffer<SSimulationWheel> GetVehicleWheels()
+    {
+        return Read<TM::CFastBuffer<SSimulationWheel>>(CurPlayerInfo.Vehicle + 744);
+    }
+
+    bool GetVehicleWheelIsContacting(SSimulationWheel Wheel)
+    {
+        return Read<unsigned int>((uintptr_t)(&Wheel + 480)) == 1;
+    }
+
+    unsigned int GetVehicleWheelMatId(SSimulationWheel Wheel)
+    {
+        return Read<unsigned int>((uintptr_t)(&Wheel + 576));
     }
 
     VehicleInputs GetInputInfo()

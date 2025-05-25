@@ -17,71 +17,72 @@ bool IsHandicapFlagSet(int HandicapFlag, int HandicapBitField)
 	return (HandicapBitField & HandicapFlag) == HandicapFlag;
 }
 
-void RenderFromState(NManiaPlanet::STelemetry& TelemetryStruct)
-{
-	using namespace ImGui;
-
-	SeparatorText("Header");
-
-	Text("Magic: %s", TelemetryStruct.Header.Magic);
-	Text("Version: %d", TelemetryStruct.Header.Version);
-	Text("Size: %d", TelemetryStruct.Header.Size);
-	Text("UpdateNumber: %d", TelemetryStruct.UpdateNumber);
-
-	SeparatorText("Game");
-
-	Text("State: %d", TelemetryStruct.Game.State);
-	Text("GameplayVariant: %s", TelemetryStruct.Game.GameplayVariant);
-	Text("MapId: %s", TelemetryStruct.Game.MapId);
-	Text("MapName: %s", TelemetryStruct.Game.MapName);
-
-	SeparatorText("Race");
-
-	Text("State: %d", TelemetryStruct.Race.State);
-	Text("Time: %d", TelemetryStruct.Race.Time);
-	Text("NbRespawns: %d", TelemetryStruct.Race.NbRespawns);
-	Text("NbCheckpoints: %d", TelemetryStruct.Race.NbCheckpoints);
-	Text("NbCheckpointsPerLap: %d", TelemetryStruct.Race.NbCheckpointsPerLap);
-	Text("NbLapsPerRace: %d", TelemetryStruct.Race.NbLapsPerRace);
-	Text("Timestamp: %d", TelemetryStruct.Race.Timestamp);
-	Text("StartTimestamp: %d", TelemetryStruct.Race.StartTimestamp);
-
-	SeparatorText("Object");
-
-	Text("Timestamp: %d", TelemetryStruct.Object.Timestamp);
-	Text("DiscontinuityCount: %d", TelemetryStruct.Object.DiscontinuityCount);
-	Text("LatestStableGroundContactTime: %d", TelemetryStruct.Object.LatestStableGroundContactTime);
-
-	SeparatorText("Vehicle");
-
-	Text("Timestamp: %d", TelemetryStruct.Vehicle.Timestamp);
-	Text("InputSteer: %f", TelemetryStruct.Vehicle.InputSteer);
-	Text("InputGasPedal: %f", TelemetryStruct.Vehicle.InputGasPedal);
-	Text("InputIsBraking: %d", TelemetryStruct.Vehicle.InputIsBraking);
-	Text("InputIsHorn: %d", TelemetryStruct.Vehicle.InputIsHorn);
-	Text("EngineRpm: %f", TelemetryStruct.Vehicle.EngineRpm);
-	Text("EngineCurGear: %d", TelemetryStruct.Vehicle.EngineCurGear);
-	Text("EngineTurboRatio: %f", TelemetryStruct.Vehicle.EngineTurboRatio);
-	Text("EngineFreeWheeling: %d", TelemetryStruct.Vehicle.EngineFreeWheeling);
-	Text("RumbleIntensity: %f", TelemetryStruct.Vehicle.RumbleIntensity);
-	Text("SpeedMeter: %d", TelemetryStruct.Vehicle.SpeedMeter);
-	Text("IsInWater: %d", TelemetryStruct.Vehicle.IsInWater);
-	Text("IsSparkling: %d", TelemetryStruct.Vehicle.IsSparkling);
-	Text("IsLightTrails: %d", TelemetryStruct.Vehicle.IsLightTrails);
-	Text("IsLightsOn: %d", TelemetryStruct.Vehicle.IsLightsOn);
-	Text("IsFlying: %d", TelemetryStruct.Vehicle.IsFlying);
-	Text("IsOnIce: %d", TelemetryStruct.Vehicle.IsOnIce);
-	Text("HandicapNoEngine: %d", IsHandicapFlagSet(NoEngineBitFlag, TelemetryStruct.Vehicle.Handicap));
-
-	SeparatorText("Device");
-
-	Text("0");
-
-	SeparatorText("Player");
-
-	Text("Hue: %f", TelemetryStruct.Player.Hue);
-	Text("Username: %s", TelemetryStruct.Player.UserName);
-}
+// ONLY USE THIS IF YOU'RE DEBUGGING THIS MODULE
+//void RenderFromState(NManiaPlanet::STelemetry& TelemetryStruct)
+//{
+//	using namespace ImGui;
+//
+//	SeparatorText("Header");
+//
+//	Text("Magic: %s", TelemetryStruct.Header.Magic);
+//	Text("Version: %d", TelemetryStruct.Header.Version);
+//	Text("Size: %d", TelemetryStruct.Header.Size);
+//	Text("UpdateNumber: %d", TelemetryStruct.UpdateNumber);
+//
+//	SeparatorText("Game");
+//
+//	Text("State: %d", TelemetryStruct.Game.State);
+//	Text("GameplayVariant: %s", TelemetryStruct.Game.GameplayVariant);
+//	Text("MapId: %s", TelemetryStruct.Game.MapId);
+//	Text("MapName: %s", TelemetryStruct.Game.MapName);
+//
+//	SeparatorText("Race");
+//
+//	Text("State: %d", TelemetryStruct.Race.State);
+//	Text("Time: %d", TelemetryStruct.Race.Time);
+//	Text("NbRespawns: %d", TelemetryStruct.Race.NbRespawns);
+//	Text("NbCheckpoints: %d", TelemetryStruct.Race.NbCheckpoints);
+//	Text("NbCheckpointsPerLap: %d", TelemetryStruct.Race.NbCheckpointsPerLap);
+//	Text("NbLapsPerRace: %d", TelemetryStruct.Race.NbLapsPerRace);
+//	Text("Timestamp: %d", TelemetryStruct.Race.Timestamp);
+//	Text("StartTimestamp: %d", TelemetryStruct.Race.StartTimestamp);
+//
+//	SeparatorText("Object");
+//
+//	Text("Timestamp: %d", TelemetryStruct.Object.Timestamp);
+//	Text("DiscontinuityCount: %d", TelemetryStruct.Object.DiscontinuityCount);
+//	Text("LatestStableGroundContactTime: %d", TelemetryStruct.Object.LatestStableGroundContactTime);
+//
+//	SeparatorText("Vehicle");
+//
+//	Text("Timestamp: %d", TelemetryStruct.Vehicle.Timestamp);
+//	Text("InputSteer: %f", TelemetryStruct.Vehicle.InputSteer);
+//	Text("InputGasPedal: %f", TelemetryStruct.Vehicle.InputGasPedal);
+//	Text("InputIsBraking: %d", TelemetryStruct.Vehicle.InputIsBraking);
+//	Text("InputIsHorn: %d", TelemetryStruct.Vehicle.InputIsHorn);
+//	Text("EngineRpm: %f", TelemetryStruct.Vehicle.EngineRpm);
+//	Text("EngineCurGear: %d", TelemetryStruct.Vehicle.EngineCurGear);
+//	Text("EngineTurboRatio: %f", TelemetryStruct.Vehicle.EngineTurboRatio);
+//	Text("EngineFreeWheeling: %d", TelemetryStruct.Vehicle.EngineFreeWheeling);
+//	Text("RumbleIntensity: %f", TelemetryStruct.Vehicle.RumbleIntensity);
+//	Text("SpeedMeter: %d", TelemetryStruct.Vehicle.SpeedMeter);
+//	Text("IsInWater: %d", TelemetryStruct.Vehicle.IsInWater);
+//	Text("IsSparkling: %d", TelemetryStruct.Vehicle.IsSparkling);
+//	Text("IsLightTrails: %d", TelemetryStruct.Vehicle.IsLightTrails);
+//	Text("IsLightsOn: %d", TelemetryStruct.Vehicle.IsLightsOn);
+//	Text("IsFlying: %d", TelemetryStruct.Vehicle.IsFlying);
+//	Text("IsOnIce: %d", TelemetryStruct.Vehicle.IsOnIce);
+//	Text("HandicapNoEngine: %d", IsHandicapFlagSet(NoEngineBitFlag, TelemetryStruct.Vehicle.Handicap));
+//
+//	SeparatorText("Device");
+//
+//	Text("0");
+//
+//	SeparatorText("Player");
+//
+//	Text("Hue: %f", TelemetryStruct.Player.Hue);
+//	Text("Username: %s", TelemetryStruct.Player.UserName);
+//}
 
 void TelemetryModule::UpdateTelemetry()
 {
@@ -108,7 +109,7 @@ void TelemetryModule::UpdateTelemetry()
 		// Vehicle
 		if (Twinkie->IsPlaying())
 		{
-			Telemetry.Vehicle.Timestamp = (int)Now();
+			// Telemetry.Vehicle.Timestamp = (int)Now();
 			Telemetry.Vehicle.InputSteer = Twinkie->GetInputInfo().Steer;
 			Telemetry.Vehicle.InputGasPedal = Twinkie->GetInputInfo().fGas;
 			Telemetry.Vehicle.InputIsBraking = Twinkie->GetInputInfo().get_Brake();
@@ -118,24 +119,31 @@ void TelemetryModule::UpdateTelemetry()
 			Telemetry.Vehicle.EngineFreeWheeling = *((bool*)Twinkie->CurPlayerInfo.Vehicle + 1548) ? 1 : 0;
 			Telemetry.Vehicle.IsInWater = Twinkie->GetWaterPhysicsApplied();
 			Telemetry.Vehicle.IsLightsOn = Twinkie->GetChallengeDecorationName().find("Night") != std::string::npos or Twinkie->GetChallengeDecorationName().find("Sunset") != std::string::npos;
+		
+			for (int Idx = 0; Idx < 4; Idx++)
+			{
+				Telemetry.Vehicle.WheelsIsGroundContact[Idx] = Twinkie->GetVehicleWheelIsContacting(Twinkie->GetVehicleWheels()[Idx]) ? 1 : 0;
+			}
 		}
 	}
 
 	CopyMemory(FileView, &Telemetry, sizeof(Telemetry));
 }
 
-long long Now() {
+unsigned long long Now() {
 	using namespace std::chrono;
 	auto now = system_clock::now();
 	auto duration = now.time_since_epoch();
-	return duration_cast<seconds>(duration).count();
+	return duration_cast<milliseconds>(duration).count();
 }
 
 void TelemetryModule::RenderMenuItem() {}
 
 void TelemetryModule::RenderInactive()
 {
+	CurrentChallenge = Twinkie->GetChallenge();
 	if (Enabled) UpdateTelemetry();
+	PreviousChallenge = Twinkie->GetChallenge();
 }
 
 TelemetryModule::TelemetryModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled)

@@ -25,7 +25,6 @@
 // #include "Modules/HuntingStats.h"
 #include "Modules/AlwaysOfficial/AlwaysOfficial.h"
 #include "Modules/NicknamePatch/NicknamePatch.h"
-#include "Modules/ViewValidation/ViewValidation.h"
 #include "Modules/Telemetry/Telemetry.h"
 #include "Modules/DownloadServerMaps/DownloadServerMaps.h"
 #ifdef BUILD_DEBUG
@@ -120,7 +119,6 @@ public:
         Modules.push_back(new TweakerModule(TrackmaniaMgr, Logger, &DoRender));
         Modules.push_back(new AlwaysOfficialModule(TrackmaniaMgr, Logger, &DoRender));
         Modules.push_back(new NicknamePatchModule(TrackmaniaMgr, Logger, &DoRender));
-        Modules.push_back(new ViewValidationModule(TrackmaniaMgr, Logger, &DoRender));
         Modules.push_back(new TelemetryModule(TrackmaniaMgr, Logger, &DoRender));
         Modules.push_back(new DownloadServerMapsModule(TrackmaniaMgr, Logger, &DoRender));
 

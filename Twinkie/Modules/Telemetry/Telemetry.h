@@ -9,8 +9,8 @@
 #define ForcedAccelBitFlag 1 << 1
 #define NoEngineBitFlag 1 << 0
 
-long long Now();
-void RenderFromState(NManiaPlanet::STelemetry& TelemetryStruct);
+unsigned long long Now();
+//void RenderFromState(NManiaPlanet::STelemetry& TelemetryStruct);
 
 class TelemetryModule : public IModule
 {
@@ -18,6 +18,9 @@ public:
 	HANDLE TelemetryFileMapping = NULL;
 	void* FileView = nullptr;
 	NManiaPlanet::STelemetry Telemetry = {};
+	
+	uintptr_t PreviousChallenge = 0;
+	uintptr_t CurrentChallenge = 0;
 
 	bool Inited = false;
 

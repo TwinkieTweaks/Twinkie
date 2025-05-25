@@ -413,7 +413,6 @@
     <ClInclude Include="Modules\AlwaysOfficial\AlwaysOfficial.h" />
     <ClInclude Include="Modules\DownloadServerMaps\DownloadServerMaps.h" />
     <ClInclude Include="Modules\Telemetry\Telemetry.h" />
-    <ClInclude Include="Modules\ViewValidation\ViewValidation.h" />
     <ClInclude Include="Telemetry.h" />
     <ClInclude Include="minhook\buffer.h" />
     <ClInclude Include="mINI\ini.h" />
@@ -461,7 +460,6 @@
     <ClCompile Include="Modules\DownloadServerMaps\DownloadServerMaps.cpp" />
     <ClCompile Include="Modules\NicknamePatch\NicknamePatch.cpp" />
     <ClCompile Include="Modules\Telemetry\Telemetry.cpp" />
-    <ClCompile Include="Modules\ViewValidation\ViewValidation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="kiero\minhook\dll_resources\MinHook.def" />

@@ -8,6 +8,11 @@ namespace TM
 		int Size = 0;
 		T* Ptr = nullptr;
 		int Capacity = 0;
+
+		T operator[](int Idx)
+		{
+			return Ptr[Idx];
+		}
 	};
 
 	template <typename T>
