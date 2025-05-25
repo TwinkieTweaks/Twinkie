@@ -11,7 +11,7 @@ namespace TM
 
 		T* operator[](int Idx)
 		{
-			return (T*)((Idx * sizeof(T)) + Ptr);
+			return Ptr + (Idx * sizeof(T));
 		}
 	};
 
