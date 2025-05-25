@@ -122,7 +122,8 @@ void TelemetryModule::UpdateTelemetry()
 		
 			for (int Idx = 0; Idx < 4; Idx++)
 			{
-				Telemetry.Vehicle.WheelsIsGroundContact[Idx] = Twinkie->GetVehicleWheelIsContacting(Twinkie->GetVehicleWheels()[Idx]) ? 1 : 0;
+				Telemetry.Vehicle.WheelsIsGroundContact[Idx] = Twinkie->GetVehicleWheelIsContactingGround(Twinkie->GetVehicleWheels()[Idx]) ? 1 : 0;
+				Telemetry.Vehicle.WheelsIsSliping[Idx] = Twinkie->GetVehicleWheelIsSlipping(Twinkie->GetVehicleWheels()[Idx]) ? 1 : 0;
 			}
 		}
 	}

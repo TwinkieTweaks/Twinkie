@@ -125,13 +125,17 @@ public:
 				PushID(Idx);
 
 				Text("Wheel #%d", Idx);
-				Text("%x", Wheel);
+				Text("0x%x", Wheel);
 				SameLine();
 				if (Button("Copy"))
 				{
 					SetClipboardText(ToHex((unsigned int)(uintptr_t)Wheel).c_str());
 					OffsetAddr = (uintptr_t)Wheel;
 				}
+
+				Text("Material: %d", Twinkie->GetVehicleWheelMatId(Wheel));
+				Text("Slipping: %d", Twinkie->GetVehicleWheelIsSlipping(Wheel) ? 1 : 0);
+				Text("GroundContact: %d", Twinkie->GetVehicleWheelIsContactingGround(Wheel) ? 1 : 0);
 
 				PopID();
 			}
