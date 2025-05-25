@@ -11,7 +11,7 @@ namespace TM
 
 		T* operator[](int Idx)
 		{
-			return Ptr + ((Idx * sizeof(T)) / 4); // ??????????????
+			return Ptr + Idx; // FUCK YOU BILL GATES
 		}
 	};
 
