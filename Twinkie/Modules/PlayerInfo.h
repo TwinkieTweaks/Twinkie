@@ -24,6 +24,8 @@ public:
 
 		Begin("Player Information", &Enabled);
 
+		auto DrawList = GetForegroundDrawList();
+
 		if (Twinkie->CurPlayerInfo.Vehicle) 
 		{
 			if (!Twinkie->CurPlayerInfo.Player) return;
@@ -32,7 +34,7 @@ public:
 			Text("Address of GameApp: %x", Twinkie->GetTrackmania());
 			SameLine();
 			std::string GameAppAddrStr = ToHex(Twinkie->GetTrackmania());
-			if (Button("Copy##GameApp"))
+			if (SmallButton("Copy##GameApp"))
 			{
 				SetClipboardText(GameAppAddrStr.c_str());
 				OffsetAddr = Twinkie->GetTrackmania();
@@ -41,7 +43,7 @@ public:
 			Text("Address of Player: %x", Twinkie->CurPlayerInfo.Player);
 			SameLine();
 			std::string PlayerAddrStr = ToHex(Twinkie->CurPlayerInfo.Player);
-			if (Button("Copy##Player"))
+			if (SmallButton("Copy##Player"))
 			{
 				SetClipboardText(PlayerAddrStr.c_str());
 				OffsetAddr = Twinkie->CurPlayerInfo.Player;
@@ -50,7 +52,7 @@ public:
 			Text("Address of Mobil: %x", Twinkie->CurPlayerInfo.Mobil);
 			SameLine();
 			std::string MobilAddrStr = ToHex(Twinkie->CurPlayerInfo.Mobil);
-			if (Button("Copy##Mobil"))
+			if (SmallButton("Copy##Mobil"))
 			{
 				SetClipboardText(MobilAddrStr.c_str());
 				OffsetAddr = Twinkie->CurPlayerInfo.Mobil;
@@ -59,7 +61,7 @@ public:
 			Text("Address of Vehicle: %x", Twinkie->CurPlayerInfo.Vehicle);
 			SameLine();
 			std::string VehicleAddrStr = ToHex(Twinkie->CurPlayerInfo.Vehicle);
-			if (Button("Copy##Vehicle"))
+			if (SmallButton("Copy##Vehicle"))
 			{
 				SetClipboardText(VehicleAddrStr.c_str());
 				OffsetAddr = Twinkie->CurPlayerInfo.Vehicle;
@@ -68,7 +70,7 @@ public:
 			Text("Address of PlayerInfo: %x", Twinkie->CurPlayerInfo.PlayerInfo);
 			SameLine();
 			std::string PlayerInfoAddrStr = ToHex(Twinkie->CurPlayerInfo.PlayerInfo);
-			if (Button("Copy##PlayerInfo"))
+			if (SmallButton("Copy##PlayerInfo"))
 			{
 				SetClipboardText(PlayerInfoAddrStr.c_str());
 				OffsetAddr = Twinkie->CurPlayerInfo.PlayerInfo;
@@ -77,19 +79,19 @@ public:
 			Text("Address of TrackmaniaRace: %x", Twinkie->CurPlayerInfo.TrackmaniaRace);
 			SameLine();
 			std::string TrackmaniaRaceAddrStr = ToHex(Twinkie->CurPlayerInfo.TrackmaniaRace);
-			if (Button("Copy##TrackmaniaRace"))
+			if (SmallButton("Copy##TrackmaniaRace"))
 			{
 				SetClipboardText(TrackmaniaRaceAddrStr.c_str());
 				OffsetAddr = Twinkie->CurPlayerInfo.TrackmaniaRace;
 			}
 
 			SeparatorText("Race data");
-
+		
 			Text("Time: %lu", Twinkie->GetRaceTime());
 			Text("Speed: %f", Twinkie->GetDisplaySpeed());
 			Text("RPM: %f", Twinkie->GetRpm());
 			Text("Gear: %lu", Twinkie->GetGear());
-			Text("IsWet: %lu", Twinkie->GetWaterPhysicsApplied());
+			Checkbox("IsWet", (bool*)(Twinkie->CurPlayerInfo.Vehicle + 1508));
 			Text("Personal best: %lu", Twinkie->GetBestTime());
 
 			VehicleInputs InputInfo = Twinkie->GetInputInfo();
@@ -108,7 +110,9 @@ public:
 
 			Checkbox("Free wheeling", (bool*)Twinkie->CurPlayerInfo.Vehicle + 1548);
 			Checkbox("Turbo", (bool*)Twinkie->CurPlayerInfo.Vehicle + 948);
+			Checkbox("Light trails", (bool*)Twinkie->CurPlayerInfo.Vehicle + 0x74);
 			Text("Turbo factor: %f", *((float*)Twinkie->CurPlayerInfo.Vehicle + 0x182) + 1.0f);
+			ColorEdit3("Trail color", (float*)(Twinkie->CurPlayerInfo.Vehicle + 0xC8));
 
 			SeparatorText("Wheels");
 
@@ -127,7 +131,7 @@ public:
 				Text("Wheel #%d", Idx);
 				Text("0x%x", Wheel);
 				SameLine();
-				if (Button("Copy"))
+				if (SmallButton("Copy"))
 				{
 					SetClipboardText(ToHex((unsigned int)(uintptr_t)Wheel).c_str());
 					OffsetAddr = (uintptr_t)Wheel;
@@ -141,6 +145,29 @@ public:
 			}
 
 			Unindent();
+
+			SeparatorText("Camera");
+
+			CameraInfo CamInfo = Twinkie->GetCamInfo();
+
+			TM::GmVec3 ExamplePoint = {};
+
+			Text("Camera: 0x%x", CamInfo.HmsPocCamera);
+			SameLine();
+			if (SmallButton("Copy"))
+			{
+				SetClipboardText(ToHex((unsigned int)CamInfo.HmsPocCamera).c_str());
+				OffsetAddr = CamInfo.HmsPocCamera;
+			}
+
+			Text("Fov: %f", CamInfo.Fov);
+			Text("FarZ: %f", CamInfo.FarZ);
+			Text("NearZ: %f", CamInfo.NearZ);
+			Text("RatioXY: %f", CamInfo.AspectRatio);
+
+			Text("Position: <%f, %f, %f>", CamInfo.Position.t.x, CamInfo.Position.t.y, CamInfo.Position.t.z);
+
+			InputFloat3("Example point", (float*)&ExamplePoint);
 
 			SeparatorText("Offset Testing");
 

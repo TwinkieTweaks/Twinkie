@@ -58,6 +58,16 @@ struct VehicleInputs
     }
 };
 
+struct CameraInfo
+{
+    TM::GmIso4 Position;
+	float Fov;
+    float NearZ;
+	float FarZ;
+    float AspectRatio;
+	uintptr_t HmsPocCamera;
+};
+
 typedef int Integer;
 typedef unsigned int Bool;
 typedef unsigned char Nat8;
@@ -342,6 +352,94 @@ public:
         return *RaceTime;
     }
 
+    float GetHmsCameraFov()
+    {
+        if (!IsPlaying()) return 0;
+		if (!GetGameCamera()) return 0;
+        if (!GetHmsPocCamera()) return 0;
+		if (!IsHmsPocHmsCamera(GetHmsPocCamera())) return 0;
+
+        uintptr_t Nod = GetHmsPocCamera();
+
+        CMwMemberInfo* MemberInfo = new CMwMemberInfo();
+        MemberInfo->type = CMwMemberInfo::REAL;
+        MemberInfo->fieldOffset = -1;
+        MemberInfo->pszName = "Fov";
+        MemberInfo->memberID = 0x6001014;
+        MemberInfo->pParam = nullptr;
+        MemberInfo->flags = -1;
+        MemberInfo->flags2 = -1;
+
+        CMwStack* MwStack = new CMwStack();
+        MwStack->m_Size = 1;
+        MwStack->ppMemberInfos = new CMwMemberInfo * [MwStack->m_Size] {MemberInfo};
+        MwStack->iCurrentPos = 0;
+
+        float* FovVal = nullptr;
+        if (!VirtualParamGet(Nod, MwStack, (void**)&FovVal))
+        {
+            delete[] MwStack->ppMemberInfos;
+            delete MwStack;
+            delete MemberInfo;
+            return 0;
+        }
+        if (!FovVal)
+        {
+            delete[] MwStack->ppMemberInfos;
+            delete MwStack;
+            delete MemberInfo;
+            return 0;
+        }
+        delete[] MwStack->ppMemberInfos;
+        delete MwStack;
+        delete MemberInfo;
+        return *FovVal;
+    }
+
+    float GetHmsCameraAspectRatio()
+    {
+        if (!IsPlaying()) return 0;
+        if (!GetGameCamera()) return 0;
+        if (!GetHmsPocCamera()) return 0;
+        if (!IsHmsPocHmsCamera(GetHmsPocCamera())) return 0;
+
+        uintptr_t Nod = GetHmsPocCamera();
+
+        CMwMemberInfo* MemberInfo = new CMwMemberInfo();
+        MemberInfo->type = CMwMemberInfo::REAL;
+        MemberInfo->fieldOffset = -1;
+        MemberInfo->pszName = "RatioXY";
+        MemberInfo->memberID = 0x6001015;
+        MemberInfo->pParam = nullptr;
+        MemberInfo->flags = -1;
+        MemberInfo->flags2 = -1;
+
+        CMwStack* MwStack = new CMwStack();
+        MwStack->m_Size = 1;
+        MwStack->ppMemberInfos = new CMwMemberInfo * [MwStack->m_Size] {MemberInfo};
+        MwStack->iCurrentPos = 0;
+
+        float* RatioXYVal = nullptr;
+        if (!VirtualParamGet(Nod, MwStack, (void**)&RatioXYVal))
+        {
+            delete[] MwStack->ppMemberInfos;
+            delete MwStack;
+            delete MemberInfo;
+            return 0;
+        }
+        if (!RatioXYVal)
+        {
+            delete[] MwStack->ppMemberInfos;
+            delete MwStack;
+            delete MemberInfo;
+            return 0;
+        }
+        delete[] MwStack->ppMemberInfos;
+        delete MwStack;
+        delete MemberInfo;
+        return *RatioXYVal;
+    }
+
     uintptr_t GetMenuManager()
     {
         return Read<uintptr_t>(GetTrackmania() + 0x194);
@@ -482,6 +580,109 @@ public:
             Write<float>(Distance, Camera + 0x178); // ZClipValue
             Write<float>(Void ? Distance * -10000.f : 200.f, Camera + 0x17c); // ZClipMargin
         }
+    }
+
+	CameraInfo GetCamInfo()
+	{
+		CameraInfo CamInfo{};
+
+		if (!GetGameCamera() or !IsPlaying()) return CamInfo;
+
+		uintptr_t Camera = GetHmsPocCamera();
+		CamInfo.HmsPocCamera = Camera;
+		if (IsHmsPocHmsCamera(Camera))
+		{
+			CamInfo.Position = Read<TM::GmIso4>(Camera + 0x18); // CHmsZoneElem.Location
+			CamInfo.Fov = GetHmsCameraFov(); // CHmsCamera.Fov (virtual)
+			CamInfo.NearZ = Read<float>(Camera + 292); // CHmsPoc.NearZ (virtual but i found the offset)
+			CamInfo.FarZ = Read<float>(Camera + 304); // CHmsPoc.FarZ (virtual but i found the offset)
+			CamInfo.AspectRatio = GetHmsCameraAspectRatio(); // CHmsCamera.RatioXY (virtual)
+		}
+
+		return CamInfo;
+	}
+
+    TM::GmMat4 GetViewMatrix(TM::GmIso4 IsoMatrix)
+    {
+        TM::GmVec3 Right = IsoMatrix[0];
+        TM::GmVec3 Up = IsoMatrix[1];
+        TM::GmVec3 Fwd = IsoMatrix[2];
+        TM::GmVec3 Pos = IsoMatrix.t;
+
+        TM::GmVec3 InvRight = { Right.x, Up.x, Fwd.x };
+        TM::GmVec3 InvUp = { Right.y, Up.y, Fwd.y };
+        TM::GmVec3 InvFwd = { Right.z, Up.z, Fwd.z };
+
+        float Tx = -(InvRight.x * Pos.x + InvRight.y * Pos.y + InvRight.z * Pos.z);
+        float Ty = -(InvUp.x * Pos.x + InvUp.y * Pos.y + InvUp.z * Pos.z);
+        float Tz = -(InvFwd.x * Pos.x + InvFwd.y * Pos.y + InvFwd.z * Pos.z);
+
+        TM::GmMat4 ViewMatrix = {
+            {InvRight.x, InvRight.y, InvRight.z, Tx},
+            {InvUp.x, InvUp.y, InvUp.z, Ty},
+            {InvFwd.x, InvFwd.y, InvFwd.z, Tz},
+            {0.0f, 0.0f, 0.0f, 1.0f}
+        };
+
+        return ViewMatrix;
+    }
+
+    TM::GmMat4 GetProjectionMatrix()
+    {
+        CameraInfo Cam = GetCamInfo();
+
+        float FovY = Cam.Fov;
+        float Aspect = Cam.AspectRatio;
+        float NearZ = Cam.NearZ;
+        float FarZ = Cam.FarZ;
+
+        float F = 1.0f / tanf(FovY / 2.0f);
+        float NF = 1.0f / (NearZ - FarZ);
+
+        TM::GmMat4 ProjMatrix = {
+            {F / Aspect, 0.0f, 0.0f, 0.0f},
+            {0.0f, F, 0.0f, 0.0f},
+            {0.0f, 0.0f, (FarZ + NearZ) * NF, 2 * FarZ * NearZ * NF},
+            {0.0f, 0.0f, -1.0f, 0.0f}
+        };
+
+        return ProjMatrix;
+    }
+
+    bool IsPointVisible(TM::GmVec3 WorldPoint)
+    {
+        TM::GmMat4 View = GetViewMatrix(GetCamInfo().Position);
+        TM::GmMat4 Proj = GetProjectionMatrix();
+
+        TM::GmVec4 Point4 = { WorldPoint.x, WorldPoint.y, WorldPoint.z, 1.0f };
+        TM::GmVec4 ViewSpace = View * Point4;
+        TM::GmVec4 ClipSpace = Proj * ViewSpace;
+
+        if (ClipSpace.w == 0.0f) return false;
+        TM::GmVec3 Ndc = { ClipSpace.x / ClipSpace.w, ClipSpace.y / ClipSpace.w, ClipSpace.z / ClipSpace.w };
+
+        return Ndc.x >= -1.0f && Ndc.x <= 1.0f &&
+            Ndc.y >= -1.0f && Ndc.y <= 1.0f &&
+            Ndc.z >= 0.0f && Ndc.z <= 1.0f;
+    }
+
+    TM::GmVec2 MapToScreenSpaceFromWorldSpace(TM::GmVec3 WorldPoint, TM::GmVec2 ScreenSize)
+    {
+        TM::GmMat4 View = GetViewMatrix(GetCamInfo().Position);
+        TM::GmMat4 Proj = GetProjectionMatrix();
+
+        TM::GmVec4 Point4 = { WorldPoint.x, WorldPoint.y, WorldPoint.z, 1.0f };
+        TM::GmVec4 ViewSpace = View * Point4;
+        TM::GmVec4 ClipSpace = Proj * ViewSpace;
+
+        if (ClipSpace.w == 0.0f) return { -1, -1 };
+        float NdcX = ClipSpace.x / ClipSpace.w;
+        float NdcY = ClipSpace.y / ClipSpace.w;
+
+        float ScreenX = (NdcX * 0.5f + 0.5f) * ScreenSize.x;
+        float ScreenY = (NdcY * 0.5f + 0.5f) * ScreenSize.y;
+
+        return { ScreenX, ScreenY };
     }
 
     void CallMenuGhostEditor()

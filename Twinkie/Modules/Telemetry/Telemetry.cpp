@@ -180,7 +180,7 @@ void TelemetryModule::RenderSettings()
 	if (BeginTabItem("Telemetry"))
 	{
 		Checkbox("Opt in", &Enabled);
-
+		 
 		EndTabItem();
 	}
 }
