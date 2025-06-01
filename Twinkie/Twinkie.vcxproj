@@ -410,23 +410,22 @@
     <ClInclude Include="kiero\minhook\src\hde\table32.h" />
     <ClInclude Include="kiero\minhook\src\hde\table64.h" />
     <ClInclude Include="kiero\minhook\src\trampoline.h" />
+    <ClInclude Include="Modules\About\About.h" />
     <ClInclude Include="Modules\AlwaysOfficial\AlwaysOfficial.h" />
     <ClInclude Include="Modules\DownloadServerMaps\DownloadServerMaps.h" />
+    <ClInclude Include="Modules\GhostEditor\GhostEditor.h" />
     <ClInclude Include="Modules\Telemetry\Telemetry.h" />
     <ClInclude Include="Telemetry.h" />
     <ClInclude Include="minhook\buffer.h" />
     <ClInclude Include="mINI\ini.h" />
-    <ClInclude Include="Modules\About.h" />
     <ClInclude Include="Modules\AppExplorer.h" />
-    <ClInclude Include="Modules\DashboardInputs.h" />
-    <ClInclude Include="Modules\DashboardTacho.h" />
-    <ClInclude Include="Modules\DashboardGears.h" />
-    <ClInclude Include="Modules\GhostEditor.h" />
-    <ClInclude Include="Modules\HuntingStats.h" />
-    <ClInclude Include="Modules\Medals.h" />
+    <ClInclude Include="Modules\Dashboard\DashboardInputs.h" />
+    <ClInclude Include="Modules\Dashboard\DashboardTacho.h" />
+    <ClInclude Include="Modules\Dashboard\DashboardGears.h" />
+    <ClInclude Include="Modules\Medals\Medals.h" />
     <ClInclude Include="Modules\NicknamePatch\NicknamePatch.h" />
-    <ClInclude Include="Modules\PlayerInfo.h" />
-    <ClInclude Include="Modules\Tweaker.h" />
+    <ClInclude Include="Modules\PlayerInfo\PlayerInfo.h" />
+    <ClInclude Include="Modules\Tweaker\Tweaker.h" />
     <ClInclude Include="nvg-dx9\fontstash.h" />
     <ClInclude Include="nvg-dx9\stb_image.h" />
     <ClInclude Include="nvg-dx9\stb_truetype.h" />
@@ -438,7 +437,7 @@
     <ClInclude Include="TwinkUi.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Version.h" />
-    <ClInclude Include="Modules\CheckpointCounter.h" />
+    <ClInclude Include="Modules\CheckpointCounter\CheckpointCounter.h" />
     <ClInclude Include="TwinkTrackmania.h" />
   </ItemGroup>
   <ItemGroup>
@@ -456,10 +455,19 @@
     <ClCompile Include="kiero\minhook\src\hde\hde64.c" />
     <ClCompile Include="kiero\minhook\src\hook.c" />
     <ClCompile Include="kiero\minhook\src\trampoline.c" />
+    <ClCompile Include="Modules\About\About.cpp" />
     <ClCompile Include="Modules\AlwaysOfficial\AlwaysOfficial.cpp" />
+    <ClCompile Include="Modules\CheckpointCounter\CheckpointCounter.cpp" />
+    <ClCompile Include="Modules\Dashboard\DashboardGears.cpp" />
+    <ClCompile Include="Modules\Dashboard\DashboardInputs.cpp" />
+    <ClCompile Include="Modules\Dashboard\DashboardTacho.cpp" />
     <ClCompile Include="Modules\DownloadServerMaps\DownloadServerMaps.cpp" />
+    <ClCompile Include="Modules\GhostEditor\GhostEditor.cpp" />
+    <ClCompile Include="Modules\Medals\Medals.cpp" />
     <ClCompile Include="Modules\NicknamePatch\NicknamePatch.cpp" />
+    <ClCompile Include="Modules\PlayerInfo\PlayerInfo.cpp" />
     <ClCompile Include="Modules\Telemetry\Telemetry.cpp" />
+    <ClCompile Include="Modules\Tweaker\Tweaker.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="kiero\minhook\dll_resources\MinHook.def" />

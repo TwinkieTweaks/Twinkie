@@ -1,12 +1,10 @@
 #pragma once
 
-#include "../IModule.h"
+#include "../../IModule.h"
 
 class GhostEditorModule : public IModule
 {
 public:
-	bool IsDebug = false;
-
 	GhostEditorModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled)
 	{
 		this->UiRenderEnabled = UiRenderEnabled;
@@ -20,17 +18,11 @@ public:
 	virtual void RenderAnyways() {}
 	virtual void RenderSettings() {}
 
-	virtual void RenderMenuItem()
-	{
-		using namespace ImGui;
-		if (MenuItem(FancyName.c_str()) and !Twinkie->GetChallenge() and Twinkie->GetProfileScores())
-		{
-			Twinkie->CallMenuGhostEditor();
-		}
-	}
+	virtual void RenderMenuItem();
 
 	virtual void SettingsInit(SettingMgr& Settings) {}
 	virtual void SettingsSave(SettingMgr& Settings) {}
 
 	virtual bool HasSettings() { return false; }
+	virtual bool IsDebug() { return false; }
 };

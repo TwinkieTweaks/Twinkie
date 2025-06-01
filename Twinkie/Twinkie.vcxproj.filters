@@ -90,28 +90,22 @@
     <ClInclude Include="IModule.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Modules\PlayerInfo.h">
+    <ClInclude Include="Modules\PlayerInfo\PlayerInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Modules\Medals.h">
+    <ClInclude Include="Modules\Medals\Medals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Modules\About.h">
+    <ClInclude Include="Modules\Dashboard\DashboardTacho.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Modules\DashboardTacho.h">
+    <ClInclude Include="Modules\Dashboard\DashboardInputs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Modules\DashboardInputs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Modules\GhostEditor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Modules\CheckpointCounter.h">
+    <ClInclude Include="Modules\CheckpointCounter\CheckpointCounter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TwinkTrackmania.h">
@@ -120,16 +114,13 @@
     <ClInclude Include="TwinkLogs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Modules\DashboardGears.h">
+    <ClInclude Include="Modules\Dashboard\DashboardGears.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TwinkIo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Modules\Tweaker.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Modules\HuntingStats.h">
+    <ClInclude Include="Modules\Tweaker\Tweaker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Modules\AppExplorer.h">
@@ -157,6 +148,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Modules\AlwaysOfficial\AlwaysOfficial.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Modules\About\About.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Modules\GhostEditor\GhostEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -213,6 +210,33 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Modules\DownloadServerMaps\DownloadServerMaps.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules\About\About.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules\GhostEditor\GhostEditor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules\Dashboard\DashboardGears.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules\Dashboard\DashboardInputs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules\Dashboard\DashboardTacho.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules\Medals\Medals.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules\CheckpointCounter\CheckpointCounter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules\PlayerInfo\PlayerInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules\Tweaker\Tweaker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
