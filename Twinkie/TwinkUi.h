@@ -70,6 +70,8 @@ public:
 
     SettingMgr Settings;
 
+    size_t ActiveModuleIdx = 0;
+
     void SettingsInit()
     {
         for (IModule* Module : Modules)
@@ -316,6 +318,21 @@ public:
 
         if (Begin("Settings", &EnableSettings))
         {
+            BeginChild("##TwinkieSettingsModulesList");
+
+            size_t CurModuleIdx = 0;
+            for (IModule* Module : Modules)
+            {
+                if (Selectable(Module->FancyName.c_str(), ActiveModuleIdx == CurModuleIdx))
+                {
+                    ActiveModuleIdx = CurModuleIdx;
+                }
+
+                CurModuleIdx++;
+            }
+
+            EndChild();
+
             BeginTabBar("##TwinkieSettings");
 
             for (IModule* Module : Modules)

@@ -15,7 +15,7 @@ public:
 		this->Logger = &Logger;
 
 		Name = "DownloadServerMaps";
-		FancyName = "DownloadServerMaps";
+		FancyName = "Map Downloader";
 	}
 
 	DownloadServerMapsModule() = default;

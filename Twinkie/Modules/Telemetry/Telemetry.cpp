@@ -152,6 +152,8 @@ TelemetryModule::TelemetryModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, co
 	this->UiRenderEnabled = UiRenderEnabled;
 	this->Twinkie = &Twinkie;
 	this->Logger = &Logger;
+	this->Name = "Telemetry";
+	this->FancyName = "Telemetry";
 
 	TelemetryFileMapping = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, 4096, L"ManiaPlanet_Telemetry");
 
@@ -177,7 +179,7 @@ void TelemetryModule::RenderSettings()
 {
 	using namespace ImGui;
 
-	if (BeginTabItem("Telemetry"))
+	if (BeginTabItem(FancyName.c_str()))
 	{
 		Checkbox("Opt in", &Enabled);
 		 

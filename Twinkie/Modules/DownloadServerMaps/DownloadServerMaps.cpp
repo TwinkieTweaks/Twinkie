@@ -20,7 +20,7 @@ void DownloadServerMapsModule::RenderSettings()
 {
 	using namespace ImGui;
 
-	if (BeginTabItem("Map Downloader"))
+	if (BeginTabItem(FancyName.c_str()))
 	{
 		Checkbox("Enable map downloads on servers", &Enabled);
 
