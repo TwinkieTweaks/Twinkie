@@ -514,6 +514,7 @@ public:
 
     bool IsProfileUnited()
     {
+
         if (!GetProfile()) return false;
 		return Read<unsigned int>(GetProfile() + 756) == 1;
     }
@@ -601,89 +602,6 @@ public:
 
 		return CamInfo;
 	}
-
-    TM::GmMat4 GetViewMatrix(TM::GmIso4 IsoMatrix)
-    {
-        TM::GmVec3 Right = IsoMatrix[0];
-        TM::GmVec3 Up = IsoMatrix[1];
-        TM::GmVec3 Fwd = IsoMatrix[2];
-        TM::GmVec3 Pos = IsoMatrix.t;
-
-        TM::GmVec3 InvRight = { Right.x, Up.x, Fwd.x };
-        TM::GmVec3 InvUp = { Right.y, Up.y, Fwd.y };
-        TM::GmVec3 InvFwd = { Right.z, Up.z, Fwd.z };
-
-        float Tx = -(InvRight.x * Pos.x + InvRight.y * Pos.y + InvRight.z * Pos.z);
-        float Ty = -(InvUp.x * Pos.x + InvUp.y * Pos.y + InvUp.z * Pos.z);
-        float Tz = -(InvFwd.x * Pos.x + InvFwd.y * Pos.y + InvFwd.z * Pos.z);
-
-        TM::GmMat4 ViewMatrix = {
-            {InvRight.x, InvRight.y, InvRight.z, Tx},
-            {InvUp.x, InvUp.y, InvUp.z, Ty},
-            {InvFwd.x, InvFwd.y, InvFwd.z, Tz},
-            {0.0f, 0.0f, 0.0f, 1.0f}
-        };
-
-        return ViewMatrix;
-    }
-
-    TM::GmMat4 GetProjectionMatrix()
-    {
-        CameraInfo Cam = GetCamInfo();
-
-        float FovY = Cam.Fov;
-        float Aspect = Cam.AspectRatio;
-        float NearZ = Cam.NearZ;
-        float FarZ = Cam.FarZ;
-
-        float F = 1.0f / tanf(FovY / 2.0f);
-        float NF = 1.0f / (NearZ - FarZ);
-
-        TM::GmMat4 ProjMatrix = {
-            {F / Aspect, 0.0f, 0.0f, 0.0f},
-            {0.0f, F, 0.0f, 0.0f},
-            {0.0f, 0.0f, (FarZ + NearZ) * NF, 2 * FarZ * NearZ * NF},
-            {0.0f, 0.0f, -1.0f, 0.0f}
-        };
-
-        return ProjMatrix;
-    }
-
-    bool IsPointVisible(TM::GmVec3 WorldPoint)
-    {
-        TM::GmMat4 View = GetViewMatrix(GetCamInfo().Position);
-        TM::GmMat4 Proj = GetProjectionMatrix();
-
-        TM::GmVec4 Point4 = { WorldPoint.x, WorldPoint.y, WorldPoint.z, 1.0f };
-        TM::GmVec4 ViewSpace = View * Point4;
-        TM::GmVec4 ClipSpace = Proj * ViewSpace;
-
-        if (ClipSpace.w == 0.0f) return false;
-        TM::GmVec3 Ndc = { ClipSpace.x / ClipSpace.w, ClipSpace.y / ClipSpace.w, ClipSpace.z / ClipSpace.w };
-
-        return Ndc.x >= -1.0f && Ndc.x <= 1.0f &&
-            Ndc.y >= -1.0f && Ndc.y <= 1.0f &&
-            Ndc.z >= 0.0f && Ndc.z <= 1.0f;
-    }
-
-    TM::GmVec2 MapToScreenSpaceFromWorldSpace(TM::GmVec3 WorldPoint, TM::GmVec2 ScreenSize)
-    {
-        TM::GmMat4 View = GetViewMatrix(GetCamInfo().Position);
-        TM::GmMat4 Proj = GetProjectionMatrix();
-
-        TM::GmVec4 Point4 = { WorldPoint.x, WorldPoint.y, WorldPoint.z, 1.0f };
-        TM::GmVec4 ViewSpace = View * Point4;
-        TM::GmVec4 ClipSpace = Proj * ViewSpace;
-
-        if (ClipSpace.w == 0.0f) return { -1, -1 };
-        float NdcX = ClipSpace.x / ClipSpace.w;
-        float NdcY = ClipSpace.y / ClipSpace.w;
-
-        float ScreenX = (NdcX * 0.5f + 0.5f) * ScreenSize.x;
-        float ScreenY = (NdcY * 0.5f + 0.5f) * ScreenSize.y;
-
-        return { ScreenX, ScreenY };
-    }
 
     void CallMenuGhostEditor()
     {
