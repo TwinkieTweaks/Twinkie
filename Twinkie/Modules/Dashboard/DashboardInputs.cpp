@@ -1,5 +1,15 @@
 #include "DashboardInputs.h"
 
+const char* DashboardStyleNames[] = { "Pad", "Keyboard", "TMViz" };
+
+ImVec2 Lerp(ImVec2 A, ImVec2 B, float T)
+{
+	Vec2 A2 = Vec2(A.x, A.y);
+	Vec2 B2 = Vec2(B.x, B.y);
+
+	return A2 + ((B2 - A2) * T);
+}
+
 void DashboardInputsModule::RenderAnyways()
 {
 	using namespace ImGui;

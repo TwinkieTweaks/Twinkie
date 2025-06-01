@@ -2,7 +2,7 @@
 
 #include "../../IModule.h"
 
-const char* DashboardStyleNames[] = { "Pad", "Keyboard", "TMViz" };
+const char* DashboardStyleNames[];
 
 // thank you omar very cool
 struct Vec2
@@ -31,13 +31,7 @@ struct Vec2
 	}
 };
 
-ImVec2 Lerp(ImVec2 A, ImVec2 B, float T)
-{
-	Vec2 A2 = Vec2(A.x, A.y);
-	Vec2 B2 = Vec2(B.x, B.y);
-
-	return A2 + ((B2 - A2) * T);
-}
+ImVec2 Lerp(ImVec2 A, ImVec2 B, float T);
 
 class DashboardInputsModule : public IModule
 {

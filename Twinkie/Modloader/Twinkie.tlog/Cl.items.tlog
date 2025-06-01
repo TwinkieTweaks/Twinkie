@@ -12,7 +12,16 @@ F:\Repos\Twinkie\Twinkie\kiero\minhook\src\hde\hde32.c;F:\Repos\Twinkie\Twinkie\
 F:\Repos\Twinkie\Twinkie\kiero\minhook\src\hde\hde64.c;F:\Repos\Twinkie\Twinkie\Modloader\hde64.obj
 F:\Repos\Twinkie\Twinkie\kiero\minhook\src\hook.c;F:\Repos\Twinkie\Twinkie\Modloader\hook.obj
 F:\Repos\Twinkie\Twinkie\kiero\minhook\src\trampoline.c;F:\Repos\Twinkie\Twinkie\Modloader\trampoline.obj
+F:\Repos\Twinkie\Twinkie\Modules\About\About.cpp;F:\Repos\Twinkie\Twinkie\Modloader\About.obj
 F:\Repos\Twinkie\Twinkie\Modules\AlwaysOfficial\AlwaysOfficial.cpp;F:\Repos\Twinkie\Twinkie\Modloader\AlwaysOfficial.obj
+F:\Repos\Twinkie\Twinkie\Modules\CheckpointCounter\CheckpointCounter.cpp;F:\Repos\Twinkie\Twinkie\Modloader\CheckpointCounter.obj
+F:\Repos\Twinkie\Twinkie\Modules\Dashboard\DashboardGears.cpp;F:\Repos\Twinkie\Twinkie\Modloader\DashboardGears.obj
+F:\Repos\Twinkie\Twinkie\Modules\Dashboard\DashboardInputs.cpp;F:\Repos\Twinkie\Twinkie\Modloader\DashboardInputs.obj
+F:\Repos\Twinkie\Twinkie\Modules\Dashboard\DashboardTacho.cpp;F:\Repos\Twinkie\Twinkie\Modloader\DashboardTacho.obj
 F:\Repos\Twinkie\Twinkie\Modules\DownloadServerMaps\DownloadServerMaps.cpp;F:\Repos\Twinkie\Twinkie\Modloader\DownloadServerMaps.obj
+F:\Repos\Twinkie\Twinkie\Modules\GhostEditor\GhostEditor.cpp;F:\Repos\Twinkie\Twinkie\Modloader\GhostEditor.obj
+F:\Repos\Twinkie\Twinkie\Modules\Medals\Medals.cpp;F:\Repos\Twinkie\Twinkie\Modloader\Medals.obj
 F:\Repos\Twinkie\Twinkie\Modules\NicknamePatch\NicknamePatch.cpp;F:\Repos\Twinkie\Twinkie\Modloader\NicknamePatch.obj
+F:\Repos\Twinkie\Twinkie\Modules\PlayerInfo\PlayerInfo.cpp;F:\Repos\Twinkie\Twinkie\Modloader\PlayerInfo.obj
 F:\Repos\Twinkie\Twinkie\Modules\Telemetry\Telemetry.cpp;F:\Repos\Twinkie\Twinkie\Modloader\Telemetry.obj
+F:\Repos\Twinkie\Twinkie\Modules\Tweaker\Tweaker.cpp;F:\Repos\Twinkie\Twinkie\Modloader\Tweaker.obj
