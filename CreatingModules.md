@@ -13,7 +13,7 @@ class MyModule : public IModule
 {
 }
 ```
-Now, we can use this module by adding it to the [`std::vector<IModule*> TwinkUi.Modules`](https://github.com/TwinkieTweaks/Twinkie/blob/3cd0b6b7dc8dbe171ed962d503350a81b64d50c0/Twinkie/TwinkUi.h#L88) (after inlcuding our MyModule.h file):
+Now, we can use this module by adding it to the [`std::vector<IModule*> TwinkUi.Modules`](https://github.com/TwinkieTweaks/Twinkie/blob/3cd0b6b7dc8dbe171ed962d503350a81b64d50c0/Twinkie/TwinkUi.h#L88) (after including our MyModule.h file):
 ```c++
 Modules.push_back(new MyModule(TrackmaniaMgr, Logger, &DoRender));
 ```
