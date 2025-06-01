@@ -178,13 +178,7 @@ TelemetryModule::TelemetryModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, co
 void TelemetryModule::RenderSettings()
 {
 	using namespace ImGui;
-
-	if (BeginTabItem(FancyName.c_str()))
-	{
-		Checkbox("Opt in", &Enabled);
-		 
-		EndTabItem();
-	}
+	Checkbox("Opt in", &Enabled);
 }
 
 void TelemetryModule::SettingsInit(SettingMgr& Settings)

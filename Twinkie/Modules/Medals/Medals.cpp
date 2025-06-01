@@ -94,19 +94,14 @@ void MedalsModule::RenderAnyways()
 void MedalsModule::RenderSettings()
 {
 	using namespace ImGui;
-	if (BeginTabItem(FancyName.c_str()))
-	{
-		ColorEdit4("Background color", &ColorBackground.x, ImGuiColorEditFlags_NoInputs);
-		ColorEdit4("Medals text color", &ColorTextMedals.x, ImGuiColorEditFlags_NoInputs);
-		ColorEdit4("Bad delta color", &ColorTextBadDelta.x, ImGuiColorEditFlags_NoInputs);
-		ColorEdit4("Good delta color", &ColorTextGoodDelta.x, ImGuiColorEditFlags_NoInputs);
-		ColorEdit4("Personal best text color", &ColorTextPersonalBest.x, ImGuiColorEditFlags_NoInputs);
+	ColorEdit4("Background color", &ColorBackground.x, ImGuiColorEditFlags_NoInputs);
+	ColorEdit4("Medals text color", &ColorTextMedals.x, ImGuiColorEditFlags_NoInputs);
+	ColorEdit4("Bad delta color", &ColorTextBadDelta.x, ImGuiColorEditFlags_NoInputs);
+	ColorEdit4("Good delta color", &ColorTextGoodDelta.x, ImGuiColorEditFlags_NoInputs);
+	ColorEdit4("Personal best text color", &ColorTextPersonalBest.x, ImGuiColorEditFlags_NoInputs);
 
-		InputText("Personal best name", Buffer, 255);
-		PersonalBestName = Buffer;
-
-		EndTabItem();
-	}
+	InputText("Personal best name", Buffer, 255);
+	PersonalBestName = Buffer;
 }
 
 void MedalsModule::RenderMenuItem()

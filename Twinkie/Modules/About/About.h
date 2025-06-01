@@ -6,7 +6,6 @@
 class AboutModule : public IModule
 {
 public:
-	bool HasSettings = false;
 
 	Versioning Versions;
 
@@ -26,4 +25,7 @@ public:
 
 	virtual void SettingsInit(SettingMgr& Settings) {}
 	virtual void SettingsSave(SettingMgr& Settings) {}
+
+	virtual bool HasSettings() { return false; }
+	virtual bool IsDebug() { return false; }
 };

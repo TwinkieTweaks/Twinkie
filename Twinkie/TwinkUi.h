@@ -71,6 +71,7 @@ public:
     SettingMgr Settings;
 
     size_t ActiveModuleIdx = 0;
+    bool IsTwinkieSettingsOpen = 0;
 
     void SettingsInit()
     {
@@ -318,11 +319,14 @@ public:
 
         if (Begin("Settings", &EnableSettings))
         {
-            BeginChild("##TwinkieSettingsModulesList");
+            BeginChild("##TwinkieSettingsModulesList", {150.f, 0.f}, ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeX);
 
             size_t CurModuleIdx = 0;
+            
             for (IModule* Module : Modules)
             {
+                if (!Module->HasSettings()) continue;
+
                 if (Selectable(Module->FancyName.c_str(), ActiveModuleIdx == CurModuleIdx))
                 {
                     ActiveModuleIdx = CurModuleIdx;
@@ -333,17 +337,16 @@ public:
 
             EndChild();
 
-            BeginTabBar("##TwinkieSettings");
+            BeginChild("##TwinkieSettingsRender", ImVec2(0, -GetFrameHeightWithSpacing()));
 
-            for (IModule* Module : Modules)
+            if (true)
             {
-                if (!Module->HasSettings()) continue;
+                IModule* ActiveModule = Modules[ActiveModuleIdx];
 
-                Module->RenderSettings();
+                ActiveModule->RenderSettings();
             }
-
-            if (BeginTabItem("Twinkie"))
-            { 
+            else
+            {
                 SliderFloat("UI Scale", &UiScale, 0.25f, 5.f, "%.3f", ImGuiSliderFlags_AlwaysClamp);
                 UiScale = roundf(UiScale / 0.25f) * 0.25f;
 
@@ -352,16 +355,15 @@ public:
                 BeginDisabled();
 
                 Text("(?)");
-				if (IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
-				{
-					SetTooltip("Applies only on restart.");
-				}
+                if (IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+                {
+                    SetTooltip("Applies only on restart.");
+                }
 
                 EndDisabled();
-                EndTabItem();
             }
 
-            EndTabBar();
+            EndChild();
         }
         End();
     }

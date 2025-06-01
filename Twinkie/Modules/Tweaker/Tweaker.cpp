@@ -8,14 +8,9 @@ void TweakerModule::RenderInactive()
 void TweakerModule::RenderSettings()
 {
 	using namespace ImGui;
-	if (BeginTabItem(FancyName.c_str()))
-	{
-		Checkbox("Enable render distance", &Enabled);
-		Checkbox("Replace unrendered things with void", &UseVoid);
-		SliderFloat("Render distance", &RenderDistance, 50.f, 5000.f, "%.3f", ImGuiSliderFlags_AlwaysClamp);
-		EndTabItem();
-	}
-
+	Checkbox("Enable render distance", &Enabled);
+	Checkbox("Replace unrendered things with void", &UseVoid);
+	SliderFloat("Render distance", &RenderDistance, 50.f, 5000.f, "%.3f", ImGuiSliderFlags_AlwaysClamp);
 }
 
 void TweakerModule::SettingsInit(SettingMgr& Settings)

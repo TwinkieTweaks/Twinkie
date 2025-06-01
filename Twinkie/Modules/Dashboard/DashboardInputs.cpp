@@ -190,35 +190,30 @@ void DashboardInputsModule::RenderAnyways()
 void DashboardInputsModule::RenderSettings()
 {
 	using namespace ImGui;
-	if (BeginTabItem(FancyName.c_str()))
+	Combo("Style", &StyleIdx, DashboardStyleNames, IM_ARRAYSIZE(DashboardStyleNames));
+	StyleName = DashboardStyleNames[StyleIdx];
+
+	Separator();
+
+	if (StyleName == "TMViz")
 	{
-		Combo("Style", &StyleIdx, DashboardStyleNames, IM_ARRAYSIZE(DashboardStyleNames));
-		StyleName = DashboardStyleNames[StyleIdx];
-
+		Checkbox("Force TMViz default dimensions", &ForceTMVizDimensions);
 		Separator();
-
-		if (StyleName == "TMViz")
-		{
-			Checkbox("Force TMViz default dimensions", &ForceTMVizDimensions);
-			Separator();
-		}
-
-		ColorEdit4("Steering", &ColorSteer.x, ImGuiColorEditFlags_NoInputs);
-		ColorEdit4("Acceleration", &ColorAccel.x, ImGuiColorEditFlags_NoInputs);
-		ColorEdit4("Brake", &ColorBrake.x, ImGuiColorEditFlags_NoInputs);
-
-		Separator();
-
-		ColorEdit4("Steering (inactive)", &ColorSteerI.x, ImGuiColorEditFlags_NoInputs);
-		ColorEdit4("Acceleration (inactive)", &ColorAccelI.x, ImGuiColorEditFlags_NoInputs);
-		ColorEdit4("Brake (inactive)", &ColorBrakeI.x, ImGuiColorEditFlags_NoInputs);
-
-		Separator();
-
-		ColorEdit4("Background color", &ColorBackground.x, ImGuiColorEditFlags_NoInputs);
-
-		EndTabItem();
 	}
+
+	ColorEdit4("Steering", &ColorSteer.x, ImGuiColorEditFlags_NoInputs);
+	ColorEdit4("Acceleration", &ColorAccel.x, ImGuiColorEditFlags_NoInputs);
+	ColorEdit4("Brake", &ColorBrake.x, ImGuiColorEditFlags_NoInputs);
+
+	Separator();
+
+	ColorEdit4("Steering (inactive)", &ColorSteerI.x, ImGuiColorEditFlags_NoInputs);
+	ColorEdit4("Acceleration (inactive)", &ColorAccelI.x, ImGuiColorEditFlags_NoInputs);
+	ColorEdit4("Brake (inactive)", &ColorBrakeI.x, ImGuiColorEditFlags_NoInputs);
+
+	Separator();
+
+	ColorEdit4("Background color", &ColorBackground.x, ImGuiColorEditFlags_NoInputs);
 }
 
 void DashboardInputsModule::RenderMenuItem()
