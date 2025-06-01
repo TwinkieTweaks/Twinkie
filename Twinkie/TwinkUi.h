@@ -325,7 +325,11 @@ public:
             
             for (IModule* Module : Modules)
             {
-                if (!Module->HasSettings()) continue;
+                if (!Module->HasSettings())
+                {
+                    CurModuleIdx++;
+                    continue;
+                }
 
                 if (Selectable(Module->FancyName.c_str(), ActiveModuleIdx == CurModuleIdx))
                 {
@@ -336,8 +340,14 @@ public:
             }
 
             EndChild();
+            
+            SameLine();
 
-            BeginChild("##TwinkieSettingsRender", ImVec2(0, -GetFrameHeightWithSpacing()));
+            BeginGroup();
+
+            PushStyleColor(ImGuiCol_ChildBg, ColorConvertFloat4ToU32({ 0.f, 0.f, 0.f, 0.f }));
+            BeginChild("##TwinkieSettingsRender");
+            PopStyleColor();
 
             if (true)
             {
@@ -345,25 +355,27 @@ public:
 
                 ActiveModule->RenderSettings();
             }
-            else
-            {
-                SliderFloat("UI Scale", &UiScale, 0.25f, 5.f, "%.3f", ImGuiSliderFlags_AlwaysClamp);
-                UiScale = roundf(UiScale / 0.25f) * 0.25f;
+            //else
+            //{
+            //    SliderFloat("UI Scale", &UiScale, 0.25f, 5.f, "%.3f", ImGuiSliderFlags_AlwaysClamp);
+            //    UiScale = roundf(UiScale / 0.25f) * 0.25f;
 
-                SameLine();
+            //    SameLine();
 
-                BeginDisabled();
+            //    BeginDisabled();
 
-                Text("(?)");
-                if (IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
-                {
-                    SetTooltip("Applies only on restart.");
-                }
+            //    Text("(?)");
+            //    if (IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+            //    {
+            //        SetTooltip("Applies only on restart.");
+            //    }
 
-                EndDisabled();
-            }
+            //    EndDisabled();
+            //}
 
             EndChild();
+
+            EndGroup();
         }
         End();
     }
