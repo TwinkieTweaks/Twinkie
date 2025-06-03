@@ -37,7 +37,7 @@ void MedalsModule::RenderAnyways()
 		{
 			TextColored(MedalIconColors[0], ICON_FK_CIRCLE);
 			SameLine();
-			TextColored(ColorTextMedals, (AuthorName + ": " + Twinkie->FormatTmDuration(InfoStruct.AuthorTime)).c_str());
+			TextColored(ColorTextMedals, (AuthorName + (AuthorName != "" ? ": " : "") + Twinkie->FormatTmDuration(InfoStruct.AuthorTime)).c_str());
 			if (Twinkie->GetBestTime() != MAXDWORD)
 			{
 				SameLine();
@@ -46,7 +46,7 @@ void MedalsModule::RenderAnyways()
 
 			TextColored(MedalIconColors[1], ICON_FK_CIRCLE);
 			SameLine();
-			TextColored(ColorTextMedals, (GoldName + ": " + Twinkie->FormatTmDuration(InfoStruct.GoldTime)).c_str());
+			TextColored(ColorTextMedals, (GoldName + (GoldName != "" ? ": " : "") + Twinkie->FormatTmDuration(InfoStruct.GoldTime)).c_str());
 			if (Twinkie->GetBestTime() != MAXDWORD)
 			{
 				SameLine();
@@ -55,7 +55,7 @@ void MedalsModule::RenderAnyways()
 
 			TextColored(MedalIconColors[2], ICON_FK_CIRCLE);
 			SameLine();
-			TextColored(ColorTextMedals, (SilverName + ": " + Twinkie->FormatTmDuration(InfoStruct.SilverTime)).c_str());
+			TextColored(ColorTextMedals, (SilverName + (SilverName != "" ? ": " : "") + Twinkie->FormatTmDuration(InfoStruct.SilverTime)).c_str());
 			if (Twinkie->GetBestTime() != MAXDWORD)
 			{
 				SameLine();
@@ -64,7 +64,7 @@ void MedalsModule::RenderAnyways()
 
 			TextColored(MedalIconColors[3], ICON_FK_CIRCLE);
 			SameLine();
-			TextColored(ColorTextMedals, (BronzeName + ": " + Twinkie->FormatTmDuration(InfoStruct.BronzeTime)).c_str());
+			TextColored(ColorTextMedals, (BronzeName + (BronzeName != "" ? ": " : "") + Twinkie->FormatTmDuration(InfoStruct.BronzeTime)).c_str());
 			if (Twinkie->GetBestTime() != MAXDWORD)
 			{
 				SameLine();
@@ -75,7 +75,7 @@ void MedalsModule::RenderAnyways()
 		{
 			TextColored(MedalIconColors[0], ICON_FK_CIRCLE);
 			SameLine();
-			TextColored(ColorTextMedals, (AuthorName + ": %lu").c_str(), InfoStruct.AuthorScore);
+			TextColored(ColorTextMedals, (AuthorName + (AuthorName != "" ? ": %lu" : "%lu")).c_str(), InfoStruct.AuthorScore);
 			if (Twinkie->GetBestTime() != MAXDWORD)
 			{
 				SameLine();
@@ -84,7 +84,7 @@ void MedalsModule::RenderAnyways()
 
 			TextColored(MedalIconColors[1], ICON_FK_CIRCLE);
 			SameLine();
-			TextColored(ColorTextMedals, (GoldName + ": %lu").c_str(), InfoStruct.GoldTime);
+			TextColored(ColorTextMedals, (GoldName + (GoldName != "" ? ": %lu" : "%lu")).c_str(), InfoStruct.GoldTime);
 			if (Twinkie->GetBestTime() != MAXDWORD)
 			{
 				SameLine();
@@ -93,7 +93,7 @@ void MedalsModule::RenderAnyways()
 
 			TextColored(MedalIconColors[2], ICON_FK_CIRCLE);
 			SameLine();
-			TextColored(ColorTextMedals, (SilverName + ": %lu").c_str(), InfoStruct.SilverTime);
+			TextColored(ColorTextMedals, (SilverName + (SilverName != "" ? ": %lu" : "%lu")).c_str(), InfoStruct.SilverTime);
 			if (Twinkie->GetBestTime() != MAXDWORD)
 			{
 				SameLine();
@@ -102,7 +102,7 @@ void MedalsModule::RenderAnyways()
 
 			TextColored(MedalIconColors[3], ICON_FK_CIRCLE);
 			SameLine();
-			TextColored(ColorTextMedals, (BronzeName + ": %lu").c_str(), InfoStruct.BronzeTime);
+			TextColored(ColorTextMedals, (BronzeName + (BronzeName != "" ? ": %lu" : "%lu")).c_str(), InfoStruct.BronzeTime);
 			if (Twinkie->GetBestTime() != MAXDWORD)
 			{
 				SameLine();
