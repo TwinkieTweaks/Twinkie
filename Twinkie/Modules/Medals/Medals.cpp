@@ -162,23 +162,23 @@ void MedalsModule::SettingsInit(SettingMgr& Settings)
 
 	Settings["Medals"]["Personal best text color"].GetAsVec4(&ColorTextPersonalBest);
 
-	Settings["Medals"]["Personal best name"].GetAsString(&PersonalBestName);
+	PersonalBestName = Settings["Medals"]["Personal best name"].Value;
 	if (strlen(PersonalBestName.c_str()) < 254) strcpy_s(BufferPersonalBest, PersonalBestName.c_str());
 	else Logger->PrintErrorArgs("Could not import setting \"Personal best name\": too large ({} >= 255)", strlen(PersonalBestName.c_str()));
 
-	Settings["Medals"]["Author name"].GetAsString(&AuthorName);
+	AuthorName = Settings["Medals"]["Author name"].Value;
 	if (strlen(AuthorName.c_str()) < 254) strcpy_s(BufferAuthor, AuthorName.c_str());
 	else Logger->PrintErrorArgs("Could not import setting \"Author name\": too large ({} >= 255)", strlen(AuthorName.c_str()));
 
-	Settings["Medals"]["Gold name"].GetAsString(&GoldName);
+	GoldName = Settings["Medals"]["Gold name"].Value;
 	if (strlen(GoldName.c_str()) < 254) strcpy_s(BufferGold, GoldName.c_str());
 	else Logger->PrintErrorArgs("Could not import setting \"Gold name\": too large ({} >= 255)", strlen(GoldName.c_str()));
 
-	Settings["Medals"]["Silver name"].GetAsString(&SilverName);
+	SilverName = Settings["Medals"]["Silver name"].Value;
 	if (strlen(SilverName.c_str()) < 254) strcpy_s(BufferSilver, SilverName.c_str());
 	else Logger->PrintErrorArgs("Could not import setting \"Silver name\": too large ({} >= 255)", strlen(SilverName.c_str()));
 
-	Settings["Medals"]["Bronze name"].GetAsString(&BronzeName);
+	BronzeName = Settings["Medals"]["Bronze name"].Value;
 	if (strlen(BronzeName.c_str()) < 254) strcpy_s(BufferBronze, BronzeName.c_str());
 	else Logger->PrintErrorArgs("Could not import setting \"Bronze name\": too large ({} >= 255)", strlen(BronzeName.c_str()));
 }
