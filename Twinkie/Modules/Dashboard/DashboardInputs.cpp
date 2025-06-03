@@ -219,7 +219,7 @@ void DashboardInputsModule::RenderSettings()
 void DashboardInputsModule::RenderMenuItem()
 {
 	using namespace ImGui;
-	if (MenuItem("Input display", "Dashboard", Enabled))
+	if (MenuItem(ICON_FK_GAMEPAD " Input display", "Dashboard", Enabled))
 	{
 		Enabled = !Enabled;
 	}

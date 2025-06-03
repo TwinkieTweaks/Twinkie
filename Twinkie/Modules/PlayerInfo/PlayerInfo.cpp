@@ -8,7 +8,7 @@ void PlayerInfoModule::Render()
 	static uintptr_t OffsetAddr = 0;
 	static uintptr_t AddrOffset = 0;
 
-	Begin("Player Information", &Enabled);
+	Begin(ICON_FK_CODE " Player Information", &Enabled);
 
 	auto DrawList = GetForegroundDrawList();
 
@@ -181,7 +181,7 @@ void PlayerInfoModule::Render()
 void PlayerInfoModule::RenderMenuItem()
 {
 	using namespace ImGui;
-	if (MenuItem(FancyName.c_str(), "", Enabled))
+	if (MenuItem(ICON_FK_EXCLAMATION_TRIANGLE " PlayerInformation", "", Enabled))
 	{
 		Enabled = !Enabled;
 	}

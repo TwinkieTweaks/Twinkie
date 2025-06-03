@@ -5,6 +5,8 @@
 #include "TwinkLogs.h"
 #include "Utils.h"
 #include "imgui-dx9/imgui.h"
+#include "GlyphTable/IconsForkAwesome.h"
+#include "GlyphTable/IconsKenney.h"
 #include <vector>
 
 // this isn't *technically* an interface but it's the class all modules inherit from

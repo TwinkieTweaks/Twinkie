@@ -25,7 +25,7 @@ void AlwaysOfficialModule::RenderMenuItem()
 
 	BeginDisabled(!Twinkie->IsProfileUnited());
 
-	if (MenuItem("Always Official", "", Enabled))
+	if (MenuItem(ICON_FK_TROPHY " Always Official", "", Enabled))
 	{
 		Enabled = !Enabled;
 	}

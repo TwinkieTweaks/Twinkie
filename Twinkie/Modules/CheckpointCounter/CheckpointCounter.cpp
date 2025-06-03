@@ -28,7 +28,7 @@ void CheckpointCounterModule::RenderAnyways()
 void CheckpointCounterModule::RenderMenuItem()
 {
 	using namespace ImGui;
-	if (MenuItem(FancyName.c_str(), "", Enabled))
+	if (MenuItem(ICON_FK_SORT_NUMERIC_ASC " Checkpoint counter", "", Enabled))
 	{
 		Enabled = !Enabled;
 	}

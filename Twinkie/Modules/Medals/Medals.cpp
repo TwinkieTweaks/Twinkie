@@ -100,14 +100,14 @@ void MedalsModule::RenderSettings()
 	ColorEdit4("Good delta color", &ColorTextGoodDelta.x, ImGuiColorEditFlags_NoInputs);
 	ColorEdit4("Personal best text color", &ColorTextPersonalBest.x, ImGuiColorEditFlags_NoInputs);
 
-	InputText("Personal best name", Buffer, 255);
-	PersonalBestName = Buffer;
+	InputText("Personal best name", BufferPersonalBest, 255);
+	PersonalBestName = BufferPersonalBest;
 }
 
 void MedalsModule::RenderMenuItem()
 {
 	using namespace ImGui;
-	if (MenuItem(FancyName.c_str(), "", Enabled))
+	if (MenuItem(ICON_FK_ADJUST " Medals", "", Enabled))
 	{
 		Enabled = !Enabled;
 	}
@@ -128,6 +128,9 @@ void MedalsModule::SettingsInit(SettingMgr& Settings)
 	Settings["Medals"]["Personal best text color"].GetAsVec4(&ColorTextPersonalBest);
 
 	Settings["Medals"]["Personal best name"].GetAsString(&PersonalBestName);
+
+	if (strlen(PersonalBestName.c_str()) < 254) strcpy_s(BufferPersonalBest, PersonalBestName.c_str());
+	else Logger->PrintErrorArgs("Could not import setting \"Personal best name\": too large ({} >= 255)", strlen(PersonalBestName.c_str()));
 }
 
 void MedalsModule::SettingsSave(SettingMgr& Settings)

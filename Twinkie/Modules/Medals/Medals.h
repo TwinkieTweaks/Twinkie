@@ -11,8 +11,21 @@ public:
 	ImVec4 ColorTextGoodDelta = ImVec4(0.443f, 0.573f, 0.988f, 1.f);
 
 	ImVec4 ColorBackground = ImVec4(0.1294117718935013f, 0.1372549086809158f, 0.168627455830574f, 0.8f);
+
 	std::string PersonalBestName = "Personal best";
-	char Buffer[255] = "Personal best";
+	char BufferPersonalBest[255] = "Personal best";
+
+	std::string AuthorName = "Author";
+	char BufferAuthor[255] = "Author";
+
+	std::string GoldName = "Gold";
+	char BufferGold[255] = "Gold";
+
+	std::string SilverName = "Silver";
+	char BufferSilver[255] = "Silver";
+
+	std::string BronzeName = "Bronze";
+	char BufferBronze[255] = "Bronze";
 
 	MedalsModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled)
 	{

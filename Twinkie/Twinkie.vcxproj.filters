@@ -156,6 +156,12 @@
     <ClInclude Include="Modules\GhostEditor\GhostEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GlyphTable\IconsForkAwesome.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GlyphTable\IconsKenney.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">

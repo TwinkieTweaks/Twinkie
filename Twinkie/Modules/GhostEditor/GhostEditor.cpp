@@ -3,7 +3,7 @@
 void GhostEditorModule::RenderMenuItem()
 {
 	using namespace ImGui;
-	if (MenuItem(FancyName.c_str()) and !Twinkie->GetChallenge() and Twinkie->GetProfileScores())
+	if (MenuItem(ICON_FK_CAR " Ghost editor") and !Twinkie->GetChallenge() and Twinkie->GetProfileScores())
 	{
 		Twinkie->CallMenuGhostEditor();
 	}

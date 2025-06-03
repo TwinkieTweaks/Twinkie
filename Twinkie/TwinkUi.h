@@ -1,4 +1,5 @@
-#pragma once
+﻿#pragma once
+#pragma execution_character_set("utf-8")
 
 #include <string>
 #include <format>
@@ -12,6 +13,8 @@
 #include "TwinkLogs.h"
 
 #include "imgui-dx9/imgui.h"
+#include "GlyphTable/IconsForkAwesome.h"
+#include "GlyphTable/IconsKenney.h"
 #include "TwinkIo.h"
 
 #include "Modules/CheckpointCounter/CheckpointCounter.h"
@@ -71,7 +74,7 @@ public:
     SettingMgr Settings;
 
     size_t ActiveModuleIdx = 0;
-    bool IsTwinkieSettingsOpen = 0;
+    bool IsTwinkieSettingsOpen = true;
 
     void SettingsInit()
     {
@@ -148,6 +151,7 @@ public:
     void InitFonts(ImGuiIO& ImIo)
     {
         FontMain = ImIo.Fonts->AddFontFromFileTTF((GetDocumentsFolder() + "\\Twinkie\\Fonts\\Twinkie.ttf").c_str(), 14.f * UiScale);
+       
         if (FontMain)
         {
             Logger.PrintInternal("Font \"Main\" initialized.");
@@ -155,8 +159,28 @@ public:
         else
         {
             Logger.PrintError("Font \"Main\" not initialized.");
+            return;
         }
-        return;
+
+        // Taken example from https://github.com/juliettef/IconFontCppHeaders?tab=readme-ov-file#example-code
+        float IconFontSize = (14.f * UiScale);
+
+        static const ImWchar IconRange[] = { ICON_MIN_KI, ICON_MAX_FK, 0 };
+        ImFontConfig IconCfg;
+        IconCfg.MergeMode = true;
+        IconCfg.PixelSnapH = true;
+        IconCfg.GlyphMinAdvanceX = IconFontSize;
+
+        auto FontManiaIcons = ImIo.Fonts->AddFontFromFileTTF((GetDocumentsFolder() + "\\Twinkie\\Fonts\\ManiaIcons.ttf").c_str(), IconFontSize, &IconCfg, IconRange);
+
+        if (FontManiaIcons)
+        {
+            Logger.PrintInternal("Font \"ManiaIcons\" initialized.");
+        }
+        else
+        {
+            Logger.PrintError("Font \"ManiaIcons\" not initialized.");
+        }
     }
 
     void SetupImGuiStyle()
@@ -261,14 +285,17 @@ public:
         }
 
         if (BeginMainMenuBar()) {
-            if (BeginMenu("Twinkie")) {
-                if (MenuItem("Settings", "", EnableSettings))
+            PushStyleColor(ImGuiCol_Text, ColorConvertFloat4ToU32({1.f, 0.f, 1.f, 1.f}));
+            if (BeginMenu(ICON_FK_COGS " Twinkie")) {
+                PopStyleColor();
+                if (MenuItem(ICON_FK_WRENCH " Settings", "", EnableSettings))
                 {
                     EnableSettings = !EnableSettings;
                 }
                 ImGui::EndMenu();
             }
-            if (BeginMenu("Modules"))
+            else PopStyleColor();
+            if (BeginMenu(ICON_FK_SLIDERS " Modules"))
             {
                 for (IModule* Module : Modules)
                 {
@@ -276,9 +303,9 @@ public:
                 }
                 ImGui::EndMenu();
             }
-            if (BeginMenu("Debug"))
+            if (BeginMenu(ICON_FK_CODE " Debug"))
             {
-                if (MenuItem("Log", "", Logger.EnableLog))
+                if (MenuItem(ICON_FK_HDD_O " Log", "", Logger.EnableLog))
                 {
                     Logger.EnableLog = !Logger.EnableLog;
                 }
@@ -317,12 +344,21 @@ public:
     {
         using namespace ImGui;
 
-        if (Begin("Settings", &EnableSettings))
+        if (Begin(ICON_FK_WRENCH " Settings", &EnableSettings))
         {
             BeginChild("##TwinkieSettingsModulesList", {150.f, 0.f}, ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeX);
 
             size_t CurModuleIdx = 0;
+
+            PushStyleColor(ImGuiCol_Text, ColorConvertFloat4ToU32({ 1.f, 0.f, 1.f, 1.f }));
+            if (Selectable(ICON_FK_COGS " Twinkie", IsTwinkieSettingsOpen))
+            {  
+                IsTwinkieSettingsOpen = !IsTwinkieSettingsOpen;
+            }
+            PopStyleColor();
             
+            Separator();
+
             for (IModule* Module : Modules)
             {
                 if (!Module->HasSettings())
@@ -331,9 +367,10 @@ public:
                     continue;
                 }
 
-                if (Selectable(Module->FancyName.c_str(), ActiveModuleIdx == CurModuleIdx))
+                if (Selectable(((Module->Enabled ? ICON_FK_CHECK " " : ICON_FK_TIMES " ") + Module->FancyName).c_str(), ActiveModuleIdx == CurModuleIdx))
                 {
                     ActiveModuleIdx = CurModuleIdx;
+                    IsTwinkieSettingsOpen = false;
                 }
 
                 CurModuleIdx++;
@@ -349,29 +386,29 @@ public:
             BeginChild("##TwinkieSettingsRender");
             PopStyleColor();
 
-            if (true)
+            if (!IsTwinkieSettingsOpen)
             {
                 IModule* ActiveModule = Modules[ActiveModuleIdx];
 
                 ActiveModule->RenderSettings();
             }
-            //else
-            //{
-            //    SliderFloat("UI Scale", &UiScale, 0.25f, 5.f, "%.3f", ImGuiSliderFlags_AlwaysClamp);
-            //    UiScale = roundf(UiScale / 0.25f) * 0.25f;
+            else
+            {
+                SliderFloat("UI Scale", &UiScale, 0.25f, 5.f, "%.3f", ImGuiSliderFlags_AlwaysClamp);
+                UiScale = roundf(UiScale / 0.25f) * 0.25f;
 
-            //    SameLine();
+                SameLine();
 
-            //    BeginDisabled();
+                BeginDisabled();
 
-            //    Text("(?)");
-            //    if (IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
-            //    {
-            //        SetTooltip("Applies only on restart.");
-            //    }
+                Text("(?)");
+                if (IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+                {
+                    SetTooltip("Applies only on restart.");
+                }
 
-            //    EndDisabled();
-            //}
+                EndDisabled();
+            }
 
             EndChild();
 

@@ -24,7 +24,7 @@ void DashboardTachometerModule::RenderAnyways()
 
 	int BarsToDraw = (int)WindowWidth / 10; // cast so we don't get the "possible loss of data" bullshit
 	BarsToDraw--; // last bar almost always gets cutoff, i don't like that
-
+	
 	for (int Idx = 0; Idx < BarsToDraw; Idx++)
 	{
 		float RepresentedRpm = (((float)Idx) / ((float)BarsToDraw)) * Twinkie->MAXRPM;
@@ -73,7 +73,7 @@ void DashboardTachometerModule::RenderSettings()
 void DashboardTachometerModule::RenderMenuItem()
 {
 	using namespace ImGui;
-	if (MenuItem("Tachometer", "Dashboard", Enabled))
+	if (MenuItem(ICON_FK_TACHOMETER " Tachometer", "Dashboard", Enabled))
 	{
 		Enabled = !Enabled;
 	}

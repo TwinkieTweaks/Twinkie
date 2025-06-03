@@ -19,7 +19,7 @@ void DashboardGearsModule::SettingsInit(SettingMgr& Settings)
 void DashboardGearsModule::RenderMenuItem()
 {
 	using namespace ImGui;
-	if (MenuItem(FancyName.c_str(), "Dashboard", Enabled))
+	if (MenuItem(ICON_KI_COG " Gears", "Dashboard", Enabled))
 	{
 		Enabled = !Enabled;
 	}
