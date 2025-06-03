@@ -41,5 +41,5 @@ Building for United and Nations is not currently supported. Only Modloader build
 ## Support me
 There currently aren't any monetary ways of supporting me, so if you like Twinkie and you have a github account, please star it so that more people see it, or be kind enough to share it with your friends.
 
-## Font
-The font Twinkie uses is Cascadia Mono, see its license [here](https://fonts.google.com/specimen/Cascadia+Mono/license) (Google Fonts), and [here](https://openfontlicense.org/open-font-license-official-text/) (openfontlicense.org).
+## Fonts
+Twinkie uses Cascadia Mono (see its license [here](https://fonts.google.com/specimen/Cascadia+Mono/license) (Google Fonts), and [here](https://openfontlicense.org/open-font-license-official-text/) (openfontlicense.org)), and [ManiaIcons](https://github.com/openplanet-nl/maniaicons) by the Openplanet Team
