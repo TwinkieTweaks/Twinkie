@@ -274,13 +274,15 @@ public:
         return ReturnVal;
     }
 
-    std::string GetNameOfNod(uintptr_t Nod)
+    // The MemberId is the most important thing to pass to this function
+    template<typename T>
+    T* VirtualParamGet(uintptr_t Nod, CMwMemberInfo::eType Type, unsigned int MemberId)
     {
         CMwMemberInfo* MemberInfo = new CMwMemberInfo();
-        MemberInfo->type = CMwMemberInfo::STRING;
+        MemberInfo->type = Type;
         MemberInfo->fieldOffset = -1;
-        MemberInfo->pszName = "IdName";
-        MemberInfo->memberID = 0x01001000;
+        MemberInfo->pszName = nullptr;
+        MemberInfo->memberID = MemberId;
         MemberInfo->pParam = nullptr;
         MemberInfo->flags = -1;
         MemberInfo->flags2 = -1;
@@ -290,66 +292,33 @@ public:
         MwStack->ppMemberInfos = new CMwMemberInfo * [MwStack->m_Size] {MemberInfo};
         MwStack->iCurrentPos = 0;
 
-        TM::CFastString* String = nullptr;
-        if (!VirtualParamGet(Nod, MwStack, (void**)&String))
+        T* ReturnVal = nullptr;
+        if (!VirtualParamGet(Nod, MwStack, (void**)&ReturnVal))
         {
             delete[] MwStack->ppMemberInfos;
             delete MwStack;
             delete MemberInfo;
-            return "";
-        }
-        if (!String)
-        {
-            delete[] MwStack->ppMemberInfos;
-            delete MwStack;
-            delete MemberInfo;
-            return "";
+            return ReturnVal;
         }
         delete[] MwStack->ppMemberInfos;
         delete MwStack;
         delete MemberInfo;
-        return String->Cstr;
+        return ReturnVal;
+    }
+
+    std::string GetNameOfNod(uintptr_t Nod)
+    {
+        auto StringPtr = VirtualParamGet<TM::CFastString>(Nod, CMwMemberInfo::STRING, 0x01001000);
+        if (!StringPtr) return "";
+        return StringPtr->Cstr;
     }
 
     int GetSignedRaceTime()
     {
         if (!IsPlaying()) return 0;
-
         uintptr_t Nod = CurPlayerInfo.TrackmaniaRace;
 
-        CMwMemberInfo* MemberInfo = new CMwMemberInfo();
-        MemberInfo->type = CMwMemberInfo::NATURAL;
-        MemberInfo->fieldOffset = -1;
-        MemberInfo->pszName = "CurrentTime";
-        MemberInfo->memberID = 0x2401400d;
-        MemberInfo->pParam = nullptr;
-        MemberInfo->flags = -1;
-        MemberInfo->flags2 = -1;
-
-        CMwStack* MwStack = new CMwStack();
-        MwStack->m_Size = 1;
-        MwStack->ppMemberInfos = new CMwMemberInfo * [MwStack->m_Size] {MemberInfo};
-        MwStack->iCurrentPos = 0;
-
-        int* RaceTime = nullptr;
-        if (!VirtualParamGet(Nod, MwStack, (void**)&RaceTime))
-        {
-            delete[] MwStack->ppMemberInfos;
-            delete MwStack;
-            delete MemberInfo;
-            return 0;
-        }
-        if (!RaceTime)
-        {
-            delete[] MwStack->ppMemberInfos;
-            delete MwStack;
-            delete MemberInfo;
-            return 0;
-        }
-        delete[] MwStack->ppMemberInfos;
-        delete MwStack;
-        delete MemberInfo;
-        return *RaceTime;
+        auto NatPtr = VirtualParamGet<int>(Nod, CMwMemberInfo::NATURAL, 0x2401400d);
     }
 
     float GetHmsCameraFov()
@@ -361,39 +330,9 @@ public:
 
         uintptr_t Nod = GetHmsPocCamera();
 
-        CMwMemberInfo* MemberInfo = new CMwMemberInfo();
-        MemberInfo->type = CMwMemberInfo::REAL;
-        MemberInfo->fieldOffset = -1;
-        MemberInfo->pszName = "Fov";
-        MemberInfo->memberID = 0x6001014;
-        MemberInfo->pParam = nullptr;
-        MemberInfo->flags = -1;
-        MemberInfo->flags2 = -1;
-
-        CMwStack* MwStack = new CMwStack();
-        MwStack->m_Size = 1;
-        MwStack->ppMemberInfos = new CMwMemberInfo * [MwStack->m_Size] {MemberInfo};
-        MwStack->iCurrentPos = 0;
-
-        float* FovVal = nullptr;
-        if (!VirtualParamGet(Nod, MwStack, (void**)&FovVal))
-        {
-            delete[] MwStack->ppMemberInfos;
-            delete MwStack;
-            delete MemberInfo;
-            return 0;
-        }
-        if (!FovVal)
-        {
-            delete[] MwStack->ppMemberInfos;
-            delete MwStack;
-            delete MemberInfo;
-            return 0;
-        }
-        delete[] MwStack->ppMemberInfos;
-        delete MwStack;
-        delete MemberInfo;
-        return *FovVal;
+        auto FloatPtr = VirtualParamGet<float>(Nod, CMwMemberInfo::REAL, 0x6001014);
+        if (!FloatPtr) return 0;
+        return *FloatPtr;
     }
 
     float GetHmsCameraAspectRatio()

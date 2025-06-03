@@ -1,5 +1,12 @@
 #include "Medals.h"
 
+ImVec4 MedalIconColors[4] = {
+	{ 0.f, 0.875f, 0.15f, 1.f },
+	{ 0.4643f, 0.3929f, 0.1429f, 1.f },
+	{ 0.3077f, 0.3462f, 0.3462f, 1.f },
+	{ 0.4737f, 0.3158f, 0.2105f, 1.f }
+};
+
 void MedalsModule::RenderAnyways()
 {
 	using namespace ImGui;
@@ -28,28 +35,36 @@ void MedalsModule::RenderAnyways()
 
 		if (!Twinkie->ChallengeUsesScore())
 		{
-			TextColored(ColorTextMedals, ("Author: " + Twinkie->FormatTmDuration(InfoStruct.AuthorTime)).c_str());
+			TextColored(MedalIconColors[0], ICON_FK_CIRCLE);
+			SameLine();
+			TextColored(ColorTextMedals, (AuthorName + ": " + Twinkie->FormatTmDuration(InfoStruct.AuthorTime)).c_str());
 			if (Twinkie->GetBestTime() != MAXDWORD)
 			{
 				SameLine();
 				TextColored(InfoStructDiff.AuthorTime < 0 ? ColorTextBadDelta : ColorTextGoodDelta, ((InfoStructDiff.AuthorTime < 0 ? "+" : "-") + Twinkie->FormatTmDuration(abs(InfoStructDiff.AuthorTime))).c_str());
 			}
 
-			TextColored(ColorTextMedals, ("Gold: " + Twinkie->FormatTmDuration(InfoStruct.GoldTime)).c_str());
+			TextColored(MedalIconColors[1], ICON_FK_CIRCLE);
+			SameLine();
+			TextColored(ColorTextMedals, (GoldName + ": " + Twinkie->FormatTmDuration(InfoStruct.GoldTime)).c_str());
 			if (Twinkie->GetBestTime() != MAXDWORD)
 			{
 				SameLine();
 				TextColored(InfoStructDiff.GoldTime < 0 ? ColorTextBadDelta : ColorTextGoodDelta, ((InfoStructDiff.GoldTime < 0 ? "+" : "-") + Twinkie->FormatTmDuration(abs(InfoStructDiff.GoldTime))).c_str());
 			}
 
-			TextColored(ColorTextMedals, ("Silver: " + Twinkie->FormatTmDuration(InfoStruct.SilverTime)).c_str());
+			TextColored(MedalIconColors[2], ICON_FK_CIRCLE);
+			SameLine();
+			TextColored(ColorTextMedals, (SilverName + ": " + Twinkie->FormatTmDuration(InfoStruct.SilverTime)).c_str());
 			if (Twinkie->GetBestTime() != MAXDWORD)
 			{
 				SameLine();
 				TextColored(InfoStructDiff.SilverTime < 0 ? ColorTextBadDelta : ColorTextGoodDelta, ((InfoStructDiff.SilverTime < 0 ? "+" : "-") + Twinkie->FormatTmDuration(abs(InfoStructDiff.SilverTime))).c_str());
 			}
 
-			TextColored(ColorTextMedals, ("Bronze: " + Twinkie->FormatTmDuration(InfoStruct.BronzeTime)).c_str());
+			TextColored(MedalIconColors[3], ICON_FK_CIRCLE);
+			SameLine();
+			TextColored(ColorTextMedals, (BronzeName + ": " + Twinkie->FormatTmDuration(InfoStruct.BronzeTime)).c_str());
 			if (Twinkie->GetBestTime() != MAXDWORD)
 			{
 				SameLine();
@@ -58,28 +73,36 @@ void MedalsModule::RenderAnyways()
 		}
 		else
 		{
-			TextColored(ColorTextMedals, "Author: %lu", InfoStruct.AuthorScore);
+			TextColored(MedalIconColors[0], ICON_FK_CIRCLE);
+			SameLine();
+			TextColored(ColorTextMedals, (AuthorName + ": %lu").c_str(), InfoStruct.AuthorScore);
 			if (Twinkie->GetBestTime() != MAXDWORD)
 			{
 				SameLine();
 				TextColored((InfoStruct.ChallengeType == 5 ? InfoStructDiff.AuthorTime > 0 : InfoStructDiff.AuthorTime < 0) ? ColorTextBadDelta : ColorTextGoodDelta, (((InfoStruct.ChallengeType == 5 ? InfoStructDiff.AuthorTime > 0 : InfoStructDiff.AuthorTime < 0) ? "+" : "-") + std::to_string(abs(InfoStructDiff.AuthorTime))).c_str());
 			}
 
-			TextColored(ColorTextMedals, "Gold: %lu", InfoStruct.GoldTime);
+			TextColored(MedalIconColors[1], ICON_FK_CIRCLE);
+			SameLine();
+			TextColored(ColorTextMedals, (GoldName + ": %lu").c_str(), InfoStruct.GoldTime);
 			if (Twinkie->GetBestTime() != MAXDWORD)
 			{
 				SameLine();
 				TextColored((InfoStruct.ChallengeType == 5 ? InfoStructDiff.GoldTime > 0 : InfoStructDiff.GoldTime < 0) ? ColorTextBadDelta : ColorTextGoodDelta, (((InfoStruct.ChallengeType == 5 ? InfoStructDiff.GoldTime > 0 : InfoStructDiff.GoldTime < 0) ? "+" : "-") + std::to_string(abs(InfoStructDiff.GoldTime))).c_str());
 			}
 
-			TextColored(ColorTextMedals, "Silver: %lu", InfoStruct.SilverTime);
+			TextColored(MedalIconColors[2], ICON_FK_CIRCLE);
+			SameLine();
+			TextColored(ColorTextMedals, (SilverName + ": %lu").c_str(), InfoStruct.SilverTime);
 			if (Twinkie->GetBestTime() != MAXDWORD)
 			{
 				SameLine();
 				TextColored((InfoStruct.ChallengeType == 5 ? InfoStructDiff.SilverTime > 0 : InfoStructDiff.SilverTime < 0) ? ColorTextBadDelta : ColorTextGoodDelta, (((InfoStruct.ChallengeType == 5 ? InfoStructDiff.SilverTime > 0 : InfoStructDiff.SilverTime < 0) ? "+" : "-") + std::to_string(abs(InfoStructDiff.SilverTime))).c_str());
 			}
 
-			TextColored(ColorTextMedals, "Bronze: %lu", InfoStruct.BronzeTime);
+			TextColored(MedalIconColors[3], ICON_FK_CIRCLE);
+			SameLine();
+			TextColored(ColorTextMedals, (BronzeName + ": %lu").c_str(), InfoStruct.BronzeTime);
 			if (Twinkie->GetBestTime() != MAXDWORD)
 			{
 				SameLine();
@@ -102,6 +125,18 @@ void MedalsModule::RenderSettings()
 
 	InputText("Personal best name", BufferPersonalBest, 255);
 	PersonalBestName = BufferPersonalBest;
+
+	InputText("Author name", BufferAuthor, 255);
+	AuthorName = BufferAuthor;
+
+	InputText("Gold name", BufferGold, 255);
+	GoldName = BufferGold;
+
+	InputText("Silver name", BufferSilver, 255);
+	SilverName = BufferSilver;
+
+	InputText("Bronze name", BufferBronze, 255);
+	BronzeName = BufferBronze;
 }
 
 void MedalsModule::RenderMenuItem()
@@ -128,9 +163,24 @@ void MedalsModule::SettingsInit(SettingMgr& Settings)
 	Settings["Medals"]["Personal best text color"].GetAsVec4(&ColorTextPersonalBest);
 
 	Settings["Medals"]["Personal best name"].GetAsString(&PersonalBestName);
-
 	if (strlen(PersonalBestName.c_str()) < 254) strcpy_s(BufferPersonalBest, PersonalBestName.c_str());
 	else Logger->PrintErrorArgs("Could not import setting \"Personal best name\": too large ({} >= 255)", strlen(PersonalBestName.c_str()));
+
+	Settings["Medals"]["Author name"].GetAsString(&AuthorName);
+	if (strlen(AuthorName.c_str()) < 254) strcpy_s(BufferAuthor, AuthorName.c_str());
+	else Logger->PrintErrorArgs("Could not import setting \"Author name\": too large ({} >= 255)", strlen(AuthorName.c_str()));
+
+	Settings["Medals"]["Gold name"].GetAsString(&GoldName);
+	if (strlen(GoldName.c_str()) < 254) strcpy_s(BufferGold, GoldName.c_str());
+	else Logger->PrintErrorArgs("Could not import setting \"Gold name\": too large ({} >= 255)", strlen(GoldName.c_str()));
+
+	Settings["Medals"]["Silver name"].GetAsString(&SilverName);
+	if (strlen(SilverName.c_str()) < 254) strcpy_s(BufferSilver, SilverName.c_str());
+	else Logger->PrintErrorArgs("Could not import setting \"Silver name\": too large ({} >= 255)", strlen(SilverName.c_str()));
+
+	Settings["Medals"]["Bronze name"].GetAsString(&BronzeName);
+	if (strlen(BronzeName.c_str()) < 254) strcpy_s(BufferBronze, BronzeName.c_str());
+	else Logger->PrintErrorArgs("Could not import setting \"Bronze name\": too large ({} >= 255)", strlen(BronzeName.c_str()));
 }
 
 void MedalsModule::SettingsSave(SettingMgr& Settings)
@@ -147,4 +197,8 @@ void MedalsModule::SettingsSave(SettingMgr& Settings)
 	Settings["Medals"]["Personal best text color"].Set(ColorTextPersonalBest);
 
 	Settings["Medals"]["Personal best name"].Set(PersonalBestName);
+	Settings["Medals"]["Author name"].Set(AuthorName);
+	Settings["Medals"]["Gold name"].Set(GoldName);
+	Settings["Medals"]["Silver name"].Set(SilverName);
+	Settings["Medals"]["Bronze name"].Set(BronzeName);
 }
