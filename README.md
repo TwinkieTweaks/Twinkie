@@ -10,6 +10,12 @@ We have a discord server at https://discord.gg/kRZ4MdCkVf
 To [GreffMASTER](https://github.com/GreffMASTER) and [brokenphilip](https://github.com/brokenphilip) for helping me during development. brokenphilip has his own [tool for TMUF](https://github.com/BulbToys/TMUF) and GreffMASTER [as well (for TM1.0)](https://github.com/GreffMASTER/TMStuff) if you're interested in more cool mods for old TM games.\
 GreffMASTER also provided me with a helpful list of class members and their offsets for TMF, alongside brokenphilip helping me along my RE journey for this project <3
 
+## Medal.tv
+Due to Medal's uncooperativeness, you might have to do these following steps to make Twinkie work alongside it: 
+- Make sure your Medal app is up to date first. 
+- Then, in Settings > Advanced and in the “Advanced | Recording” section, turn on "Force Window Capture". 
+Keep in mind that **this is an experimental setting**, **it might not work at all** or **it might make your clips stuttery** but it is worth trying.
+
 ## Features
 - Ghost Editor, allows you to access the ghost editor without the cheat code.
 - Dashboard, an input display and gear display (tachometer, and gear number indicator) with customizable options
@@ -19,10 +25,6 @@ GreffMASTER also provided me with a helpful list of class members and their offs
 - ~~**Hunting Stats**, a module that keeps track of your progress for each map~~
 - **Always official**, that brings up the Official Mode menu when you reset (only for United accounts)
 - **Nickname patch**, sets the nickname text box to have a larger size than normal
-
-## Limitations
-- For some people, the F3 keybind to close the UI bar doesn't work
-- Medal.tv randomly works and randomly doesn't
 
 ## Screenshots
 ![In island](https://github.com/user-attachments/assets/f28186ec-e62b-4a3b-9c2a-444ee05aaac6)
