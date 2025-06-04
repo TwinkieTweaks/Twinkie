@@ -6,7 +6,7 @@ void AlwaysOfficialModule::RenderAnyways()
 	if (!Twinkie->IsPlaying()) return;
 	if (!Twinkie->GetPlayerInfo().TrackmaniaRace) return;
 
-	if (!Twinkie->IsOnline() and !Twinkie->IsOfficial())
+	if (!Twinkie->IsOnline())
 	{
 		CurrentState = Twinkie->GetState();
 
