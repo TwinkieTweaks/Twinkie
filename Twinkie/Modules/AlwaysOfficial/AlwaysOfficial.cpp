@@ -10,7 +10,7 @@ void AlwaysOfficialModule::RenderAnyways()
 	{
 		CurrentState = Twinkie->GetState();
 
-		if (CurrentState == TM::RaceState::BeforeStart and CurrentState != PreviousState)
+		if (CurrentState == TM::RaceState::BeforeStart and CurrentState != PreviousState and (!Twinkie->IsOfficial() or PreviousState == TM::RaceState::Running))
 		{
 			Twinkie->CallSetOfficialRace();
 		}
