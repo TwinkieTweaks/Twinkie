@@ -414,6 +414,11 @@ public:
         return Read<uintptr_t>(GetTrackmania() + 0x168);
     }
 
+    bool IsOfficial()
+    {
+        return Read<unsigned int>(GetTrackmania() + 0x268) != 0;
+    }
+
     std::string GetChallengeDecorationName()
     {
         uintptr_t Decoration = Read<uintptr_t>(GetChallenge() + 0x114);
