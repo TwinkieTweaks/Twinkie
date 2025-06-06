@@ -3,7 +3,7 @@
 void SplitSpeedsModule::DrawSpeedAndSplitText(ImDrawList* DrawList, std::string ValueText, std::string DiffText, ImVec4 Color)
 {
 	using namespace ImGui;
-	auto ScreenSize = ImGui::GetMainViewport()->Size;
+	auto ScreenSize = GetMainViewport()->Size;
 
 	ImVec2 SizeVal = CalcTextSize(ValueText.c_str());
 	ImVec2 SizeDiff = CalcTextSize(DiffText.c_str());
@@ -16,8 +16,8 @@ void SplitSpeedsModule::DrawSpeedAndSplitText(ImDrawList* DrawList, std::string 
 
 void SplitSpeedsModule::RenderAnyways()
 {
-	static long LastCheckpoint = 0;
-	static long CurrentCheckpoint = 0;
+	static long LastCheckpoint = -1;
+	static long CurrentCheckpoint = -1;
 
 	static TM::RaceState CurrentState = TM::RaceState::Finished;
 	static TM::RaceState LastState = TM::RaceState::Finished;
@@ -25,15 +25,14 @@ void SplitSpeedsModule::RenderAnyways()
 	static long LastRaceTime = 0;
 	static long CurrentRaceTime = 0;
 
-	static unsigned long CurrentCheckpointIdx = -1;
+	static unsigned int CurrentCheckpointIdx = -1;
 
-	static std::vector<long> Splits = {};
-	static std::vector<long> BestSplits = { 434, 444, 355 };
+	static std::vector<float> Splits = {};
+	static std::vector<float> BestSplits = { 434.f, 444.f, 355.f };
 
 	static bool DrawlistTesting = true;
 
 	using namespace ImGui;
-
 
 	if (Twinkie->IsPlaying())
 	{
@@ -48,8 +47,8 @@ void SplitSpeedsModule::RenderAnyways()
 			CurrentRaceTime = Twinkie->GetRaceTime();
 			if (CurrentRaceTime < LastRaceTime)
 			{
-				CurrentCheckpoint = 0;
-				LastCheckpoint = 0;
+				CurrentCheckpoint = -1;
+				LastCheckpoint = -1;
 
 				CurrentCheckpointIdx = -1;
 
@@ -83,9 +82,9 @@ void SplitSpeedsModule::RenderAnyways()
 			auto FGDrawList = GetForegroundDrawList();
 			auto ScreenSize = GetWindowSize();
 
-			long CurrentSplit = Splits[CurrentCheckpointIdx];
+			float CurrentSplit = Splits[CurrentCheckpointIdx];
 
-			long BestSplit = -1;
+			float BestSplit = -1;
 			bool IsFaster = false;
 			bool IsNew = false;
 
@@ -95,7 +94,6 @@ void SplitSpeedsModule::RenderAnyways()
 				IsFaster = CurrentSplit >= BestSplit;
 				IsNew = false;
 			}
-
 			else
 			{
 				IsNew = true;
@@ -103,11 +101,21 @@ void SplitSpeedsModule::RenderAnyways()
 
 			ImVec4 SplitTextCol = IsNew ? ImVec4(0, 0, 1, 1) : (IsFaster ? ImVec4(0, 1, 0, 1) : ImVec4(1, 0, 0, 1));
 			std::string ValueText = std::format("{}", CurrentSplit);
-			long SplitDiff = CurrentSplit - BestSplit;
-			std::string IFuckingHateC20 = !IsNew ? (SplitDiff < 0 ? "{}" : "+{}") : "";
-			std::string DiffText = std::vformat(IFuckingHateC20, std::make_format_args(SplitDiff));
+			float SplitDiff = CurrentSplit - BestSplit;
+			std::string SignText = !IsNew ? (SplitDiff < 0 ? "{}" : "+{}") : "";
+			std::string DiffText = std::vformat(SignText, std::make_format_args(SplitDiff));
 
 			DrawSpeedAndSplitText(FGDrawList, ValueText, DiffText, SplitTextCol);
 		}
+	}
+}
+
+void SplitSpeedsModule::RenderMenuItem()
+{
+	using namespace ImGui;
+
+	if (MenuItem(ICON_FK_EXCLAMATION_TRIANGLE " Split Speeds", "", Enabled))
+	{
+		Enabled = !Enabled;
 	}
 }

@@ -351,11 +351,11 @@ public:
 
     int GetCurCheckpointTime()
     {
-        if (!IsPlaying()) return 0;
-		uintptr_t Nod = CurPlayerInfo.PlayerInfo;
+        if (!IsPlaying()) return -1;
+        uintptr_t ActualPlayerInfo = Read<uintptr_t>(CurPlayerInfo.Player + 0x1C);
 
-		auto NatPtr = VirtualParamGet<int>(Nod, CMwMemberInfo::NATURAL, 0x24036017);
-		if (!NatPtr) return 0;
+		auto NatPtr = VirtualParamGet<int>(ActualPlayerInfo, CMwMemberInfo::NATURAL, 0x24036017);
+		if (!NatPtr) return -1;
 		return *NatPtr;
     }
 

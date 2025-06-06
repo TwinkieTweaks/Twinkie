@@ -29,6 +29,7 @@
 #include "Modules/NicknamePatch/NicknamePatch.h"
 #include "Modules/Telemetry/Telemetry.h"
 #include "Modules/DownloadServerMaps/DownloadServerMaps.h"
+#include "Modules/SplitSpeeds/SplitSpeeds.h"
 #ifdef BUILD_DEBUG
 #include "Modules/PlayerInfo/PlayerInfo.h"
 #endif
@@ -120,6 +121,7 @@ public:
         // Modules.push_back(new HuntingStatsModule(TrackmaniaMgr, Logger, &DoRender));
         Modules.push_back(new MedalsModule(TrackmaniaMgr, Logger, &DoRender));
         //
+        Modules.push_back(new SplitSpeedsModule(TrackmaniaMgr, Logger, &DoRender));
         Modules.push_back(new GhostEditorModule(TrackmaniaMgr, Logger, &DoRender));
         Modules.push_back(new TweakerModule(TrackmaniaMgr, Logger, &DoRender));
         Modules.push_back(new AlwaysOfficialModule(TrackmaniaMgr, Logger, &DoRender));

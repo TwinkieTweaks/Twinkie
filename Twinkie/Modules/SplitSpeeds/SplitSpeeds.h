@@ -20,7 +20,7 @@ public:
 	virtual void RenderAnyways();
 	virtual void RenderInactive() {}
 	virtual void RenderSettings() {}
-	virtual void RenderMenuItem() {}
+	virtual void RenderMenuItem();
 
 	virtual void SettingsInit(SettingMgr& Settings) {};
 	virtual void SettingsSave(SettingMgr& Settings) {};
