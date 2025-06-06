@@ -344,39 +344,19 @@ public:
 
         uintptr_t Nod = GetHmsPocCamera();
 
-        CMwMemberInfo* MemberInfo = new CMwMemberInfo();
-        MemberInfo->type = CMwMemberInfo::REAL;
-        MemberInfo->fieldOffset = -1;
-        MemberInfo->pszName = "RatioXY";
-        MemberInfo->memberID = 0x6001015;
-        MemberInfo->pParam = nullptr;
-        MemberInfo->flags = -1;
-        MemberInfo->flags2 = -1;
+        auto FloatPtr = VirtualParamGet<float>(Nod, CMwMemberInfo::REAL, 0x6001015);
+        if (!FloatPtr) return 0;
+        return *FloatPtr;
+    }
 
-        CMwStack* MwStack = new CMwStack();
-        MwStack->m_Size = 1;
-        MwStack->ppMemberInfos = new CMwMemberInfo * [MwStack->m_Size] {MemberInfo};
-        MwStack->iCurrentPos = 0;
+    int GetCurCheckpointTime()
+    {
+        if (!IsPlaying()) return 0;
+		uintptr_t Nod = CurPlayerInfo.PlayerInfo;
 
-        float* RatioXYVal = nullptr;
-        if (!VirtualParamGet(Nod, MwStack, (void**)&RatioXYVal))
-        {
-            delete[] MwStack->ppMemberInfos;
-            delete MwStack;
-            delete MemberInfo;
-            return 0;
-        }
-        if (!RatioXYVal)
-        {
-            delete[] MwStack->ppMemberInfos;
-            delete MwStack;
-            delete MemberInfo;
-            return 0;
-        }
-        delete[] MwStack->ppMemberInfos;
-        delete MwStack;
-        delete MemberInfo;
-        return *RatioXYVal;
+		auto NatPtr = VirtualParamGet<int>(Nod, CMwMemberInfo::NATURAL, 0x24036017);
+		if (!NatPtr) return 0;
+		return *NatPtr;
     }
 
     uintptr_t GetMenuManager()

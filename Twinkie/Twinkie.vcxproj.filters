@@ -162,6 +162,9 @@
     <ClInclude Include="GlyphTable\IconsKenney.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Modules\SplitSpeeds\SplitSpeeds.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -243,6 +246,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Modules\Tweaker\Tweaker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules\SplitSpeeds\SplitSpeeds.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

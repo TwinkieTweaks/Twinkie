@@ -422,6 +422,7 @@
     <ClInclude Include="Modules\AlwaysOfficial\AlwaysOfficial.h" />
     <ClInclude Include="Modules\DownloadServerMaps\DownloadServerMaps.h" />
     <ClInclude Include="Modules\GhostEditor\GhostEditor.h" />
+    <ClInclude Include="Modules\SplitSpeeds\SplitSpeeds.h" />
     <ClInclude Include="Modules\Telemetry\Telemetry.h" />
     <ClInclude Include="Telemetry.h" />
     <ClInclude Include="minhook\buffer.h" />
@@ -474,6 +475,7 @@
     <ClCompile Include="Modules\Medals\Medals.cpp" />
     <ClCompile Include="Modules\NicknamePatch\NicknamePatch.cpp" />
     <ClCompile Include="Modules\PlayerInfo\PlayerInfo.cpp" />
+    <ClCompile Include="Modules\SplitSpeeds\SplitSpeeds.cpp" />
     <ClCompile Include="Modules\Telemetry\Telemetry.cpp" />
     <ClCompile Include="Modules\Tweaker\Tweaker.cpp" />
   </ItemGroup>
