@@ -48,12 +48,12 @@ public:
 	virtual void Render() {}
 	virtual void RenderAnyways();
 	virtual void RenderInactive() {}
-	virtual void RenderSettings() {}
+	virtual void RenderSettings();
 	virtual void RenderMenuItem();
 
 	virtual void SettingsInit(SettingMgr& Settings);
 	virtual void SettingsSave(SettingMgr& Settings);
 
 	virtual bool IsDebug() { return false; }
-	virtual bool HasSettings() { return false; }
+	virtual bool HasSettings() { return true; }
 };

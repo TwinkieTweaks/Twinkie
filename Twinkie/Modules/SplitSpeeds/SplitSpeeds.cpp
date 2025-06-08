@@ -109,8 +109,8 @@ void SplitSpeedsModule::RenderAnyways()
 			}
 
 			ImVec4 SplitTextCol = IsNew ? ColorTextEqual : (IsFaster ? ColorTextAhead : ColorTextBehind);
-			std::string ValueTextFormatText = std::format("{{.{}f}}", DigitsToShow);
-			std::string ValueText = std::format(ValueTextFormatText, CurrentSplit);
+			std::string ValueTextFormatText = std::vformat("{{.{}f}}", std::make_format_args(DigitsToShow));
+			std::string ValueText = std::vformat(ValueTextFormatText, std::make_format_args(CurrentSplit));
 			float SplitDiff = CurrentSplit - BestSplit;
 			std::string SignText = !IsNew ? (SplitDiff < 0 ? "{}" : "+{}") : "";
 			std::string DiffText = std::vformat(SignText, std::make_format_args(SplitDiff));
@@ -149,6 +149,20 @@ void SplitSpeedsModule::RenderMenuItem()
 	{
 		Enabled = !Enabled;
 	}
+}
+
+void SplitSpeedsModule::RenderSettings()
+{
+	using namespace ImGui;
+
+	ColorEdit4("Ahead color", (float*)&ColorTextAhead, ImGuiColorEditFlags_NoInputs);
+	ColorEdit4("Behind color", (float*)&ColorTextBehind, ImGuiColorEditFlags_NoInputs);
+	ColorEdit4("Equal/New color", (float*)&ColorTextEqual, ImGuiColorEditFlags_NoInputs);
+	ColorEdit4("Background color", (float*)&ColorBg, ImGuiColorEditFlags_NoInputs);
+
+	Separator();
+
+	SliderInt("Digits to show", &DigitsToShow, 0, 10);
 }
 
 void SplitSpeedsModule::SettingsInit(SettingMgr& Settings)
