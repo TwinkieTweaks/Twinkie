@@ -18,6 +18,7 @@ bool SplitSpeedsModule::IsPersonalBest()
 {
 	int PersonalBest = Twinkie->GetBestTime();
 
+	if (PersonalBest == -1) return true;
 	if (Twinkie->GetRaceTime() < PersonalBest and !Twinkie->ChallengeUsesScore())
 	{
 		return true;
@@ -60,13 +61,6 @@ void SplitSpeedsModule::RenderAnyways()
 
 			Splits = {};
 			return;
-
-		}
-
-		if (CurrentState == TM::RaceState::Finished and CurrentState != ActualLastState and IsPersonalBest())
-		{
-			BestSplits = Splits;
-			LoadedSplits[Twinkie->GetChallengeUID()] = Splits;
 		}
 
 		LastRaceTime = CurrentRaceTime;
@@ -112,6 +106,20 @@ void SplitSpeedsModule::RenderAnyways()
 			DrawSpeedAndSplitText(FGDrawList, ValueText, DiffText, SplitTextCol);
 		}
 
+		if (CurrentState == TM::RaceState::Finished)
+		{
+			if (CurrentState != ActualLastState)
+			{
+				auto IsPb = IsPersonalBest();
+				if (IsPb)
+				{
+					BestSplits = Splits;
+					LoadedSplits[Twinkie->GetChallengeUID()] = Splits;
+					Logger->PrintArgs("Len: {}", Splits.size());
+				}
+			}
+		}
+
 		ActualLastState = CurrentState;
 	}
 
@@ -140,8 +148,8 @@ void SplitSpeedsModule::SettingsInit(SettingMgr& Settings)
 void SplitSpeedsModule::SettingsSave(SettingMgr& Settings)
 {
 	auto& SplitSpeedsSection = Settings["Split speeds"];
-	for (auto& Value : SplitSpeedsSection.Settings)
+	for (auto& Value : LoadedSplits)
 	{
-		Value.Set(LoadedSplits[Value.Name]);
+		SplitSpeedsSection[Value.first].Set(Value.second);
 	}
 }
