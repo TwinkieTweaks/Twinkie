@@ -5,6 +5,7 @@ void DashboardTachometerModule::RenderAnyways()
 	using namespace ImGui;
 
 	if (!Twinkie->GetPlayerInfo().Vehicle) return;
+	if (Twinkie->GetNameOfNod(Twinkie->GetPlayerInfo().Vehicle))
 
 	int DashboardWindowFlags = ImGuiWindowFlags_NoTitleBar;
 	if (!*UiRenderEnabled) DashboardWindowFlags |= ImGuiWindowFlags_NoInputs;

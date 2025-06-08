@@ -5,9 +5,6 @@
 class DashboardTachometerModule : public IModule
 {
 public:
-	bool HasSettings = true;
-	bool IsDebug = false;
-
 	ImVec4 ColorUpshift = ImVec4(1.f, 0.f, 0.f, 1.f);
 	ImVec4 ColorDownshift = ImVec4(1.f, 1.f, 0.f, 1.f);
 	ImVec4 ColorMiddle = ImVec4(0.f, 1.f, 0.f, 1.f);
@@ -15,6 +12,8 @@ public:
 	ImVec4 ColorBackground = ImVec4(0.1294117718935013f, 0.1372549086809158f, 0.168627455830574f, 0.8f);
 	float DownshiftRpm = 6500;
 	float UpshiftRpm = 10000;
+
+	std::vector<std::string> TMOCarsNames = {"American", "Rally", "SnowCar"};
 
 	DashboardTachometerModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled)
 	{
@@ -32,4 +31,7 @@ public:
 
 	virtual void SettingsInit(SettingMgr& Settings);
 	virtual void SettingsSave(SettingMgr& Settings);
+
+	virtual bool IsDebug() { return false; }
+	virtual bool HasSettings() { return true; }
 };

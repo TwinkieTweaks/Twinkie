@@ -1,6 +1,6 @@
 #include "SplitSpeeds.h"
 
-void SplitSpeedsModule::DrawSpeedAndSplitText(ImDrawList* DrawList, std::string ValueText, std::string DiffText, ImVec4 Color)
+void SplitSpeedsModule::DrawSpeedAndSplitText(ImDrawList* DrawList, std::string ValueText, std::string DiffText, ImVec4 TextColor, ImVec4 BgColor)
 {
 	using namespace ImGui;
 	auto ScreenSize = GetMainViewport()->Size;
@@ -8,10 +8,9 @@ void SplitSpeedsModule::DrawSpeedAndSplitText(ImDrawList* DrawList, std::string 
 	ImVec2 SizeVal = CalcTextSize(ValueText.c_str());
 	ImVec2 SizeDiff = CalcTextSize(DiffText.c_str());
 
-	DrawList->AddText(ImVec2((ScreenSize.x / 2.f) - (SizeVal.x / 2.f) + 3, ScreenSize.y / 10.f + 3), ColorConvertFloat4ToU32(ImVec4(0, 0, 0, 1)), ValueText.c_str());
-	DrawList->AddText(ImVec2((ScreenSize.x / 2.f) - (SizeVal.x / 2.f), ScreenSize.y / 10.f), ColorConvertFloat4ToU32(Color), ValueText.c_str());
-	DrawList->AddText(ImVec2((ScreenSize.x / 2.f) - (SizeDiff.x / 2.f) + 3, ScreenSize.y / 10.f + 3 + SizeVal.y), ColorConvertFloat4ToU32(ImVec4(0, 0, 0, 1)), DiffText.c_str());
-	DrawList->AddText(ImVec2((ScreenSize.x / 2.f) - (SizeDiff.x / 2.f), ScreenSize.y / 10.f + SizeVal.y), ColorConvertFloat4ToU32(Color), DiffText.c_str());
+	DrawList->AddRectFilled(ImVec2(), ImVec2(), ColorConvertFloat4ToU32(BgColor);
+	DrawList->AddText(ImVec2((ScreenSize.x / 2.f) - (SizeVal.x / 2.f), ScreenSize.y / 10.f), ColorConvertFloat4ToU32(TextColor), ValueText.c_str());
+	DrawList->AddText(ImVec2((ScreenSize.x / 2.f) - (SizeDiff.x / 2.f), ScreenSize.y / 10.f + SizeVal.y), ColorConvertFloat4ToU32(TextColor), DiffText.c_str());
 }
 
 bool SplitSpeedsModule::IsPersonalBest()
@@ -19,11 +18,11 @@ bool SplitSpeedsModule::IsPersonalBest()
 	int PersonalBest = Twinkie->GetBestTime();
 
 	if (PersonalBest == -1) return true;
-	if (Twinkie->GetRaceTime() < PersonalBest and !Twinkie->ChallengeUsesScore())
+	if (Twinkie->GetRaceTime() == PersonalBest and !Twinkie->ChallengeUsesScore())
 	{
 		return true;
 	}
-	else if (Twinkie->GetStuntsScore() > PersonalBest and !Twinkie->IsChallengePlatform())
+	else if (Twinkie->GetStuntsScore() == PersonalBest and !Twinkie->IsChallengePlatform())
 	{
 		return true;
 	}
@@ -111,11 +110,14 @@ void SplitSpeedsModule::RenderAnyways()
 			if (CurrentState != ActualLastState)
 			{
 				auto IsPb = IsPersonalBest();
+				Logger->PrintArgs("Len: {}", Splits.size());
+				Logger->PrintArgs("PbVal: {}", Twinkie->GetBestTime());
+				Logger->PrintArgs("RaceVal: {}", Twinkie->GetRaceTime());
+				Logger->PrintArgs("IsPb: {}", IsPersonalBest() ? 1 : 0);
 				if (IsPb)
 				{
 					BestSplits = Splits;
 					LoadedSplits[Twinkie->GetChallengeUID()] = Splits;
-					Logger->PrintArgs("Len: {}", Splits.size());
 				}
 			}
 		}
@@ -150,6 +152,7 @@ void SplitSpeedsModule::SettingsSave(SettingMgr& Settings)
 	auto& SplitSpeedsSection = Settings["Split speeds"];
 	for (auto& Value : LoadedSplits)
 	{
+		if (Value.second.size() == 0) continue;
 		SplitSpeedsSection[Value.first].Set(Value.second);
 	}
 }

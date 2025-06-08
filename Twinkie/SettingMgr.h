@@ -121,7 +121,7 @@ public:
 		size_t Idx = 0;
 		for (float& IndexedValue : Value)
 		{
-			NewValue = std::to_string(IndexedValue) + (Idx == Value.size() - 1 ? "" : ",");
+			NewValue = NewValue + std::to_string(IndexedValue) + (Idx == Value.size() - 1 ? "" : ",");
 			Idx++;
 		}
 

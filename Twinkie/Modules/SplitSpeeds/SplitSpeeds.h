@@ -35,7 +35,7 @@ public:
 
 	SplitSpeedsModule() = default;
 
-	void DrawSpeedAndSplitText(ImDrawList* DrawList, std::string ValueText, std::string DiffText, ImVec4 Color);
+	void DrawSpeedAndSplitText(ImDrawList* DrawList, std::string ValueText, std::string DiffText, ImVec4 TextColor, ImVec4 BgColor);
 	bool IsPersonalBest();
 
 	virtual void Render() {}
