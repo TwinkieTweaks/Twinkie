@@ -38,10 +38,15 @@ void DashboardGearsModule::RenderAnyways()
 	using namespace ImGui;
 	if (Twinkie->IsPlaying())
 	{
+		if (DisableTMO and std::find(TMOCarNames.begin(), TMOCarNames.end(), Twinkie->GetNameOfNod(Twinkie->GetPlayerInfo().Vehicle)) != TMOCarNames.end()) return;
+
 		PushStyleColor(ImGuiCol_WindowBg, ColorBackground);
+
 		auto WindowFlags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize;
 		if (!*UiRenderEnabled) WindowFlags |= ImGuiWindowFlags_NoInputs;
+
 		Begin("##Gears", nullptr, WindowFlags);
+
 		PopStyleColor();
 
 		TextColored(ColorText, "%d", Twinkie->GetGear());

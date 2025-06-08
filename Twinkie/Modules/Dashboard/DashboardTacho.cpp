@@ -5,7 +5,7 @@ void DashboardTachometerModule::RenderAnyways()
 	using namespace ImGui;
 
 	if (!Twinkie->GetPlayerInfo().Vehicle) return;
-	if (Twinkie->GetNameOfNod(Twinkie->GetPlayerInfo().Vehicle))
+	if (DisableTMO and std::find(TMOCarNames.begin(), TMOCarNames.end(), Twinkie->GetNameOfNod(Twinkie->GetPlayerInfo().Vehicle)) != TMOCarNames.end()) return;
 
 	int DashboardWindowFlags = ImGuiWindowFlags_NoTitleBar;
 	if (!*UiRenderEnabled) DashboardWindowFlags |= ImGuiWindowFlags_NoInputs;
@@ -69,6 +69,10 @@ void DashboardTachometerModule::RenderSettings()
 
 	InputFloat("Upshift RPM", &UpshiftRpm);
 	InputFloat("Downshift RPM", &DownshiftRpm);
+
+	Separator();
+
+	Checkbox("Disable tachometer with TMO cars", &DisableTMO);
 }
 
 void DashboardTachometerModule::RenderMenuItem()
@@ -94,6 +98,8 @@ void DashboardTachometerModule::SettingsInit(SettingMgr& Settings)
 
 	Settings["Dashboard"]["Upshift RPM"].GetAsFloat(&UpshiftRpm);
 	Settings["Dashboard"]["Downshift RPM"].GetAsFloat(&DownshiftRpm);
+
+	Settings["Dashboard"]["Disable tachometer with TMO cars"].GetAsBool(&DisableTMO);
 }
 
 void DashboardTachometerModule::SettingsSave(SettingMgr& Settings)
@@ -109,4 +115,6 @@ void DashboardTachometerModule::SettingsSave(SettingMgr& Settings)
 
 	Settings["Dashboard"]["Upshift RPM"].Set(UpshiftRpm);
 	Settings["Dashboard"]["Downshift RPM"].Set(DownshiftRpm);
+
+	Settings["Dashboard"]["Disable tachometer with TMO cars"].Set(DisableTMO);
 }

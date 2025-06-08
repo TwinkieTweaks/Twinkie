@@ -8,7 +8,19 @@ void SplitSpeedsModule::DrawSpeedAndSplitText(ImDrawList* DrawList, std::string 
 	ImVec2 SizeVal = CalcTextSize(ValueText.c_str());
 	ImVec2 SizeDiff = CalcTextSize(DiffText.c_str());
 
-	DrawList->AddRectFilled(ImVec2(), ImVec2(), ColorConvertFloat4ToU32(BgColor);
+	ImVec2 ValCoord = { (ScreenSize.x / 2.f) - (SizeVal.x / 2.f), ScreenSize.y / 10.f };
+	ImVec2 DiffCoord = { (ScreenSize.x / 2.f) - (SizeDiff.x / 2.f), ScreenSize.y / 10.f + SizeVal.y };
+
+	ImVec2 RectMin;
+	ImVec2 RectMax;
+
+	RectMin.x = min(ValCoord.x, DiffCoord.x) - 5.f;
+	RectMin.y = min(ValCoord.y, DiffCoord.y) - 5.f;
+
+	RectMax.x = max(ValCoord.x + (SizeVal.x), DiffCoord.x + (SizeDiff.x)) + 5.f;
+	RectMax.y = max(ValCoord.y + (SizeVal.y), DiffCoord.y + (SizeDiff.y)) + 5.f;
+
+	DrawList->AddRectFilled(RectMin, RectMax, ColorConvertFloat4ToU32(BgColor));
 	DrawList->AddText(ImVec2((ScreenSize.x / 2.f) - (SizeVal.x / 2.f), ScreenSize.y / 10.f), ColorConvertFloat4ToU32(TextColor), ValueText.c_str());
 	DrawList->AddText(ImVec2((ScreenSize.x / 2.f) - (SizeDiff.x / 2.f), ScreenSize.y / 10.f + SizeVal.y), ColorConvertFloat4ToU32(TextColor), DiffText.c_str());
 }
@@ -74,7 +86,7 @@ void SplitSpeedsModule::RenderAnyways()
 
 		LastCheckpoint = CurrentCheckpoint;
 
-		if (CurrentCheckpointIdx != -1)
+		if (CurrentCheckpointIdx != -1 and CurrentState != TM::RaceState::BeforeStart)
 		{
 			auto FGDrawList = GetForegroundDrawList();
 			auto ScreenSize = GetWindowSize();
@@ -96,13 +108,14 @@ void SplitSpeedsModule::RenderAnyways()
 				IsNew = true;
 			}
 
-			ImVec4 SplitTextCol = IsNew ? ImVec4(0, 0, 1, 1) : (IsFaster ? ImVec4(0, 1, 0, 1) : ImVec4(1, 0, 0, 1));
-			std::string ValueText = std::format("{}", CurrentSplit);
+			ImVec4 SplitTextCol = IsNew ? ColorTextEqual : (IsFaster ? ColorTextAhead : ColorTextBehind);
+			std::string ValueTextFormatText = std::format("{{.{}f}}", DigitsToShow);
+			std::string ValueText = std::format(ValueTextFormatText, CurrentSplit);
 			float SplitDiff = CurrentSplit - BestSplit;
 			std::string SignText = !IsNew ? (SplitDiff < 0 ? "{}" : "+{}") : "";
 			std::string DiffText = std::vformat(SignText, std::make_format_args(SplitDiff));
 
-			DrawSpeedAndSplitText(FGDrawList, ValueText, DiffText, SplitTextCol);
+			DrawSpeedAndSplitText(FGDrawList, ValueText, DiffText, SplitTextCol, ColorBg);
 		}
 
 		if (CurrentState == TM::RaceState::Finished)
@@ -145,6 +158,13 @@ void SplitSpeedsModule::SettingsInit(SettingMgr& Settings)
 	{
 		LoadedSplits[Value.Name] = Value.GetAsFloats();
 	}
+
+	SplitSpeedsSection["Ahead color"].GetAsVec4(&ColorTextAhead);
+	SplitSpeedsSection["Behind color"].GetAsVec4(&ColorTextBehind);
+	SplitSpeedsSection["Equal color"].GetAsVec4(&ColorTextEqual);
+	SplitSpeedsSection["Background color"].GetAsVec4(&ColorBg);
+
+	SplitSpeedsSection["Digits to show"].GetAsInt(&DigitsToShow);
 }
 
 void SplitSpeedsModule::SettingsSave(SettingMgr& Settings)
@@ -155,4 +175,11 @@ void SplitSpeedsModule::SettingsSave(SettingMgr& Settings)
 		if (Value.second.size() == 0) continue;
 		SplitSpeedsSection[Value.first].Set(Value.second);
 	}
+
+	SplitSpeedsSection["Ahead color"].Set(ColorTextAhead);
+	SplitSpeedsSection["Behind color"].Set(ColorTextBehind);
+	SplitSpeedsSection["Equal color"].Set(ColorTextEqual);
+	SplitSpeedsSection["Background color"].Set(ColorBg);
+
+	SplitSpeedsSection["Digits to show"].Set(DigitsToShow);
 }

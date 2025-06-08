@@ -25,6 +25,13 @@ class SplitSpeedsModule : public IModule
 	
 	std::map<std::string, std::vector<float>> LoadedSplits = {};
 
+	ImVec4 ColorTextAhead  = { 0.f, 1.f, 0.f, 1.f };
+	ImVec4 ColorTextBehind = { 1.f, 0.f, 0.f, 1.f };
+	ImVec4 ColorTextEqual  = { 0.f, 1.f, 1.f, 1.f };
+	ImVec4 ColorBg         = { 0.f, 0.f, 0.f, 0.5f};
+
+	int DigitsToShow = 2;
+
 public:
 	SplitSpeedsModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled)
 	{

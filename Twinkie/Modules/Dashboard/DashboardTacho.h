@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include "../../IModule.h"
 
 class DashboardTachometerModule : public IModule
@@ -13,7 +14,8 @@ public:
 	float DownshiftRpm = 6500;
 	float UpshiftRpm = 10000;
 
-	std::vector<std::string> TMOCarsNames = {"American", "Rally", "SnowCar"};
+	std::vector<std::string> TMOCarNames = {"American", "Rally", "SnowCar"};
+	bool DisableTMO = true;
 
 	DashboardTachometerModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled)
 	{

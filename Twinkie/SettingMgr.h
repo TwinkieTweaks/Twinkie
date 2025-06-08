@@ -94,6 +94,19 @@ public:
 		*DefaultValue = Value == "" ? *DefaultValue : Value;
 	}
 
+	void GetAsInt(int* DefaultValue)
+	{
+		// FORMAT: "i"
+		try
+		{
+			*DefaultValue = Value == "" ? *DefaultValue : std::stoi(Value);
+		}
+		catch (std::exception e)
+		{
+			return;
+		}
+	}
+
 	void Set(ImVec4 Value)
 	{
 		this->Value = std::to_string(Value.x) + "," + std::to_string(Value.y) + "," + std::to_string(Value.z) + "," + std::to_string(Value.w);
@@ -104,7 +117,13 @@ public:
 		this->Value = Value ? "true" : "false";
 	}
 
+	// TODO: turn this into a template (declspec?)
 	void Set(float Value)
+	{
+		this->Value = std::to_string(Value);
+	}
+
+	void Set(int Value)
 	{
 		this->Value = std::to_string(Value);
 	}
