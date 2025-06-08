@@ -55,6 +55,21 @@ public:
 		*DefaultValue = { Values[0], Values[1], Values[2], Values[3] };
 	}
 
+	std::vector<float> GetAsFloats()
+	{
+		// FORMAT: "f,f,f,...,f"
+		std::stringstream Stream(Value);
+		std::vector<float> Values = {};
+		std::string Token = "";
+
+		while (std::getline(Stream, Token, ','))
+		{
+			Values.push_back(std::stof(Token));
+		}
+
+		return Values;
+	}
+
 	void GetAsBool(bool* DefaultValue)
 	{
 		// FORMAT: "true|false"
@@ -97,6 +112,20 @@ public:
 	void Set(std::string Value)
 	{
 		this->Value = Value;
+	}
+
+	void Set(std::vector<float>& Value)
+	{
+		std::string NewValue = "";
+
+		size_t Idx = 0;
+		for (float& IndexedValue : Value)
+		{
+			NewValue = std::to_string(IndexedValue) + (Idx == Value.size() - 1 ? "" : ",");
+			Idx++;
+		}
+
+		this->Value = NewValue;
 	}
 };
 

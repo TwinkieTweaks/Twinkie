@@ -359,6 +359,14 @@ public:
 		return *NatPtr;
     }
 
+    int GetStuntsScore()
+    {
+        if (!IsPlaying()) return -1;
+        uintptr_t ActualPlayerInfo = Read<uintptr_t>(CurPlayerInfo.Player + 0x1C);
+
+        return Read<int>(ActualPlayerInfo + 0x2D4);
+    }
+
     uintptr_t GetMenuManager()
     {
         return Read<uintptr_t>(GetTrackmania() + 0x194);
@@ -573,6 +581,11 @@ public:
         // 5 -> Stunt
 		// 1 -> Platform
         return GetChallengeInfo().ChallengeType == 1 or GetChallengeInfo().ChallengeType == 5;
+    }
+
+    bool IsChallengePlatform()
+    {
+        return GetChallengeInfo().ChallengeType == 1;
     }
 
     PlayerInfo GetPlayerInfo()

@@ -14,70 +14,74 @@ void SplitSpeedsModule::DrawSpeedAndSplitText(ImDrawList* DrawList, std::string 
 	DrawList->AddText(ImVec2((ScreenSize.x / 2.f) - (SizeDiff.x / 2.f), ScreenSize.y / 10.f + SizeVal.y), ColorConvertFloat4ToU32(Color), DiffText.c_str());
 }
 
+bool SplitSpeedsModule::IsPersonalBest()
+{
+	int PersonalBest = Twinkie->GetBestTime();
+
+	if (Twinkie->GetRaceTime() < PersonalBest and !Twinkie->ChallengeUsesScore())
+	{
+		return true;
+	}
+	else if (Twinkie->GetStuntsScore() > PersonalBest and !Twinkie->IsChallengePlatform())
+	{
+		return true;
+	}
+	return false;
+}
+
 void SplitSpeedsModule::RenderAnyways()
 {
-	static long LastCheckpoint = -1;
-	static long CurrentCheckpoint = -1;
-
-	static TM::RaceState CurrentState = TM::RaceState::Finished;
-	static TM::RaceState LastState = TM::RaceState::Finished;
-
-	static long LastRaceTime = 0;
-	static long CurrentRaceTime = 0;
-
-	static unsigned int CurrentCheckpointIdx = -1;
-
-	static std::vector<float> Splits = {};
-	static std::vector<float> BestSplits = { 434.f, 444.f, 355.f };
-
-	static bool DrawlistTesting = true;
-
 	using namespace ImGui;
+
+	CurrentChallenge = Twinkie->GetChallenge();
+
+	if (CurrentChallenge != PrevChallenge and CurrentChallenge)
+	{
+		BestSplits = LoadedSplits[Twinkie->GetChallengeUID()];
+	}
 
 	if (Twinkie->IsPlaying())
 	{
-		if (Begin("SplitSpeeds", &Enabled))
+		if (Twinkie->IsChallengePlatform()) return;
+		CurrentState = Twinkie->GetState();
+
+		CurrentRaceTime = Twinkie->GetRaceTime();
+		if (CurrentRaceTime < LastRaceTime)
 		{
-			Text("Last checkpoint: %lu", Twinkie->GetCurCheckpointTime());
-			Checkbox("Test drawlist rendering", &DrawlistTesting);
+			CurrentCheckpoint = -1;
+			LastCheckpoint = -1;
 
-			CurrentState = Twinkie->GetState();
-			Text(std::format("BestTime: {}", Twinkie->GetBestTime()).c_str());
+			CurrentCheckpointIdx = -1;
 
-			CurrentRaceTime = Twinkie->GetRaceTime();
-			if (CurrentRaceTime < LastRaceTime)
-			{
-				CurrentCheckpoint = -1;
-				LastCheckpoint = -1;
+			CurrentRaceTime = 0;
+			LastRaceTime = 0;
 
-				CurrentCheckpointIdx = -1;
+			LastState = CurrentState;
 
-				CurrentRaceTime = 0;
-				LastRaceTime = 0;
+			Splits = {};
+			return;
 
-				LastState = CurrentState;
-
-				Splits = {};
-
-				End();
-				return;
-
-			}
-
-			LastRaceTime = CurrentRaceTime;
-			CurrentCheckpoint = Twinkie->GetCurCheckpointTime();
-			if (CurrentCheckpoint != LastCheckpoint)
-			{
-				Splits.push_back(Twinkie->GetDisplaySpeed());
-				CurrentCheckpointIdx++;
-			}
-
-			LastCheckpoint = CurrentCheckpoint;
 		}
 
-		End();
+		if (CurrentState == TM::RaceState::Finished and CurrentState != ActualLastState and IsPersonalBest())
+		{
+			BestSplits = Splits;
+			LoadedSplits[Twinkie->GetChallengeUID()] = Splits;
+		}
 
-		if (DrawlistTesting and CurrentCheckpointIdx != -1)
+		LastRaceTime = CurrentRaceTime;
+		
+		CurrentCheckpoint = Twinkie->GetCurCheckpointTime();
+		
+		if (CurrentCheckpoint != LastCheckpoint)
+		{
+			Splits.push_back(Twinkie->GetDisplaySpeed());
+			CurrentCheckpointIdx++;
+		}
+
+		LastCheckpoint = CurrentCheckpoint;
+
+		if (CurrentCheckpointIdx != -1)
 		{
 			auto FGDrawList = GetForegroundDrawList();
 			auto ScreenSize = GetWindowSize();
@@ -107,7 +111,11 @@ void SplitSpeedsModule::RenderAnyways()
 
 			DrawSpeedAndSplitText(FGDrawList, ValueText, DiffText, SplitTextCol);
 		}
+
+		ActualLastState = CurrentState;
 	}
+
+	PrevChallenge = CurrentChallenge;
 }
 
 void SplitSpeedsModule::RenderMenuItem()
@@ -117,5 +125,23 @@ void SplitSpeedsModule::RenderMenuItem()
 	if (MenuItem(ICON_FK_EXCLAMATION_TRIANGLE " Split Speeds", "", Enabled))
 	{
 		Enabled = !Enabled;
+	}
+}
+
+void SplitSpeedsModule::SettingsInit(SettingMgr& Settings)
+{
+	auto& SplitSpeedsSection = Settings["Split speeds"];
+	for (auto& Value : SplitSpeedsSection.Settings)
+	{
+		LoadedSplits[Value.Name] = Value.GetAsFloats();
+	}
+}
+
+void SplitSpeedsModule::SettingsSave(SettingMgr& Settings)
+{
+	auto& SplitSpeedsSection = Settings["Split speeds"];
+	for (auto& Value : SplitSpeedsSection.Settings)
+	{
+		Value.Set(LoadedSplits[Value.Name]);
 	}
 }
