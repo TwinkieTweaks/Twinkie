@@ -41,7 +41,7 @@ bool SplitSpeedsModule::IsPersonalBest()
 	return false;
 }
 
-void SplitSpeedsModule::RenderAnyways()
+void SplitSpeedsModule::RenderInactive()
 {
 	using namespace ImGui;
 
@@ -88,9 +88,6 @@ void SplitSpeedsModule::RenderAnyways()
 
 		if (CurrentCheckpointIdx != -1 and CurrentState != TM::RaceState::BeforeStart)
 		{
-			auto FGDrawList = GetForegroundDrawList();
-			auto ScreenSize = GetWindowSize();
-
 			float CurrentSplit = Splits[CurrentCheckpointIdx];
 
 			float BestSplit = -1;
@@ -108,14 +105,20 @@ void SplitSpeedsModule::RenderAnyways()
 				IsNew = true;
 			}
 
-			ImVec4 SplitTextCol = IsNew ? ColorTextEqual : (IsFaster ? ColorTextAhead : ColorTextBehind);
-			std::string ValueTextFormatText = std::vformat("{{.{}f}}", std::make_format_args(DigitsToShow));
-			std::string ValueText = std::vformat(ValueTextFormatText, std::make_format_args(CurrentSplit));
-			float SplitDiff = CurrentSplit - BestSplit;
-			std::string SignText = !IsNew ? (SplitDiff < 0 ? "{}" : "+{}") : "";
-			std::string DiffText = std::vformat(SignText, std::make_format_args(SplitDiff));
+			if (Enabled)
+			{
+				auto FGDrawList = GetForegroundDrawList();
+				auto ScreenSize = GetWindowSize();
 
-			DrawSpeedAndSplitText(FGDrawList, ValueText, DiffText, SplitTextCol, ColorBg);
+				ImVec4 SplitTextCol = IsNew ? ColorTextEqual : (IsFaster ? ColorTextAhead : ColorTextBehind);
+				std::string ValueTextFormatText = std::vformat("{{:.{}f}}", std::make_format_args(DigitsToShow));
+				std::string ValueText = std::vformat(ValueTextFormatText, std::make_format_args(CurrentSplit));
+				float SplitDiff = CurrentSplit - BestSplit;
+				std::string SignText = !IsNew ? (SplitDiff < 0 ? ValueTextFormatText : "+" + ValueTextFormatText) : "";
+				std::string DiffText = std::vformat(SignText, std::make_format_args(SplitDiff));
+
+				DrawSpeedAndSplitText(FGDrawList, ValueText, DiffText, SplitTextCol, ColorBg);
+			}
 		}
 
 		if (CurrentState == TM::RaceState::Finished)
@@ -123,10 +126,6 @@ void SplitSpeedsModule::RenderAnyways()
 			if (CurrentState != ActualLastState)
 			{
 				auto IsPb = IsPersonalBest();
-				Logger->PrintArgs("Len: {}", Splits.size());
-				Logger->PrintArgs("PbVal: {}", Twinkie->GetBestTime());
-				Logger->PrintArgs("RaceVal: {}", Twinkie->GetRaceTime());
-				Logger->PrintArgs("IsPb: {}", IsPersonalBest() ? 1 : 0);
 				if (IsPb)
 				{
 					BestSplits = Splits;

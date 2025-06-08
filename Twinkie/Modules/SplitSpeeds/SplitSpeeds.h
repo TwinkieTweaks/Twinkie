@@ -38,6 +38,8 @@ public:
 		this->UiRenderEnabled = UiRenderEnabled;
 		this->Twinkie = &Twinkie;
 		this->Logger = &Logger;
+		this->Name = "SplitSpeeds";
+		this->FancyName = "Split speeds";
 	}
 
 	SplitSpeedsModule() = default;
