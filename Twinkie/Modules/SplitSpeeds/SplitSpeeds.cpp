@@ -54,7 +54,7 @@ void SplitSpeedsModule::RenderInactive()
 
 	if (Twinkie->IsPlaying())
 	{
-		if (Twinkie->IsChallengePlatform()) return;
+		if (Twinkie->IsChallengePlatform() or Twinkie->IsOnline()) return;
 		CurrentState = Twinkie->GetState();
 
 		CurrentRaceTime = Twinkie->GetRaceTime();
@@ -144,7 +144,7 @@ void SplitSpeedsModule::RenderMenuItem()
 {
 	using namespace ImGui;
 
-	if (MenuItem(ICON_FK_EXCLAMATION_TRIANGLE " Split Speeds", "", Enabled))
+	if (MenuItem(ICON_FK_CLOCK_O " Split Speeds", "", Enabled))
 	{
 		Enabled = !Enabled;
 	}
@@ -171,6 +171,7 @@ void SplitSpeedsModule::SettingsInit(SettingMgr& Settings)
 	{
 		LoadedSplits[Value.Name] = Value.GetAsFloats();
 	}
+	SplitSpeedsSection["Enabled"].GetAsBool(&Enabled);
 
 	SplitSpeedsSection["Ahead color"].GetAsVec4(&ColorTextAhead);
 	SplitSpeedsSection["Behind color"].GetAsVec4(&ColorTextBehind);
@@ -188,6 +189,7 @@ void SplitSpeedsModule::SettingsSave(SettingMgr& Settings)
 		if (Value.second.size() == 0) continue;
 		SplitSpeedsSection[Value.first].Set(Value.second);
 	}
+	SplitSpeedsSection["Enabled"].Set(Enabled);
 
 	SplitSpeedsSection["Ahead color"].Set(ColorTextAhead);
 	SplitSpeedsSection["Behind color"].Set(ColorTextBehind);

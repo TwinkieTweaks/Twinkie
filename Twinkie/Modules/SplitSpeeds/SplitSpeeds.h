@@ -48,8 +48,8 @@ public:
 	bool IsPersonalBest();
 
 	virtual void Render() {}
-	virtual void RenderAnyways();
-	virtual void RenderInactive() {}
+	virtual void RenderAnyways() {}
+	virtual void RenderInactive();
 	virtual void RenderSettings();
 	virtual void RenderMenuItem();
 
