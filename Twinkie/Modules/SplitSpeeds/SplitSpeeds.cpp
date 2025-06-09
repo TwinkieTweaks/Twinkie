@@ -169,7 +169,9 @@ void SplitSpeedsModule::SettingsInit(SettingMgr& Settings)
 	auto& SplitSpeedsSection = Settings["Split speeds"];
 	for (auto& Value : SplitSpeedsSection.Settings)
 	{
-		LoadedSplits[Value.Name] = Value.GetAsFloats();
+		if (!Value.Name.starts_with("U_")) continue;
+		std::string KeyToAccess = Value.Name.substr(2);
+		LoadedSplits[KeyToAccess] = Value.GetAsFloats();
 	}
 	SplitSpeedsSection["Enabled"].GetAsBool(&Enabled);
 
@@ -187,7 +189,8 @@ void SplitSpeedsModule::SettingsSave(SettingMgr& Settings)
 	for (auto& Value : LoadedSplits)
 	{
 		if (Value.second.size() == 0) continue;
-		SplitSpeedsSection[Value.first].Set(Value.second);
+		std::string KeyToAccess = "U_" + Value.first;
+		SplitSpeedsSection[KeyToAccess].Set(Value.second);
 	}
 	SplitSpeedsSection["Enabled"].Set(Enabled);
 
