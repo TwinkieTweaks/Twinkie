@@ -2,7 +2,7 @@
 
 void NicknamePatchModule::RenderMenuItem()
 {
-	if (ImGui::MenuItem(ICON_FK_TEXT_WIDTH " Nickname Patch"))
+	if (ImGui::MenuItem(ICON_FK_LIGHTBULB_O " Nickname Patch"))
 	{
 		Twinkie->PatchNicknameEntry();
 	}

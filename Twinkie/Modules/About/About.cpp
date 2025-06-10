@@ -6,6 +6,8 @@ void AboutModule::Render()
 	if (Begin(ICON_FK_INFO_CIRCLE " About Twinkie", &Enabled, ImGuiWindowFlags_AlwaysAutoResize))
 	{
 		Text(std::format("Twinkie for TrackMania Forever. Version {}", Versions.TwinkieVer).c_str());
+		Text(std::format("Account type: {}", Twinkie->GetPayingAccountType() == TM::AccountType::Disconnected ? "Disconnected" : (Twinkie->GetPayingAccountType() == TM::AccountType::Nations ? "Nations" : "United")).c_str());
+		Text(std::format("Game type: {}", Twinkie->IsGameInstallUnited() ? "United" : "Nations").c_str());
 		Text("Made with love by jailman. <3");
 #ifdef BUILD_DEBUG
 		Separator();

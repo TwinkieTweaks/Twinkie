@@ -188,19 +188,18 @@ namespace TM
 		unsigned int Value;
 	};
 
-	enum GameType
-	{
-		United,
-		Nations,
-		Modded,
-		Unk
-	};
-
 	enum RaceState
 	{
 		BeforeStart = 0,
 		Running = 1,
 		Finished = 2
+	};
+
+	enum AccountType
+	{
+		Disconnected = 0,
+		Nations = 1,
+		United = 2
 	};
 
 	enum MaterialId

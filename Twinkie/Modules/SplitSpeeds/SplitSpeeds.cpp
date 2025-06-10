@@ -6,10 +6,10 @@ void SplitSpeedsModule::DrawSpeedAndSplitText(ImDrawList* DrawList, std::string 
 	auto ScreenSize = GetMainViewport()->Size;
 
 	ImVec2 SizeVal = CalcTextSize(ValueText.c_str());
-	ImVec2 SizeDiff = CalcTextSize(DiffText.c_str());
+	ImVec2 SizeDiff = DiffText == "" ? SizeVal : CalcTextSize(DiffText.c_str());
 
 	ImVec2 ValCoord = { (ScreenSize.x / 2.f) - (SizeVal.x / 2.f), ScreenSize.y / 10.f };
-	ImVec2 DiffCoord = { (ScreenSize.x / 2.f) - (SizeDiff.x / 2.f), ScreenSize.y / 10.f + SizeVal.y };
+	ImVec2 DiffCoord = DiffText != "" ? ImVec2((ScreenSize.x / 2.f) - (SizeDiff.x / 2.f), ScreenSize.y / 10.f + SizeVal.y) : ValCoord;
 
 	ImVec2 RectMin;
 	ImVec2 RectMax;

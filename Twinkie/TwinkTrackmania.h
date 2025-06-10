@@ -201,20 +201,8 @@ public:
     const float MAXRPM = 11000.f;
 
 	uintptr_t O_CTRACKMANIA = 0x972EB8;
-    TM::GameType TMType = TM::GameType::Modded;
 
-    TwinkTrackmania()
-    {
-		// 0x700b15 + ExeBaseAddr (0x400000) = 0xb00b15 (boobies)
-		if (Read<unsigned char>(GetExeBaseAddr() + 0x700b15) == 0xA3u)
-		{
-			TMType = TM::GameType::Nations;
-		}
-		else if (Read<unsigned char>(GetExeBaseAddr() + 0x700b15) == 0xF7u)
-		{
-			TMType = TM::GameType::United;
-		}
-    }
+    TwinkTrackmania() {}
 
     std::string WStringToUTF8(const std::wstring& wstr) {
         if (wstr.empty()) return {};
@@ -423,7 +411,7 @@ public:
     void CallSaveChallengeFromMemory()
     {
         using SaveChallengeFromMemoryFn = int(__thiscall*)(uintptr_t);
-        reinterpret_cast<SaveChallengeFromMemoryFn>(GetExeBaseAddr() + 0x278300)(GetNetwork());
+        reinterpret_cast<SaveChallengeFromMemoryFn>(GetExeBaseAddr() +  )(GetNetwork());
     }
 
     void PatchNicknameEntry()
@@ -448,9 +436,23 @@ public:
 
     bool IsProfileUnited()
     {
+        return GetPayingAccountType() == TM::United;
+    }
 
-        if (!GetProfile()) return false;
-		return Read<unsigned int>(GetProfile() + 756) == 1;
+    TM::AccountType GetPayingAccountType()
+    {
+        using GetPayingAccountTypeFn = TM::AccountType(__thiscall*)(uintptr_t);
+        uintptr_t FnPtr = 0x19b350 + GetExeBaseAddr();
+
+        return reinterpret_cast<GetPayingAccountTypeFn>(FnPtr)(GetTrackmania());
+    }
+
+    bool IsGameInstallUnited()
+    {
+        using IsPayingInstallFn = int(__thiscall*)(uintptr_t);
+        uintptr_t FnPtr = 0x19b340 + GetExeBaseAddr();
+
+        return reinterpret_cast<IsPayingInstallFn>(FnPtr)(GetTrackmania()) != 0;
     }
 
     void ForceDevicePoll(uintptr_t Device, int MustNotPoll)
@@ -541,7 +543,7 @@ public:
     {
         using MenuGhostEditorFn = int(__thiscall*)(uintptr_t);
 
-        uintptr_t GhostEditorPtr = TMType == TM::GameType::United ? GetExeBaseAddr() + 0xD93D0 : GetExeBaseAddr() + 0xD9780;
+        uintptr_t GhostEditorPtr = GetExeBaseAddr() + 0xD9780;
         if (GetMenuManager())
         {
             reinterpret_cast<MenuGhostEditorFn>(GhostEditorPtr)(GetMenuManager());
@@ -681,7 +683,7 @@ public:
     void GetIdName(unsigned int Ident, TM::CFastString* String)
     {
         using GetIdNameFn = void* (__thiscall*)(unsigned int* Ident, TM::CFastString* String);
-		reinterpret_cast<GetIdNameFn>(TMType == TM::GameType::United ? GetExeBaseAddr() + 0x335660 + 0x200000 : GetExeBaseAddr() + 0x3357D0 + 0x200000)(&Ident, String);
+		reinterpret_cast<GetIdNameFn>(GetExeBaseAddr() + 0x3357D0 + 0x200000)(&Ident, String); // the +0x200000 is on purpose, might be modloader related
     }
 
     std::string GetChallengeUID()
