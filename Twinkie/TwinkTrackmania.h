@@ -260,6 +260,7 @@ public:
         return reinterpret_cast<GetClassId>(Virtual<3>(This))(This);
     }
 
+    // Credit to greffmaster for helping me implement this function
     bool VirtualParamGet(uintptr_t Nod, CMwStack* MwStack, void** Value)
     {
         CMwValueStd ValueStd;
@@ -275,6 +276,7 @@ public:
     }
 
     // The MemberId is the most important thing to pass to this function
+    // Credit to greffmaster for helping me implement this function
     template<typename T>
     T* VirtualParamGet(uintptr_t Nod, CMwMemberInfo::eType Type, unsigned int MemberId)
     {
@@ -543,6 +545,19 @@ public:
         if (GetMenuManager())
         {
             reinterpret_cast<MenuGhostEditorFn>(GhostEditorPtr)(GetMenuManager());
+        }
+    }
+
+    void SetAnalogInfo(float Deadzone = -1.f, float Sensitivity = -1.f)
+    {
+        using DialogInputOnQuitFn = int(__thiscall*)(uintptr_t);
+
+        uintptr_t OnQuitPtr = GetExeBaseAddr() + 0x22A550;
+        if (GetMenuManager())
+        {
+            if (Deadzone >= 0) Write(Sensitivity, GetMenuManager() + 0x114);
+            if (Sensitivity >= 0) Write(Deadzone, GetMenuManager() + 0x118);
+            reinterpret_cast<DialogInputOnQuitFn>(OnQuitPtr)(GetMenuManager());
         }
     }
 
