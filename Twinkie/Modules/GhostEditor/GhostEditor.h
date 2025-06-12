@@ -5,14 +5,9 @@
 class GhostEditorModule : public IModule
 {
 public:
-	GhostEditorModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled)
-	{
-		this->UiRenderEnabled = UiRenderEnabled;
-		this->Twinkie = &Twinkie;
-		this->Logger = &Logger;
-		this->Name = "GhostEditor";
-		this->FancyName = "Ghost editor";
-	}
+	GhostEditorModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled);
+
+	void PatchChallengeMainLoop();
 
 	virtual void Render() {}
 	virtual void RenderAnyways() {}
