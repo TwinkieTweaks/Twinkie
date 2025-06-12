@@ -302,10 +302,18 @@ public:
                 {
                     TrackmaniaMgr.CallGameAppExit();
                 }
+                if (IsItemHovered())
+                {
+                    SetTooltip("Closes the game.");
+                }
                 if (MenuItem(ICON_FK_BAN " Terminate", ""))
                 {
                     Logger.Print("Terminating, as user commanded");
                     free((void*)TrackmaniaMgr.GetTrackmania());
+                }
+                if (IsItemHovered())
+                {
+                    SetTooltip(ICON_FK_EXCLAMATION_TRIANGLE " WARNING! This crashes the game.");
                 }
                 ImGui::EndMenu();
             }
