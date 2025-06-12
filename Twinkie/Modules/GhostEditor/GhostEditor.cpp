@@ -21,6 +21,7 @@ GhostEditorModule::GhostEditorModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger
 
 void GhostEditorModule::PatchChallengeMainLoop()
 {
+	// Patch made by GreffMASTER, slightly modified to fit into Twinkie
 #define CHALLENGEMAINLOOPPATCH_ADDR_START 0x958FC + (size_t)this->Twinkie->GetExeBaseAddr()
 #define CHALLENGEMAINLOOPPATCH_ADDR_END 0x95912 + (size_t)this->Twinkie->GetExeBaseAddr()
 
