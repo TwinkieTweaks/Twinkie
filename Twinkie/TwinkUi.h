@@ -297,6 +297,16 @@ public:
                 {
                     EnableSettings = !EnableSettings;
                 }
+                Separator();
+                if (MenuItem(ICON_FK_BAN " Shutdown", ""))
+                {
+                    TrackmaniaMgr.CallGameAppExit();
+                }
+                if (MenuItem(ICON_FK_BAN " Terminate", ""))
+                {
+                    Logger.Print("Terminating, as user commanded");
+                    free((void*)TrackmaniaMgr.GetTrackmania());
+                }
                 ImGui::EndMenu();
             }
             else PopStyleColor();

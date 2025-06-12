@@ -414,6 +414,12 @@ public:
         reinterpret_cast<SaveChallengeFromMemoryFn>(GetExeBaseAddr() + 0x278300)(GetNetwork());
     }
 
+    void CallGameAppExit()
+    {
+        using ExitFn = void(__thiscall*)(uintptr_t);
+        reinterpret_cast<ExitFn>(GetExeBaseAddr() + 0x19b060)(GetTrackmania());
+    }
+
     void PatchNicknameEntry()
     {
         std::vector<int> IndiciesToNicknameEntry = { 0, 0, 1, 1, 1 };
