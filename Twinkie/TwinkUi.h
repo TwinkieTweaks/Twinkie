@@ -314,7 +314,7 @@ public:
                 {
                     Logger.EnableLog = !Logger.EnableLog;
                 }
-                if (MenuItem(ICON_FK_BAN " Disable all modules", "", &ForceModulesNoRender))
+                if (MenuItem(ICON_FK_BAN " Disable all modules", "", ForceModulesNoRender))
                 {
                     ForceModulesNoRender = !ForceModulesNoRender;
                 }
