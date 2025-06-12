@@ -411,7 +411,7 @@ public:
     void CallSaveChallengeFromMemory()
     {
         using SaveChallengeFromMemoryFn = int(__thiscall*)(uintptr_t);
-        reinterpret_cast<SaveChallengeFromMemoryFn>(GetExeBaseAddr() +  )(GetNetwork());
+        reinterpret_cast<SaveChallengeFromMemoryFn>(GetExeBaseAddr() + 0x278300)(GetNetwork());
     }
 
     void PatchNicknameEntry()

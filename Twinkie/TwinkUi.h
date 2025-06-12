@@ -60,6 +60,7 @@ public:
 
     bool DoRender = true;
     bool Initialized = false;
+    bool ForceModulesNoRender = false;
 
     ResetFn oReset = NULL;
     PresentFn oPresent = NULL;
@@ -284,7 +285,8 @@ public:
 
         for (IModule* Module : Modules)
         {
-           if (Module->Enabled) Module->Render();
+            if (ForceModulesNoRender) break;
+            if (Module->Enabled) Module->Render();
         }
 
         if (BeginMainMenuBar()) {
@@ -311,6 +313,10 @@ public:
                 if (MenuItem(ICON_FK_HDD_O " Log", "", Logger.EnableLog))
                 {
                     Logger.EnableLog = !Logger.EnableLog;
+                }
+                if (MenuItem(ICON_FK_BAN " Disable all modules", "", &ForceModulesNoRender))
+                {
+                    ForceModulesNoRender = !ForceModulesNoRender;
                 }
                 for (IModule* Module : Modules)
                 {
@@ -432,6 +438,7 @@ public:
 
         for (IModule* Module : Modules)
         {
+            if (ForceModulesNoRender) break;
             if (Module->Enabled) Module->RenderAnyways();
             Module->RenderInactive();
         }
