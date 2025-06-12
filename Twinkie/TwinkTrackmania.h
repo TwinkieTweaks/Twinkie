@@ -242,6 +242,11 @@ public:
         return Read<uintptr_t>(GetExeBaseAddr() + O_CTRACKMANIA);
     }
 
+    uintptr_t GetGbxApp()
+    {
+        return Read<uintptr_t>(GetExeBaseAddr() + 0x966ff8);
+    }
+
     int GetMwClassId(uintptr_t This)
     {
         using GetClassId = int(__thiscall*)(uintptr_t);
@@ -414,10 +419,10 @@ public:
         reinterpret_cast<SaveChallengeFromMemoryFn>(GetExeBaseAddr() + 0x278300)(GetNetwork());
     }
 
-    void CallGameAppExit()
+    void CallGbxAppExit()
     {
         using ExitFn = void(__thiscall*)(uintptr_t);
-        reinterpret_cast<ExitFn>(GetExeBaseAddr() + 0x19b060)(GetTrackmania());
+        reinterpret_cast<ExitFn>(Virtual<33>(GetGbxApp()))(GetGbxApp());
     }
 
     void PatchNicknameEntry()

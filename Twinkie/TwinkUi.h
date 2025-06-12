@@ -298,15 +298,15 @@ public:
                     EnableSettings = !EnableSettings;
                 }
                 Separator();
-                if (MenuItem(ICON_FK_BAN " Shutdown", ""))
+                if (MenuItem(ICON_FK_POWER_OFF " Shutdown", ""))
                 {
-                    TrackmaniaMgr.CallGameAppExit();
+                    TrackmaniaMgr.CallGbxAppExit();
                 }
                 if (IsItemHovered())
                 {
-                    SetTooltip("Closes the game.");
+                    SetTooltip("Softly closes the game.");
                 }
-                if (MenuItem(ICON_FK_BAN " Terminate", ""))
+                if (MenuItem(ICON_FK_EXCLAMATION_TRIANGLE " Terminate", ""))
                 {
                     Logger.Print("Terminating, as user commanded");
                     free((void*)TrackmaniaMgr.GetTrackmania());
