@@ -371,3 +371,4 @@ Release/
 /Twinkie/Modules/AppExplorer.h
 *.c
 /Modloader/TwinkieModloader.dll
+/Premium/TwinkieModloader.dll

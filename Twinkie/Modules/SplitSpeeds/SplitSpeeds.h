@@ -31,6 +31,7 @@ class SplitSpeedsModule : public IModule
 	ImVec4 ColorBg         = { 0.f, 0.f, 0.f, 0.5f};
 
 	int DigitsToShow = 2;
+	bool UnsignedSpeed = false;
 
 public:
 	SplitSpeedsModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled)

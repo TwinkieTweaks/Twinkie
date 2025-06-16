@@ -310,10 +310,10 @@ public:
 
     int GetSignedRaceTime()
     {
-        if (!IsPlaying()) return 0;
-        uintptr_t Nod = CurPlayerInfo.TrackmaniaRace;
+        if (!IsPlaying()) return -1;
+        uintptr_t ActualPlayerInfo = Read<uintptr_t>(CurPlayerInfo.Player + 0x1C);
 
-        auto NatPtr = VirtualParamGet<int>(Nod, CMwMemberInfo::NATURAL, 0x2401400d);
+        return Read<int>(ActualPlayerInfo + 0x2B0);
     }
 
     float GetHmsCameraFov()
@@ -825,11 +825,12 @@ public:
 
     bool IsPlaying()
     {
-        return GetPlayerInfo().Vehicle and 
-               GetPlayerInfo().TrackmaniaRace and 
-               GetPlayerInfo().Mobil and 
-               GetPlayerInfo().Player and 
-               GetPlayerInfo().PlayerInfo;
+        PlayerInfo Info = GetPlayerInfo();
+        return Info.Vehicle and
+               Info.TrackmaniaRace and
+               Info.Mobil and
+               Info.Player and
+               Info.PlayerInfo;
     }
 
     std::string FormatTmDuration(unsigned int Duration) {

@@ -80,7 +80,7 @@ void SplitSpeedsModule::RenderInactive()
 		
 		if (CurrentCheckpoint != LastCheckpoint)
 		{
-			Splits.push_back(Twinkie->GetDisplaySpeed());
+			Splits.push_back(UnsignedSpeed ? fabs(Twinkie->GetDisplaySpeed()) : Twinkie->GetDisplaySpeed());
 			CurrentCheckpointIdx++;
 		}
 
@@ -181,6 +181,8 @@ void SplitSpeedsModule::SettingsInit(SettingMgr& Settings)
 	SplitSpeedsSection["Background color"].GetAsVec4(&ColorBg);
 
 	SplitSpeedsSection["Digits to show"].GetAsInt(&DigitsToShow);
+
+	SplitSpeedsSection["Show absolute speed"].GetAsBool(&UnsignedSpeed);
 }
 
 void SplitSpeedsModule::SettingsSave(SettingMgr& Settings)
@@ -200,4 +202,6 @@ void SplitSpeedsModule::SettingsSave(SettingMgr& Settings)
 	SplitSpeedsSection["Background color"].Set(ColorBg);
 
 	SplitSpeedsSection["Digits to show"].Set(DigitsToShow);
+
+	SplitSpeedsSection["Show absolute speed"].Set(UnsignedSpeed);
 }

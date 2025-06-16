@@ -1,6 +1,4 @@
 #define WIN32_LEAN_AND_MEAN
-#define BUILD_DEBUG
-#define BUILD_PREMIUM
 
 #include <iostream>
 #include "TwinkUi.h"
@@ -130,7 +128,7 @@ static DWORD WINAPI MainThread(LPVOID lpReserved)
 			if (D3DDevice->GetCreationParameters(&D3DCreationParams) == D3D_OK)
 			{
 				Twinkie.Window = D3DCreationParams.hFocusWindow;
-
+				if (!Twinkie.Window) continue; // just to shut up MSVC
 				Twinkie.oWndProc = (WNDPROC)SetWindowLongPtr(Twinkie.Window, GWLP_WNDPROC, (LONG_PTR)WndProc);
 				if (!Twinkie.oWndProc)
 					Twinkie.Logger.PrintErrorArgs("Failed to hook WndProc");
