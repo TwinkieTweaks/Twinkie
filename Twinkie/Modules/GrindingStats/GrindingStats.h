@@ -10,11 +10,6 @@ struct Stat
 	unsigned int Finishes;
 	unsigned int Respawns;
 
-	void ApplyOffset(unsigned long long Offset)
-	{
-		Playtime += Offset;
-	}
-
 	void FromString(std::string String)
 	{
 		std::stringstream Stream(String);
@@ -70,6 +65,7 @@ class GrindingStatsModule : public IModule
 	TM::RaceState PreviousState = TM::Finished;
 
 	std::string LastLoadedChallengeUID = "";
+	unsigned int LastNonZeroUnsignedRaceTime = 0;
 
 public:
 	GrindingStatsModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled)

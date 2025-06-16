@@ -67,6 +67,11 @@ void GrindingStatsModule::RenderInactive()
 	CurrentRespawnCount = Twinkie->GetRespawns();
 	CurrentState = Twinkie->GetState();
 
+	if (CurrentRaceTime != 0)
+	{
+		LastNonZeroUnsignedRaceTime = CurrentRaceTime;
+	}
+
 	if (PreviousChallenge != CurrentChallenge)
 	{
 		OnMapLoad();
@@ -126,8 +131,8 @@ void GrindingStatsModule::OnReset()
 {
 	GetCurrentTotalStat().Attempts++;
 	CurrentStat.Attempts++;
-	GetCurrentTotalStat().Playtime += CurrentRaceTime;
-	CurrentStat.Playtime += CurrentRaceTime;
+	GetCurrentTotalStat().Playtime += LastNonZeroUnsignedRaceTime;
+	CurrentStat.Playtime += LastNonZeroUnsignedRaceTime;
 }
 
 void GrindingStatsModule::OnRespawn()
