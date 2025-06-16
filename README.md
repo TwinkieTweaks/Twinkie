@@ -23,13 +23,13 @@ Keep in mind that **this is an experimental setting**, **it might not work at al
 - Checkpoint counter, does what it says right on the tin
 - Medals window, for easily viewing medals
 - Tweaker, for customizing your render distance (even though [TMUnlimiter already does that](https://github.com/tomek0055/TMUnlimiter/wiki/Game-Settings))
-- ~~**Hunting Stats**, a module that keeps track of your progress for each map~~
+- **Grinding Stats**, a module that keeps track of your progress for each map
 - **Always official**, that brings up the Official Mode menu when you reset (only for United accounts)
 - **Nickname patch**, sets the nickname text box to have a larger size than normal
 
 ## Screenshots
-![In island](https://github.com/user-attachments/assets/f28186ec-e62b-4a3b-9c2a-444ee05aaac6)
-![In stadium](https://github.com/user-attachments/assets/b93b3ab0-580a-4346-85f1-046398d7f320)
+![In stadium, playing solo on a Premium build](https://github.com/user-attachments/assets/54d06017-bbf3-48ee-b8e1-a07288d3d672)
+![In coast/bay envimix, playing multiplayer](https://github.com/user-attachments/assets/5391ee54-9d2f-40a6-9c26-218cd95e2bf1)
 
 ## Contribute
 To know how to make new modules, check out [`CreatingModules.md`](https://github.com/TwinkieTweaks/Twinkie/blob/master/CreatingModules.md)
@@ -39,7 +39,7 @@ The visual studio solution already comes with various build options for some TMF
 ![image](https://github.com/user-attachments/assets/25da4bde-8146-4740-94d6-d7e75660a87a)\
 Building in x64 is **not supported** since TMF is 32-bit.\
 If you're having compilation issues, make sure you're **ONLY** compiling to x86/Win32.\
-Building for United and Nations is not currently supported. Only Modloader builds are.
+Building for United and Nations is not currently supported. Only Modloader/Premium builds are.
 
 ## Support me
 There currently aren't any monetary ways of supporting me, so if you like Twinkie and you have a github account, please star it so that more people see it, or be kind enough to share it with your friends.
