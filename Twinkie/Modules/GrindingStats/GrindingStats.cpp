@@ -77,7 +77,8 @@ void GrindingStatsModule::RenderInactive()
 		OnMapLoad();
 	}
 
-	if (PreviousSignedRaceTime != CurrentSignedRaceTime and CurrentSignedRaceTime < 0 and PreviousSignedRaceTime > CurrentSignedRaceTime and CurrentSignedRaceTime != -1)
+	// if (PreviousSignedRaceTime != CurrentSignedRaceTime and CurrentSignedRaceTime < 0 and PreviousSignedRaceTime > CurrentSignedRaceTime and CurrentSignedRaceTime != -1)
+	if (PreviousState != CurrentState and CurrentState == TM::BeforeStart)
 	{
 		OnReset();
 	}

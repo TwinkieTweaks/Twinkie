@@ -65,7 +65,7 @@ class GrindingStatsModule : public IModule
 	TM::RaceState PreviousState = TM::Finished;
 
 	std::string LastLoadedChallengeUID = "";
-	unsigned int LastNonZeroUnsignedRaceTime = 0;
+	unsigned long long LastNonZeroUnsignedRaceTime = 0;
 
 public:
 	GrindingStatsModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled)
