@@ -144,6 +144,7 @@ void GrindingStatsModule::OnRespawn()
 
 void GrindingStatsModule::OnMapLoad()
 {
+	LastNonZeroUnsignedRaceTime = 0;
 	CurrentStat = { 0, 0, 0, 0 };
 }
 

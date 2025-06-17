@@ -42,12 +42,10 @@ public:
 				if (ImIo.WantCaptureMouse)
 				{
 					Twinkie->ForceDevicePoll(Device, 1);
-					Twinkie->Write<int>(0, Device + 0x54);
 				}
 				else
 				{
 					Twinkie->ForceDevicePoll(Device, 0);
-					Twinkie->Write<int>(1, Device + 0x54);
 				}
 			}
 		}
