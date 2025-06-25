@@ -200,8 +200,6 @@ public:
     const float MINRPM = 200.f;
     const float MAXRPM = 11000.f;
 
-	uintptr_t O_CTRACKMANIA = 0x972EB8;
-
     TwinkTrackmania() {}
 
     std::string WStringToUTF8(const std::wstring& wstr) {
@@ -233,13 +231,12 @@ public:
 
     uintptr_t GetExeBaseAddr()
     {
-        // Gets the base address of the .exe
-        return (unsigned long)GetModuleHandle(NULL); // could be better
+        return (unsigned long)GetModuleHandle(NULL);
     }
 
     uintptr_t GetTrackmania()
     {
-        return Read<uintptr_t>(GetExeBaseAddr() + O_CTRACKMANIA);
+        return Read<uintptr_t>(GetExeBaseAddr() + 0x972EB8);
     }
 
     uintptr_t GetGbxApp()
