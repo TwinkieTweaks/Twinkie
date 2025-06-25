@@ -19,7 +19,7 @@ public:
 
 		TM::CFastArray<uintptr_t> Devices = Twinkie->GetDevices();
 
-		for (int Idx = 0; Idx < Devices.Size; Idx++)
+		for (size_t Idx = 0; Idx < Devices.Size; Idx++)
 		{
 			uintptr_t Device = Devices[Idx];
 

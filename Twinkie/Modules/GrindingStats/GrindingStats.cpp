@@ -55,6 +55,7 @@ void GrindingStatsModule::RenderInactive()
 		}
 		if (PreviousChallenge != CurrentChallenge and CurrentChallenge != 0)
 		{
+			LastLoadedChallengeUID = Twinkie->GetChallengeUID();
 			OnMapLoad();
 		}
 		PreviousChallenge = CurrentChallenge;

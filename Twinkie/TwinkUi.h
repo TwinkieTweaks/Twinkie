@@ -452,8 +452,6 @@ public:
 
         IoMgr->Update();
 
-        TrackmaniaMgr.CurPlayerInfo = TrackmaniaMgr.GetPlayerInfo();
-
         for (IModule* Module : Modules)
         {
             if (ForceModulesNoRender) break;

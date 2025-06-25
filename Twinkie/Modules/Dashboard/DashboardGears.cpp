@@ -38,7 +38,7 @@ void DashboardGearsModule::RenderAnyways()
 	using namespace ImGui;
 	if (Twinkie->IsPlaying())
 	{
-		if (DisableTMO and std::find(TMOCarNames.begin(), TMOCarNames.end(), Twinkie->GetNameOfNod(Twinkie->GetPlayerInfo().Vehicle)) != TMOCarNames.end()) return;
+		if (DisableTMO and std::find(TMOCarNames.begin(), TMOCarNames.end(), Twinkie->GetNameOfNod(Twinkie->CurPlayerInfo.Vehicle)) != TMOCarNames.end()) return;
 
 		PushStyleColor(ImGuiCol_WindowBg, ColorBackground);
 

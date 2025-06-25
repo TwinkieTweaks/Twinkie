@@ -216,7 +216,7 @@ public:
 
 	Setting& operator()(std::string TabName, std::string SettingName)
 	{
-		Tab FoundTab = this->operator[](TabName);
+		Tab& FoundTab = this->operator[](TabName);
 		for (auto& Setting : FoundTab.Settings)
 		{
 			if (Setting.Name == SettingName)

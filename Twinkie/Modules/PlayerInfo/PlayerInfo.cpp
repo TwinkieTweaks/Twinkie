@@ -108,7 +108,7 @@ void PlayerInfoModule::Render()
 
 		Text("BufferPtr: %x", WheelBuf.Ptr);
 
-		for (int Idx = 0; Idx < WheelBuf.Size; Idx++)
+		for (size_t Idx = 0; Idx < WheelBuf.Size; Idx++)
 		{
 			auto Wheel = WheelBuf[Idx];
 

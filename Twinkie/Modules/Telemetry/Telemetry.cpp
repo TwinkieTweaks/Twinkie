@@ -95,7 +95,7 @@ void TelemetryModule::UpdateTelemetry()
 		Telemetry.Game.State = GetGameState();
 		if (Twinkie->IsPlaying())
 		{
-			strcpy_s(Telemetry.Game.GameplayVariant, Twinkie->GetNameOfNod(Twinkie->GetPlayerInfo().Vehicle).c_str());
+			strcpy_s(Telemetry.Game.GameplayVariant, Twinkie->GetNameOfNod(Twinkie->CurPlayerInfo.Vehicle).c_str());
 			strcpy_s(Telemetry.Game.MapName, Twinkie->GetChallengeName().c_str());
 			strcpy_s(Telemetry.Game.MapId, Twinkie->GetChallengeUID().c_str());
 		}

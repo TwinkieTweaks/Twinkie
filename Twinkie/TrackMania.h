@@ -5,11 +5,11 @@ namespace TM
 	template <typename T>
 	struct CFastBuffer
 	{
-		int Size = 0;
+		size_t Size = 0;
 		T* Ptr = nullptr;
-		int Capacity = 0;
+		size_t Capacity = 0;
 
-		T* operator[](int Idx)
+		T* operator[](size_t Idx)
 		{
 			return Ptr + Idx; // FUCK YOU BILL GATES
 		}
@@ -18,10 +18,10 @@ namespace TM
 	template <typename T>
 	struct CFastArray
 	{
-		int Size = 0;
+		size_t Size = 0;
 		T* Ptr = nullptr;
 
-		T operator[](int Idx)
+		T operator[](size_t Idx)
 		{
 			return Ptr[Idx];
 		}

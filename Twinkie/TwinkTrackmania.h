@@ -284,17 +284,11 @@ public:
 
         CMwStack* MwStack = new CMwStack();
         MwStack->m_Size = 1;
-        MwStack->ppMemberInfos = new CMwMemberInfo * [MwStack->m_Size] {MemberInfo};
+        MwStack->ppMemberInfos = new CMwMemberInfo*[MwStack->m_Size]{MemberInfo};
         MwStack->iCurrentPos = 0;
 
         T* ReturnVal = nullptr;
-        if (!VirtualParamGet(Nod, MwStack, (void**)&ReturnVal))
-        {
-            delete[] MwStack->ppMemberInfos;
-            delete MwStack;
-            delete MemberInfo;
-            return ReturnVal;
-        }
+        VirtualParamGet(Nod, MwStack, (void**)&ReturnVal);
         delete[] MwStack->ppMemberInfos;
         delete MwStack;
         delete MemberInfo;
@@ -344,6 +338,18 @@ public:
         return *FloatPtr;
     }
 
+    bool GetIsInterfaceHidden()
+    {
+        if (!IsPlaying()) return false;
+        
+        uintptr_t Nod = CurPlayerInfo.TrackmaniaRace;
+
+        uintptr_t* InterfacePtr = VirtualParamGet<uintptr_t>(Nod, CMwMemberInfo::CLASS, 0x0300d000);
+        if (!InterfacePtr) return false;
+
+        return Read<int>((*InterfacePtr) + 32); // +16 also works
+    }
+
     int GetCurCheckpointTime()
     {
         if (!IsPlaying()) return -1;
@@ -375,6 +381,11 @@ public:
     uintptr_t GetVisionViewport()
     {
         return Read<uintptr_t>(GetTrackmania() + 0x64);
+    }
+
+    int ViewportOverlayDisabled()
+    {
+        return Read<int>(GetVisionViewport() + 0x7c);
     }
 
 	IDirect3DDevice9* GetD3DDevice()
@@ -466,6 +477,16 @@ public:
         return reinterpret_cast<IsPayingInstallFn>(FnPtr)(GetTrackmania()) != 0;
     }
 
+    uintptr_t GetCoreCmdBuffer()
+    {
+        return Read<uintptr_t>(GetExeBaseAddr() + 0x9731e0);
+    }
+
+    uintptr_t GetMainEngine()
+    {
+        return Read<uintptr_t>(GetExeBaseAddr() + 0x973300);
+    }
+
     void ForceDevicePoll(uintptr_t Device, int MustNotPoll)
     {
         Write<int>(MustNotPoll, Device + 0x1c);
@@ -500,9 +521,9 @@ public:
     {
 		using SetOfficialRaceFn = void(__thiscall*)(uintptr_t);
 		uintptr_t SetOfficialRacePtr = GetExeBaseAddr() + 0x7B5F0;
-        if (GetPlayerInfo().TrackmaniaRace)
+        if (CurPlayerInfo.TrackmaniaRace)
         {
-			reinterpret_cast<SetOfficialRaceFn>(SetOfficialRacePtr)(GetPlayerInfo().TrackmaniaRace);
+			reinterpret_cast<SetOfficialRaceFn>(SetOfficialRacePtr)(CurPlayerInfo.TrackmaniaRace);
         }
     }
 
@@ -661,7 +682,6 @@ public:
                 }
             }
         }
-        CurPlayerInfo = InfoStruct;
         return InfoStruct;
     }
 
@@ -687,7 +707,6 @@ public:
 
     VehicleInputs GetInputInfo()
     {
-        CurPlayerInfo = GetPlayerInfo();
         return Read<VehicleInputs>(CurPlayerInfo.Vehicle + 80);
     }
 
@@ -825,12 +844,11 @@ public:
 
     bool IsPlaying()
     {
-        PlayerInfo Info = GetPlayerInfo();
-        return Info.Vehicle and
-               Info.TrackmaniaRace and
-               Info.Mobil and
-               Info.Player and
-               Info.PlayerInfo;
+        return CurPlayerInfo.Vehicle and
+               CurPlayerInfo.TrackmaniaRace and
+               CurPlayerInfo.Mobil and
+               CurPlayerInfo.Player and
+               CurPlayerInfo.PlayerInfo;
     }
 
     std::string FormatTmDuration(unsigned int Duration) {

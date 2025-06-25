@@ -4,7 +4,7 @@ void AlwaysOfficialModule::RenderAnyways()
 {
 	if (!Twinkie->IsProfileUnited()) return;
 	if (!Twinkie->IsPlaying()) return;
-	if (!Twinkie->GetPlayerInfo().TrackmaniaRace) return;
+	if (!Twinkie->CurPlayerInfo.TrackmaniaRace) return;
 
 	if (!Twinkie->IsOnline())
 	{

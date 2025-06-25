@@ -1,4 +1,5 @@
 #define WIN32_LEAN_AND_MEAN
+#define BUILD_DEBUG
 
 #include <iostream>
 #include "TwinkUi.h"
@@ -40,6 +41,8 @@ static long __stdcall hkReset(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* 
 
 static long __stdcall hkPresent(LPDIRECT3DDEVICE9 pDevice, LPVOID A, LPVOID B, HWND C, LPVOID D)
 {
+	Twinkie.TrackmaniaMgr.CurPlayerInfo = Twinkie.TrackmaniaMgr.GetPlayerInfo();
+
 	if (!Twinkie.Initialized)
 	{
 		InitImGui(pDevice);
@@ -50,7 +53,7 @@ static long __stdcall hkPresent(LPDIRECT3DDEVICE9 pDevice, LPVOID A, LPVOID B, H
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
-	Twinkie.RenderAnyways(); // aintnoway
+	Twinkie.RenderAnyways();
 	if (Twinkie.DoRender) Twinkie.Render();
 
 	ImGui::EndFrame();
@@ -63,8 +66,6 @@ static long __stdcall hkPresent(LPDIRECT3DDEVICE9 pDevice, LPVOID A, LPVOID B, H
 static LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 {
 	if (!Twinkie.Initialized) return CallWindowProcA(Twinkie.oWndProc, hWnd, uMsg, wParam, lParam);
-
-	// if (GetAsyncKeyState(VK_F3) & 1) Twinkie.DoRender = !Twinkie.DoRender;
 
 	auto& ImIo = ImGui::GetIO();
 
@@ -118,6 +119,7 @@ static DWORD WINAPI MainThread(LPVOID lpReserved)
 	while (!HookedAndAttached)
 	{
 		Twinkie.Logger.PrintInternal("Hooking DX9...");
+		Twinkie.Logger.PrintInternalArgs("IDirect3DDevice9* (0x{:x})", (unsigned int)D3DDevice);
 		if ((Twinkie.DX9HookStatus = kiero::init(kiero::RenderType::D3D9)) == kiero::Status::Success)
 		{
 			Twinkie.Logger.PrintInternal("kiero initialized");
@@ -128,7 +130,7 @@ static DWORD WINAPI MainThread(LPVOID lpReserved)
 			if (D3DDevice->GetCreationParameters(&D3DCreationParams) == D3D_OK)
 			{
 				Twinkie.Window = D3DCreationParams.hFocusWindow;
-				if (!Twinkie.Window) continue; // just to shut up MSVC
+				if (!Twinkie.Window) continue; // just to shut up MSVC, Window cannot be possibly null here because of Line 116
 				Twinkie.oWndProc = (WNDPROC)SetWindowLongPtr(Twinkie.Window, GWLP_WNDPROC, (LONG_PTR)WndProc);
 				if (!Twinkie.oWndProc)
 					Twinkie.Logger.PrintErrorArgs("Failed to hook WndProc");
