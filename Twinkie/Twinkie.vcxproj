@@ -498,11 +498,18 @@
     <ClInclude Include="kiero\minhook\src\hde\table32.h" />
     <ClInclude Include="kiero\minhook\src\hde\table64.h" />
     <ClInclude Include="kiero\minhook\src\trampoline.h" />
+    <ClInclude Include="LuaEngine\include\lauxlib.h" />
+    <ClInclude Include="LuaEngine\include\lua.h" />
+    <ClInclude Include="LuaEngine\include\lua.hpp" />
+    <ClInclude Include="LuaEngine\include\luaconf.h" />
+    <ClInclude Include="LuaEngine\include\lualib.h" />
+    <ClInclude Include="LuaEngine\LuaEngine2.h" />
     <ClInclude Include="Modules\About\About.h" />
     <ClInclude Include="Modules\AlwaysOfficial\AlwaysOfficial.h" />
     <ClInclude Include="Modules\DownloadServerMaps\DownloadServerMaps.h" />
     <ClInclude Include="Modules\GhostEditor\GhostEditor.h" />
     <ClInclude Include="Modules\GrindingStats\GrindingStats.h" />
+    <ClInclude Include="Modules\LuaEditor\LuaEditor.h" />
     <ClInclude Include="Modules\SplitSpeeds\SplitSpeeds.h" />
     <ClInclude Include="Modules\Telemetry\Telemetry.h" />
     <ClInclude Include="Telemetry.h" />
@@ -554,6 +561,7 @@
     <ClCompile Include="Modules\DownloadServerMaps\DownloadServerMaps.cpp" />
     <ClCompile Include="Modules\GhostEditor\GhostEditor.cpp" />
     <ClCompile Include="Modules\GrindingStats\GrindingStats.cpp" />
+    <ClCompile Include="Modules\LuaEditor\LuaEditor.cpp" />
     <ClCompile Include="Modules\Medals\Medals.cpp" />
     <ClCompile Include="Modules\NicknamePatch\NicknamePatch.cpp" />
     <ClCompile Include="Modules\PlayerInfo\PlayerInfo.cpp" />

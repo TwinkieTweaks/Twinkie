@@ -202,13 +202,24 @@ public:
 
     TwinkTrackmania() {}
 
-    std::string WStringToUTF8(const std::wstring& wstr) {
+    std::string WStringToUTF8(const std::wstring& wstr) 
+    {
         if (wstr.empty()) return {};
 
         int size_needed = WideCharToMultiByte(CP_UTF8, 0, wstr.data(), (int)wstr.size(), nullptr, 0, nullptr, nullptr);
         std::string strTo(size_needed, 0);
         WideCharToMultiByte(CP_UTF8, 0, wstr.data(), (int)wstr.size(), &strTo[0], size_needed, nullptr, nullptr);
         return strTo;
+    }
+
+    std::wstring UTF8ToWString(const std::string& str)
+    {
+        if (str.empty()) return {};
+
+        int size_needed = MultiByteToWideChar(CP_UTF8, 0, str.data(), (int)str.size(), nullptr, 0);
+        std::wstring wstrTo(size_needed, 0);
+        MultiByteToWideChar(CP_UTF8, 0, str.data(), (int)str.size(), &wstrTo[0], size_needed);
+        return wstrTo;
     }
 
     template <typename T>

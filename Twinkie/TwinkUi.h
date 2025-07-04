@@ -33,6 +33,7 @@
 #include "Modules/GrindingStats/GrindingStats.h"
 #ifdef BUILD_DEBUG
 #include "Modules/PlayerInfo/PlayerInfo.h"
+#include "Modules/LuaEditor/LuaEditor.h"
 #endif
 #ifdef BUILD_PREMIUM
 #include "Modules/AppExplorer.h"
@@ -108,6 +109,7 @@ public:
 
 #ifdef BUILD_DEBUG
         Modules.push_back(new PlayerInfoModule(TrackmaniaMgr, Logger, &DoRender));
+        Modules.push_back(new LuaEditorModule(TrackmaniaMgr, Logger, &DoRender));
 #endif
 #ifdef BUILD_PREMIUM
         Modules.push_back(new AppExplorerModule(TrackmaniaMgr, Logger, &DoRender));

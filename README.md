@@ -11,10 +11,14 @@ We have a discord server at https://discord.gg/kRZ4MdCkVf
 To [GreffMASTER](https://github.com/GreffMASTER) and [brokenphilip](https://github.com/brokenphilip) for helping me during development. brokenphilip has his own [tool for TMUF](https://github.com/BulbToys/TMUF) and GreffMASTER [as well (for TM1.0)](https://github.com/GreffMASTER/TMStuff) if you're interested in more cool mods for old TM games.\
 GreffMASTER also provided me with a helpful list of class members and their offsets for TMF, alongside brokenphilip helping me along my RE journey for this project <3
 
+## Limitations
+- Medal.tv requires a work-around to function properly (see below)
+- Hiding the in-game HUD might also hide the Twinkie UI or make it look weird. To fix this, try changing your shader quality to something different.
+
 ## Medal.tv
 Due to Medal's uncooperativeness, you might have to do these following steps to make Twinkie work alongside it: 
 - Make sure your Medal app is up to date first. 
-- Then, in Settings > Advanced and in the “Advanced | Recording” section, turn on "Force Window Capture". 
+- Then, in Settings > Advanced and in the "Advanced | Recording section, turn on "Force Window Capture". 
 Keep in mind that **this is an experimental setting**, **it might not work at all** or **it might make your clips stuttery** but it is worth trying.
 
 ## Features

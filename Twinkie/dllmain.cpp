@@ -1,3 +1,6 @@
+#pragma comment(lib, "LuaEngine/lua54.lib")
+#pragma comment(lib, "LuaEngine/LuaEngine2.lib")
+#include "LuaEngine/LuaEngine2.h"
 #define WIN32_LEAN_AND_MEAN
 #define BUILD_DEBUG
 
@@ -18,6 +21,23 @@ extern "C" __declspec(dllexport) int Bla() // TODO: Remove when modloader update
 #endif
 
 TwinkUi Twinkie;
+
+int LuaPrintFunction(lua_State* L)
+{
+	int NumberOfElems = lua_gettop(L);
+	for (int Idx = 1; Idx <= NumberOfElems; Idx++) {
+		const char* LuaStr = lua_tostring(L, Idx);
+		if (LuaStr) {
+			Twinkie.Logger.PrintCustom(LuaStr);
+		}
+		else {
+			Twinkie.Logger.PrintCustom(luaL_typename(L, Idx));
+		}
+		if (Idx < NumberOfElems) Twinkie.Logger.PrintCustom("\t");
+	}
+	Twinkie.Logger.PrintCustom("\n");
+	return 0;
+}
 
 static void InitImGui(LPDIRECT3DDEVICE9 pDevice)
 {
@@ -65,6 +85,7 @@ static long __stdcall hkPresent(LPDIRECT3DDEVICE9 pDevice, LPVOID A, LPVOID B, H
 
 static LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 {
+	SetLuaPrintFunction(LuaPrintFunction);
 	if (!Twinkie.Initialized) return CallWindowProcA(Twinkie.oWndProc, hWnd, uMsg, wParam, lParam);
 
 	auto& ImIo = ImGui::GetIO();
