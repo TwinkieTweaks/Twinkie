@@ -26,7 +26,7 @@ public:
 
 	TelemetryModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled);
 
-	inline ~TelemetryModule()
+	~TelemetryModule()
 	{
 		UnmapViewOfFile(FileView);
 		CloseHandle(TelemetryFileMapping);

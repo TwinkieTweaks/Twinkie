@@ -202,26 +202,6 @@ public:
 
     TwinkTrackmania() {}
 
-    std::string WStringToUTF8(const std::wstring& wstr) 
-    {
-        if (wstr.empty()) return {};
-
-        int size_needed = WideCharToMultiByte(CP_UTF8, 0, wstr.data(), (int)wstr.size(), nullptr, 0, nullptr, nullptr);
-        std::string strTo(size_needed, 0);
-        WideCharToMultiByte(CP_UTF8, 0, wstr.data(), (int)wstr.size(), &strTo[0], size_needed, nullptr, nullptr);
-        return strTo;
-    }
-
-    std::wstring UTF8ToWString(const std::string& str)
-    {
-        if (str.empty()) return {};
-
-        int size_needed = MultiByteToWideChar(CP_UTF8, 0, str.data(), (int)str.size(), nullptr, 0);
-        std::wstring wstrTo(size_needed, 0);
-        MultiByteToWideChar(CP_UTF8, 0, str.data(), (int)str.size(), &wstrTo[0], size_needed);
-        return wstrTo;
-    }
-
     template <typename T>
     T Read(uintptr_t Addr)
     {
@@ -879,5 +859,55 @@ public:
             << std::setw(2) << Millis;
 
         return StringStream.str();
+    }
+
+    std::string WStringToUTF8(const std::wstring& wstr)
+    {
+        if (wstr.empty()) return {};
+
+        int size_needed = WideCharToMultiByte(CP_UTF8, 0, wstr.data(), (int)wstr.size(), nullptr, 0, nullptr, nullptr);
+        std::string strTo(size_needed, 0);
+        WideCharToMultiByte(CP_UTF8, 0, wstr.data(), (int)wstr.size(), &strTo[0], size_needed, nullptr, nullptr);
+        return strTo;
+    }
+
+    std::wstring UTF8ToWString(const std::string& str)
+    {
+        if (str.empty()) return {};
+
+        int size_needed = MultiByteToWideChar(CP_UTF8, 0, str.data(), (int)str.size(), nullptr, 0);
+        std::wstring wstrTo(size_needed, 0);
+        MultiByteToWideChar(CP_UTF8, 0, str.data(), (int)str.size(), &wstrTo[0], size_needed);
+        return wstrTo;
+    }
+
+    void SetString(TM::CFastStringInt* String, wchar_t** CString)
+    {
+        using SetStringFn = void(__thiscall*)(TM::CFastStringInt*, wchar_t**);
+        reinterpret_cast<SetStringFn>(0x503280 + GetExeBaseAddr())(String, CString);
+    }
+
+    void SetString(TM::CFastString* String, char** CString)
+    {
+        using SetStringFn = void(__thiscall*)(TM::CFastString*, char**);
+        reinterpret_cast<SetStringFn>(0x4fee60 + GetExeBaseAddr())(String, CString);
+    }
+
+    void SetStringLength(TM::CFastStringInt* String, size_t Length)
+    {
+        using SetStringLengthFn = void(__thiscall*)(TM::CFastStringInt*, size_t);
+        reinterpret_cast<SetStringLengthFn>(0x2e030 + GetExeBaseAddr())(String, Length);
+    }
+
+    void SetStringLength(TM::CFastString* String, size_t Length)
+    {
+        using SetStringLengthFn = void(__thiscall*)(TM::CFastString*, size_t);
+        reinterpret_cast<SetStringLengthFn>(0x1bff0 + GetExeBaseAddr())(String, Length);
+    }
+
+    void SetIdName(uintptr_t Nod, char* CString)
+    {
+        using SetIdNameFn = void(__thiscall*)(uintptr_t, char*);
+        reinterpret_cast<SetIdNameFn>(0x523f40 + GetExeBaseAddr())(Nod, CString);
     }
 };

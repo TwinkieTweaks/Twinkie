@@ -29,6 +29,8 @@ public:
 
 	IModule() = default;
 
+	virtual ~IModule() = default;
+
 	virtual void Render() {}
 	virtual void RenderAnyways() {}
 	virtual void RenderInactive() {}

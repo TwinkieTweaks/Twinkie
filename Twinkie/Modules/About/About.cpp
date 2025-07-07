@@ -15,10 +15,12 @@ void AboutModule::Render()
 #endif
 		Separator();
 
-		Text(ICON_FK_GITHUB); SameLine();
+		Text(ICON_FK_GITHUB); 
+		SameLine();
 		TextLinkOpenURL("https://github.com/TwinkieTweaks/Twinkie");
 
-		Text(ICON_FK_DISCORD_ALT); SameLine();
+		Text(ICON_FK_DISCORD_ALT); 
+		SameLine();
 		TextLinkOpenURL("https://discord.gg/kRZ4MdCkVf");
 	}
 	End();
