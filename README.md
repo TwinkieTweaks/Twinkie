@@ -4,6 +4,9 @@
 Twinkie is a QOL modification for TrackMania Forever, a practical alternative to Openplanet, but for TMNF and TMUF.\
 It features a modular (or plugin-like) system for overlays and patches, that makes it practical to customize every feature available.
 
+# Setup
+To use Twinkie, you will need to install the [Trackmania Modloader](https://tomashu.dev/software/tmloader), and after that, go grab the latest release from [the Releases page](https://github.com/TwinkieTweaks/Twinkie/releases), and install Twinkie using the `TwinkieInstallerModloader.exe` file. Alternatively, if you're using a portable Modloader install, you can go grab the `TwinkieModloader.dll` as well, for a manual setup.
+
 ## Discord
 We have a discord server at https://discord.gg/kRZ4MdCkVf
 
