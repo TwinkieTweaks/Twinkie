@@ -906,8 +906,14 @@ public:
     }
 
     void SetIdName(uintptr_t Nod, char* CString)
-    {
+    {9
         using SetIdNameFn = void(__thiscall*)(uintptr_t, char*);
         reinterpret_cast<SetIdNameFn>(0x523f40 + GetExeBaseAddr())(Nod, CString);
+    }
+
+    bool IsMwNodKindOf(uintptr_t Nod, unsigned int Id)
+    {
+        using MwKindOfFn = int(__thiscall*)(uintptr_t, unsigned int);
+        return reinterpret_cast<MwKindOfFn>(Virtual<4>(Nod))(Nod, Id) == 1;
     }
 };

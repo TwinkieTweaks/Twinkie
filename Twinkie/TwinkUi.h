@@ -171,13 +171,12 @@ public:
         // Taken example from https://github.com/juliettef/IconFontCppHeaders?tab=readme-ov-file#example-code
         float IconFontSize = (14.f * UiScale);
 
-        static const ImWchar IconRange[] = { ICON_MIN_KI, ICON_MAX_FK, 0 };
         ImFontConfig IconCfg;
         IconCfg.MergeMode = true;
         IconCfg.PixelSnapH = true;
         IconCfg.GlyphMinAdvanceX = IconFontSize;
 
-        auto FontManiaIcons = ImIo.Fonts->AddFontFromFileTTF((GetDocumentsFolder() + "\\Twinkie\\Fonts\\ManiaIcons.ttf").c_str(), IconFontSize, &IconCfg, IconRange);
+        auto FontManiaIcons = ImIo.Fonts->AddFontFromFileTTF((GetDocumentsFolder() + "\\Twinkie\\Fonts\\ManiaIcons.ttf").c_str(), IconFontSize, &IconCfg);
 
         if (FontManiaIcons)
         {
@@ -283,7 +282,7 @@ public:
     void Render()
     {
         using namespace ImGui;
-        if (FontMain) PushFont(FontMain);
+        if (FontMain) PushFont(FontMain, 14.f * UiScale);
 
         for (IModule* Module : Modules)
         {
@@ -380,7 +379,7 @@ public:
             size_t CurModuleIdx = 0;
 
             PushStyleColor(ImGuiCol_Text, ColorConvertFloat4ToU32({ 1.f, 0.f, 1.f, 1.f }));
-            if (Selectable(ICON_FK_COGS " Twinkie", IsTwinkieSettingsOpen))
+            if (Selectable(ICON_FK_COGS " Twinkie", (ActiveModuleIdx != CurModuleIdx) and (IsTwinkieSettingsOpen)))
             {  
                 IsTwinkieSettingsOpen = !IsTwinkieSettingsOpen;
             }
@@ -396,7 +395,7 @@ public:
                     continue;
                 }
 
-                if (Selectable(((Module->Enabled ? ICON_FK_CHECK " " : ICON_FK_TIMES " ") + Module->FancyName).c_str(), ActiveModuleIdx == CurModuleIdx))
+                if (Selectable(((Module->Enabled ? ICON_FK_CHECK " " : ICON_FK_TIMES " ") + Module->FancyName).c_str(), (ActiveModuleIdx == CurModuleIdx) and (!IsTwinkieSettingsOpen)))
                 {
                     ActiveModuleIdx = CurModuleIdx;
                     IsTwinkieSettingsOpen = false;
@@ -424,19 +423,6 @@ public:
             else
             {
                 SliderFloat("UI Scale", &UiScale, 0.25f, 5.f, "%.3f", ImGuiSliderFlags_AlwaysClamp);
-                UiScale = roundf(UiScale / 0.25f) * 0.25f;
-
-                SameLine();
-
-                BeginDisabled();
-
-                Text("(?)");
-                if (IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
-                {
-                    SetTooltip("Applies only on restart.");
-                }
-
-                EndDisabled();
             }
 
             EndChild();
@@ -450,7 +436,7 @@ public:
     {
 		using namespace ImGui;
 
-		if (FontMain) PushFont(FontMain);
+		if (FontMain) PushFont(FontMain, 14.f * UiScale);
 
         IoMgr->Update();
 
