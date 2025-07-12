@@ -13,6 +13,12 @@ namespace TM
 		{
 			return Ptr + Idx; // FUCK YOU BILL GATES
 		}
+
+		T* begin() { return Ptr; }
+		T* end() { return Ptr + Size; }
+
+		const T* begin() const { return Ptr; }
+		const T* end() const { return Ptr + Size; }
 	};
 
 	template <typename T>
@@ -25,6 +31,12 @@ namespace TM
 		{
 			return Ptr[Idx];
 		}
+
+		T* begin() { return Ptr; }
+		T* end() { return Ptr + Size; }
+
+		const T* begin() const { return Ptr; }
+		const T* end() const { return Ptr + Size; }
 	};
 
 	struct CFastString

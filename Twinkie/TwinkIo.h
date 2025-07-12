@@ -19,10 +19,8 @@ public:
 
 		TM::CFastArray<uintptr_t> Devices = Twinkie->GetDevices();
 
-		for (size_t Idx = 0; Idx < Devices.Size; Idx++)
+		for (uintptr_t Device : Devices)
 		{
-			uintptr_t Device = Devices[Idx];
-
 			int ClassType = Twinkie->GetMwClassId(Device);
 
 			// Force devices to not be polled when ImGui wants them
