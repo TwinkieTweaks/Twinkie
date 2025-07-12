@@ -26,7 +26,7 @@
 #include "Modules/Dashboard/DashboardGears.h"
 #include "Modules/Tweaker/Tweaker.h"
 #include "Modules/AlwaysOfficial/AlwaysOfficial.h"
-#include "Modules/NicknamePatch/NicknamePatch.h"
+// #include "Modules/NicknamePatch/NicknamePatch.h" // Removed in 2.0.0
 #include "Modules/Telemetry/Telemetry.h"
 #include "Modules/DownloadServerMaps/DownloadServerMaps.h"
 #include "Modules/SplitSpeeds/SplitSpeeds.h"
@@ -129,7 +129,7 @@ public:
         Modules.push_back(new GhostEditorModule(TrackmaniaMgr, Logger, &DoRender));
         Modules.push_back(new TweakerModule(TrackmaniaMgr, Logger, &DoRender));
         Modules.push_back(new AlwaysOfficialModule(TrackmaniaMgr, Logger, &DoRender));
-        Modules.push_back(new NicknamePatchModule(TrackmaniaMgr, Logger, &DoRender));
+        // Modules.push_back(new NicknamePatchModule(TrackmaniaMgr, Logger, &DoRender)); // Removed in 2.0.0
         Modules.push_back(new TelemetryModule(TrackmaniaMgr, Logger, &DoRender));
         Modules.push_back(new DownloadServerMapsModule(TrackmaniaMgr, Logger, &DoRender));
 
@@ -422,7 +422,7 @@ public:
             }
             else
             {
-                SliderFloat("UI Scale", &UiScale, 0.25f, 5.f, "%.3f", ImGuiSliderFlags_AlwaysClamp);
+                SliderFloat("UI Scale", &UiScale, 0.25f, 5.f, "%.3f");
             }
 
             EndChild();

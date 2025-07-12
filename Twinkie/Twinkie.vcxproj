@@ -520,7 +520,6 @@
     <ClInclude Include="Modules\Dashboard\DashboardTacho.h" />
     <ClInclude Include="Modules\Dashboard\DashboardGears.h" />
     <ClInclude Include="Modules\Medals\Medals.h" />
-    <ClInclude Include="Modules\NicknamePatch\NicknamePatch.h" />
     <ClInclude Include="Modules\PlayerInfo\PlayerInfo.h" />
     <ClInclude Include="Modules\Tweaker\Tweaker.h" />
     <ClInclude Include="nvg-dx9\fontstash.h" />
@@ -563,7 +562,6 @@
     <ClCompile Include="Modules\GrindingStats\GrindingStats.cpp" />
     <ClCompile Include="Modules\LuaEditor\LuaEditor.cpp" />
     <ClCompile Include="Modules\Medals\Medals.cpp" />
-    <ClCompile Include="Modules\NicknamePatch\NicknamePatch.cpp" />
     <ClCompile Include="Modules\PlayerInfo\PlayerInfo.cpp" />
     <ClCompile Include="Modules\SplitSpeeds\SplitSpeeds.cpp" />
     <ClCompile Include="Modules\Telemetry\Telemetry.cpp" />
