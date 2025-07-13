@@ -32,7 +32,7 @@ Keep in mind that **this is an experimental setting**, **it might not work at al
 - Tweaker, for customizing your render distance (even though [TMUnlimiter already does that](https://github.com/tomek0055/TMUnlimiter/wiki/Game-Settings))
 - **Grinding Stats**, a module that keeps track of your progress for each map
 - **Always official**, that brings up the Official Mode menu when you reset (only for United accounts)
-- **Nickname patch**, sets the nickname text box to have a larger size than normal
+- ~~**Nickname patch**~~ _**DO NOT USE THIS! This module causes interference with server databases, costing server owners a lot of time patching it.**_
 
 ## Screenshots
 ![In stadium, playing solo on a Premium build](https://github.com/user-attachments/assets/54d06017-bbf3-48ee-b8e1-a07288d3d672)
