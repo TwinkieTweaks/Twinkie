@@ -15,14 +15,15 @@ Global
 		Nations|x86 = Nations|x86
 		Premium|x64 = Premium|x64
 		Premium|x86 = Premium|x86
+		PremiumDebug|x64 = PremiumDebug|x64
+		PremiumDebug|x86 = PremiumDebug|x86
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 		United|x64 = United|x64
 		United|x86 = United|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Debug|x64.ActiveCfg = Debug|x64
-		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Debug|x64.Build.0 = Debug|x64
+		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Debug|x64.ActiveCfg = PremiumDebug|x64
 		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Debug|x86.ActiveCfg = Modloader|Win32
 		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Debug|x86.Build.0 = Modloader|Win32
 		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Modloader|x64.ActiveCfg = Modloader|x64
@@ -37,6 +38,10 @@ Global
 		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Premium|x64.Build.0 = Premium|x64
 		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Premium|x86.ActiveCfg = Premium|Win32
 		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Premium|x86.Build.0 = Premium|Win32
+		{E43A687A-2577-4CD5-A45C-EA35254221E9}.PremiumDebug|x64.ActiveCfg = PremiumDebug|x64
+		{E43A687A-2577-4CD5-A45C-EA35254221E9}.PremiumDebug|x64.Build.0 = PremiumDebug|x64
+		{E43A687A-2577-4CD5-A45C-EA35254221E9}.PremiumDebug|x86.ActiveCfg = PremiumDebug|Win32
+		{E43A687A-2577-4CD5-A45C-EA35254221E9}.PremiumDebug|x86.Build.0 = PremiumDebug|Win32
 		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Release|x64.ActiveCfg = Release|x64
 		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Release|x64.Build.0 = Release|x64
 		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Release|x86.ActiveCfg = Release|Win32

@@ -235,6 +235,11 @@ public:
         return Read<uintptr_t>(GetExeBaseAddr() + 0x966ff8);
     }
 
+    TM::CFastStringInt GetChatText()
+    {
+        return Read<TM::CFastStringInt>(GetExeBaseAddr() + 0x96C558);
+    }
+
     int GetMwClassId(uintptr_t This)
     {
         using GetClassId = int(__thiscall*)(uintptr_t);

@@ -39,6 +39,20 @@ namespace TM
 		const T* end() const { return Ptr + Size; }
 	};
 
+	template <typename T>
+	struct CFastBufferCat
+	{
+		CFastBuffer<unsigned int> Keys;
+		CFastBuffer<T> Values;
+		unsigned int SomeInts[3];
+
+		T* begin() { return Values.Ptr; }
+		T* end() { return Values.Ptr + Values.Size; }
+
+		const T* begin() const { return Values.Ptr; }
+		const T* end() const { return Values.Ptr + Values.Size; }
+	};
+
 	struct CFastString
 	{
 		int Size;
