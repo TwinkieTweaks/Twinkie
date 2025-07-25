@@ -183,6 +183,7 @@ public:
 	std::vector<Tab> Tabs;
 	mINI::INIFile IniFile = mINI::INIFile(GetDocumentsFolder() + "\\Twinkie\\Twinkie.ini");
 	mINI::INIStructure IniStruct;
+	std::string Error = "";
 
 	int Status = 0;
 
@@ -256,6 +257,10 @@ public:
 	void Save()
 	{
 		GenerateIni();
-		IniFile.write(IniStruct, true);
+		if (!IniFile.write(IniStruct, true))
+		{
+			Error = IniFile.err;
+			Status = -2;
+		}
 	}
 };

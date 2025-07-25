@@ -1,5 +1,6 @@
 #include "LuaEditor.h"
 
+#ifdef BUILD_DEBUG
 namespace Filesystem = std::filesystem;
 inline std::string AlsoGetDocumentsFolder()
 {
@@ -79,3 +80,4 @@ void LuaEditorModule::Render()
 
     End();
 }
+#endif

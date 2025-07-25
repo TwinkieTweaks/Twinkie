@@ -1,4 +1,5 @@
 #pragma once
+#ifdef BUILD_DEBUG
 #include "include/lua.hpp"
 
 extern lua_CFunction PrintFunc;
@@ -13,3 +14,4 @@ extern "C" {
     __declspec(dllimport) void InitLua();
     __declspec(dllimport) lua_State* GetLuaState();
 }
+#endif

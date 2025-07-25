@@ -439,10 +439,13 @@ namespace mINI
 
 	public:
 		bool prettyPrint = false;
+		std::string err = "";
 
 		INIGenerator(std::string const& filename)
 		{
 			fileWriteStream.open(filename, std::ios::out | std::ios::binary);
+			char buf[512];
+			err = strerror_s(buf, 512, errno);
 		}
 		~INIGenerator() {}
 
@@ -666,6 +669,7 @@ namespace mINI
 
 	public:
 		bool prettyPrint = false;
+		std::string err = "";
 
 		INIWriter(std::string const& filename)
 			: filename(filename)
@@ -681,7 +685,9 @@ namespace mINI
 			{
 				INIGenerator generator(filename);
 				generator.prettyPrint = prettyPrint;
-				return generator << data;
+				bool returnVal = generator << data;
+				err = generator.err;
+				return returnVal;
 			}
 			INIStructure originalData;
 			T_LineDataPtr lineData;
@@ -736,6 +742,8 @@ namespace mINI
 		std::string filename;
 
 	public:
+		std::string err;
+
 		INIFile(std::string const& filename)
 			: filename(filename)
 		{
@@ -766,7 +774,7 @@ namespace mINI
 			generator.prettyPrint = pretty;
 			return generator << data;
 		}
-		bool write(INIStructure& data, bool pretty = false) const
+		bool write(INIStructure& data, bool pretty = false)
 		{
 			if (filename.empty())
 			{
@@ -774,7 +782,9 @@ namespace mINI
 			}
 			INIWriter writer(filename);
 			writer.prettyPrint = pretty;
-			return writer << data;
+			bool returnVal = writer << data;
+			err = writer.err;
+			return returnVal;
 		}
 	};
 }

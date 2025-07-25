@@ -1,4 +1,6 @@
 #pragma once
+
+#ifdef BUILD_DEBUG
 #include <filesystem>
 #include "../../IModule.h"
 #include "../../LuaEngine/LuaEngine2.h"
@@ -48,3 +50,4 @@ public:
 	virtual bool IsDebug() { return false; }
 	virtual bool HasSettings() { return false; }
 };
+#endif

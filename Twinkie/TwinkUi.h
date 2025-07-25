@@ -88,6 +88,11 @@ public:
         }
 
         Settings["Twinkie"]["UI Scale"].GetAsFloat(&UiScale);
+
+        if (Settings.Status != 0)
+        {
+            Logger.PrintErrorArgs("Could not load settings with reason {}", Settings.Status);
+        }
     }
 
     void SettingsSave()
@@ -156,6 +161,8 @@ public:
 
     void InitFonts(ImGuiIO& ImIo)
     {
+        Logger.PrintInternalArgs("Documents are at: {}", GetDocumentsFolder());
+        Logger.PrintInternalArgs("Expected path of Fonts is at: {}", (GetDocumentsFolder() + "\\Twinkie\\Fonts\\Twinkie.ttf"));
         FontMain = ImIo.Fonts->AddFontFromFileTTF((GetDocumentsFolder() + "\\Twinkie\\Fonts\\Twinkie.ttf").c_str(), 14.f * UiScale);
        
         if (FontMain)
@@ -176,6 +183,8 @@ public:
         IconCfg.PixelSnapH = true;
         IconCfg.GlyphMinAdvanceX = IconFontSize;
 
+        Logger.PrintInternalArgs("Documents are at: {}", GetDocumentsFolder());
+        Logger.PrintInternalArgs("Expected path of Fonts is at: {}", (GetDocumentsFolder() + "\\Twinkie\\Fonts\\ManiaIcons.ttf"));
         auto FontManiaIcons = ImIo.Fonts->AddFontFromFileTTF((GetDocumentsFolder() + "\\Twinkie\\Fonts\\ManiaIcons.ttf").c_str(), IconFontSize, &IconCfg);
 
         if (FontManiaIcons)
@@ -423,6 +432,18 @@ public:
             else
             {
                 SliderFloat("UI Scale", &UiScale, 0.25f, 5.f, "%.3f");
+                if (Button("Save settings"))
+                {
+                    Settings.Save();
+                    if (Settings.Status != 0)
+                    {
+                        Logger.PrintErrorArgs("Could not save settings with reason {} ({})", Settings.Error, Settings.Status);
+                    }
+                    else
+                    {
+                        Logger.PrintInternal("Settings saved successfully.");
+                    }
+                }
             }
 
             EndChild();
