@@ -22,7 +22,7 @@ void LuaEditorModule::Render()
     memset(ErrorBuffer, 0, 512);
 
     char ActiveLuaScript[512];
-    memset(ErrorBuffer, 0, 512);
+    memset(ActiveLuaScript, 0, 512);
 
     if ((Button("Run") and !LuaFileInitialized) or LuaFileReload)
     {

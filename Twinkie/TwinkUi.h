@@ -34,6 +34,7 @@
 #ifdef BUILD_DEBUG
 #include "Modules/PlayerInfo/PlayerInfo.h"
 #include "Modules/LuaEditor/LuaEditor.h"
+#include "Modules/LuaConsole/LuaConsole.h"
 #endif
 #ifdef BUILD_PREMIUM
 #include "Modules/AppExplorer.h"
@@ -115,6 +116,7 @@ public:
 #ifdef BUILD_DEBUG
         Modules.push_back(new PlayerInfoModule(TrackmaniaMgr, Logger, &DoRender));
         Modules.push_back(new LuaEditorModule(TrackmaniaMgr, Logger, &DoRender));
+        Modules.push_back(new LuaConsoleModule(TrackmaniaMgr, Logger, &DoRender));
 #endif
 #ifdef BUILD_PREMIUM
         Modules.push_back(new AppExplorerModule(TrackmaniaMgr, Logger, &DoRender));
