@@ -345,7 +345,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;BUILD_UNITED;BUILD_TMMC;BUILD_PREMIUM;TWINKIE_EXPORTS;BUILD_TMMC;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;BUILD_UNITED;BUILD_TMMC;BUILD_PREMIUM;BUILD_DEBUG;TWINKIE_EXPORTS;BUILD_TMMC;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -528,6 +528,7 @@
     <ClInclude Include="Modules\DownloadServerMaps\DownloadServerMaps.h" />
     <ClInclude Include="Modules\GhostEditor\GhostEditor.h" />
     <ClInclude Include="Modules\GrindingStats\GrindingStats.h" />
+    <ClInclude Include="Modules\LuaConsole\LuaConsole.h" />
     <ClInclude Include="Modules\LuaEditor\LuaEditor.h" />
     <ClInclude Include="Modules\SplitSpeeds\SplitSpeeds.h" />
     <ClInclude Include="Modules\Telemetry\Telemetry.h" />
@@ -579,6 +580,7 @@
     <ClCompile Include="Modules\DownloadServerMaps\DownloadServerMaps.cpp" />
     <ClCompile Include="Modules\GhostEditor\GhostEditor.cpp" />
     <ClCompile Include="Modules\GrindingStats\GrindingStats.cpp" />
+    <ClCompile Include="Modules\LuaConsole\LuaConsole.cpp" />
     <ClCompile Include="Modules\LuaEditor\LuaEditor.cpp" />
     <ClCompile Include="Modules\Medals\Medals.cpp" />
     <ClCompile Include="Modules\PlayerInfo\PlayerInfo.cpp" />

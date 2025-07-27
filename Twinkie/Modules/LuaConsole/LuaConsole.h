@@ -9,26 +9,24 @@ namespace Filesystem = std::filesystem;
 
 extern inline std::string AlsoGetDocumentsFolder();
 
-class LuaEditorModule : public IModule
+class LuaConsoleModule : public IModule
 {
-	bool LuaFileInitialized = false;
-	bool LuaFileReload = false;
-	bool LuaErrorOccured = false;
+	std::string ConsoleStr = "";
 public:
-	LuaEditorModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled)
+	LuaConsoleModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled)
 	{
-		Filesystem::create_directories(Filesystem::path(AlsoGetDocumentsFolder() + "\\Twinkie\\LuaScripts"));
+		InitLua("TwinkieLuaConsole");
 		this->UiRenderEnabled = UiRenderEnabled;
 		this->Twinkie = &Twinkie;
 		this->Logger = &Logger;
 	}
 
-	~LuaEditorModule()
+	~LuaConsoleModule()
 	{
-		CloseLuaAll();
+		CloseLua("TwinkieLuaConsole");
 	}
 
-	LuaEditorModule() = default;
+	LuaConsoleModule() = default;
 
 	virtual void Render();
 	virtual void RenderAnyways() {}
@@ -37,7 +35,7 @@ public:
 	virtual void RenderMenuItem() 
 	{
 		using namespace ImGui;
-		if (MenuItem(ICON_FK_CODE " Lua Editor", "", Enabled))
+		if (MenuItem(ICON_FK_CODE " Lua Console", "", Enabled))
 		{
 			Enabled = !Enabled;
 		}

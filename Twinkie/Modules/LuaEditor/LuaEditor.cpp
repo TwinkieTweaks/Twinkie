@@ -21,13 +21,18 @@ void LuaEditorModule::Render()
     char ErrorBuffer[512];
     memset(ErrorBuffer, 0, 512);
 
-    std::string ActiveLuaScript = "Script.lua";
+    char ActiveLuaScript[512];
+    memset(ErrorBuffer, 0, 512);
 
     if ((Button("Run") and !LuaFileInitialized) or LuaFileReload)
     {
+        if (!LuaInited(ActiveLuaScript))
+        {
+            InitLua(ActiveLuaScript);
+        }
         Logger->PrintArgs("Running lua script {}", ActiveLuaScript);
         LuaErrorOccured = false;
-        RunLuaFile(std::string(AlsoGetDocumentsFolder() + "\\Twinkie\\LuaScripts\\" + ActiveLuaScript).c_str(), ErrorBuffer, 512);
+        RunLuaFile(ActiveLuaScript, std::string(AlsoGetDocumentsFolder() + "\\Twinkie\\LuaScripts\\" + ActiveLuaScript).c_str(), ErrorBuffer, 512);
         LuaFileInitialized = true;
         LuaFileReload = false;
         if (strcmp(ErrorBuffer, "OK") != 0)
@@ -37,7 +42,7 @@ void LuaEditorModule::Render()
             LuaErrorOccured = true;
             LuaFileInitialized = false;
             LuaFileReload = false;
-            lua_settop(GetLuaState(), 0);
+            lua_settop(GetLuaState(ActiveLuaScript), 0);
         }
     }
 
@@ -66,7 +71,7 @@ void LuaEditorModule::Render()
     if (LuaFileInitialized and !LuaErrorOccured)
     {
         LuaErrorOccured = false;
-        RunRender(ErrorBuffer, 512);
+        RunRender(ActiveLuaScript, ErrorBuffer, 512);
         if (strcmp(ErrorBuffer, "OK") != 0)
         {
             Logger->PrintErrorArgs("Error while running lua script: {}", ErrorBuffer);
@@ -74,9 +79,11 @@ void LuaEditorModule::Render()
             LuaErrorOccured = true;
             LuaFileInitialized = false;
             LuaFileReload = false;
-            lua_settop(GetLuaState(), 0);
+            lua_settop(GetLuaState(ActiveLuaScript), 0);
         }
     }
+
+    InputText("Lua script", ActiveLuaScript, 512);
 
     End();
 }
