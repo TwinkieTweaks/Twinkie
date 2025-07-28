@@ -22,6 +22,7 @@ extern "C" __declspec(dllexport) int Bla() // TODO: Remove when modloader update
 #endif
 
 TwinkUi Twinkie;
+std::string g_LuaConsoleModuleOutputStr = "";
 
 #ifdef BUILD_DEBUG
 int LuaPrintFunction(lua_State* L)
@@ -36,7 +37,7 @@ int LuaPrintFunction(lua_State* L)
 		}
 		else 
 		{
-			Twinkie.Logger.PrintCustom(lua_tostring(L, Idx));
+			Twinkie.Logger.PrintCustom(lua_typename(L, Idx));
 		}
 		if (Idx < NumberOfElems) Twinkie.Logger.PrintCustom("\t");
 	}

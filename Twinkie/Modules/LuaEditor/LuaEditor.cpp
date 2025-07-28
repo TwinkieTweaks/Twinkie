@@ -18,11 +18,16 @@ void LuaEditorModule::Render()
     using namespace ImGui;
     Begin(ICON_FK_CODE " Lua Editor", &Enabled);
 
-    char ErrorBuffer[512];
-    memset(ErrorBuffer, 0, 512);
+    static char ActiveLuaScript[512];
+    static char ErrorBuffer[512];
+    static bool AreBuffersZeroed = false;
 
-    char ActiveLuaScript[512];
-    memset(ActiveLuaScript, 0, 512);
+    if (!AreBuffersZeroed)
+    {
+        memset(ActiveLuaScript, 0, 512);
+        memset(ErrorBuffer, 0, 512);
+        AreBuffersZeroed = true;
+    }
 
     if ((Button("Run") and !LuaFileInitialized) or LuaFileReload)
     {
@@ -43,6 +48,7 @@ void LuaEditorModule::Render()
             LuaFileInitialized = false;
             LuaFileReload = false;
             lua_settop(GetLuaState(ActiveLuaScript), 0);
+            memset(ErrorBuffer, 0, 512);
         }
     }
 
@@ -80,6 +86,7 @@ void LuaEditorModule::Render()
             LuaFileInitialized = false;
             LuaFileReload = false;
             lua_settop(GetLuaState(ActiveLuaScript), 0);
+            memset(ErrorBuffer, 0, 512);
         }
     }
 

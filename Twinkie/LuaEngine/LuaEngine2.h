@@ -9,6 +9,7 @@ extern "C"
 	__declspec(dllimport) lua_State* GetLuaState(const char* StateName);
 	__declspec(dllimport) bool LuaInited(const char* StateName);
 	__declspec(dllimport) void SetLuaPrintFunction(lua_CFunction PrintFunction);
+	__declspec(dllimport) void SetLuaPrintFunctionForState(const char* StateName, lua_CFunction PrintFunction);
 	__declspec(dllimport) void InitLua(const char* StateName);
 	__declspec(dllimport) void RunRender(const char* StateName, char* ErrorStrBuffer, size_t ErrorStrSize);
 	__declspec(dllimport) void RunLua(const char* StateName, const char* LuaScript, char* ErrorStrBuffer, size_t ErrorStrSize);

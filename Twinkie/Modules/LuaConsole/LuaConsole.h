@@ -9,13 +9,13 @@ namespace Filesystem = std::filesystem;
 
 extern inline std::string AlsoGetDocumentsFolder();
 
+extern std::string g_LuaConsoleModuleOutputStr;
+
 class LuaConsoleModule : public IModule
 {
-	std::string ConsoleStr = "";
 public:
 	LuaConsoleModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled)
 	{
-		InitLua("TwinkieLuaConsole");
 		this->UiRenderEnabled = UiRenderEnabled;
 		this->Twinkie = &Twinkie;
 		this->Logger = &Logger;
