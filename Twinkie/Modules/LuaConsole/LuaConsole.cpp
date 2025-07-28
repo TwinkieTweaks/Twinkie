@@ -1,25 +1,15 @@
 #include "LuaConsole.h"
 #include "../../imgui-dx9/imgui_internal.h"
 
+#define StringBufferMaxSize 512
 #ifdef BUILD_DEBUG
-namespace Filesystem = std::filesystem;
-inline std::string AlsoGetDocumentsFolder()
-{
-    std::string path;
-
-    char szPath[MAX_PATH + 1] = {};
-    if (SHGetFolderPathA(NULL, CSIDL_MYDOCUMENTS, NULL, SHGFP_TYPE_CURRENT, szPath) == S_OK)
-        path = szPath;
-
-    return path;
-}
 
 void LuaConsoleModule::Render()
 {
     using namespace ImGui;
 
-    static char LuaStringBuffer[512];
-    static char ErrorBuffer[512];
+    static char LuaStringBuffer[StringBufferMaxSize];
+    static char ErrorBuffer[StringBufferMaxSize];
     static bool AreBuffersZeroed = false;
 
     static bool PreviousFrameWantsTextInputFocus = false;
@@ -29,8 +19,8 @@ void LuaConsoleModule::Render()
 
     if (!AreBuffersZeroed)
     {
-        memset(LuaStringBuffer, 0, 512);
-        memset(ErrorBuffer, 0, 512);
+        memset(LuaStringBuffer, 0, StringBufferMaxSize);
+        memset(ErrorBuffer, 0, StringBufferMaxSize);
         AreBuffersZeroed = true;
     }
 
@@ -52,31 +42,34 @@ void LuaConsoleModule::Render()
 
     EndChild();
 
-    InputText("##LuaInputString", LuaStringBuffer, 512);
+    if (PreviousFrameWantsTextInputFocus)
+    {
+        PreviousFrameWantsTextInputFocus = false;
+#define NextInputTextItem
+        SetKeyboardFocusHere(NextInputTextItem);
+    }
+
+    InputText("##LuaInputString", LuaStringBuffer, StringBufferMaxSize);
 
     if (IsItemFocused())
     {
-        if (IsKeyPressed(ImGuiKey_Enter, false) and strcmp(LuaStringBuffer, "") != 0)
+#define NoRepeat false
+        if (IsKeyPressed(ImGuiKey_Enter, NoRepeat) and strcmp(LuaStringBuffer, "") != 0)
         {
             EnterPressed = true;
             PreviousFrameWantsTextInputFocus = true;
         }
-    }
-    else if (!IsItemFocused() and PreviousFrameWantsTextInputFocus)
-    {
-        PreviousFrameWantsTextInputFocus = false;
-        ImGui::SetFocusID(ImGui::GetID("##LuaInputString"), ImGui::GetCurrentWindow());
     }
 
     SameLine();
     if (Button("Run") or EnterPressed)
     {
         g_LuaConsoleModuleOutputStr = g_LuaConsoleModuleOutputStr + LuaStringBuffer + "\n";
-        RunLua("TwinkieLuaConsole", LuaStringBuffer, ErrorBuffer, 512);
+        RunLua("TwinkieLuaConsole", LuaStringBuffer, ErrorBuffer, StringBufferMaxSize);
         if (strcmp(ErrorBuffer, "OK") != 0)
         {
             Logger->PrintErrorArgs("Error while running lua string: {}", ErrorBuffer);
-            memset(ErrorBuffer, 0, 512);
+            memset(ErrorBuffer, 0, StringBufferMaxSize);
         }
         AreBuffersZeroed = false;
         EnterPressed = false;
@@ -84,4 +77,5 @@ void LuaConsoleModule::Render()
 
     End();
 }
+
 #endif
