@@ -1,4 +1,5 @@
 #include "LuaConsole.h"
+#include "../../imgui-dx9/imgui_internal.h"
 
 #ifdef BUILD_DEBUG
 namespace Filesystem = std::filesystem;
@@ -21,6 +22,11 @@ void LuaConsoleModule::Render()
     static char ErrorBuffer[512];
     static bool AreBuffersZeroed = false;
 
+    static bool PreviousFrameWantsTextInputFocus = false;
+    static int PreviouslyWrittenStatementIndex = -1;
+
+    bool EnterPressed = false;
+
     if (!AreBuffersZeroed)
     {
         memset(LuaStringBuffer, 0, 512);
@@ -41,22 +47,39 @@ void LuaConsoleModule::Render()
     std::string Line;
     while (std::getline(Stream, Line))
     {
-        Text(Line.c_str());
+        Text(("> " + Line).c_str());
     }
 
     EndChild();
 
     InputText("##LuaInputString", LuaStringBuffer, 512);
-    SameLine();
-    if (Button("Run"))
+
+    if (IsItemFocused())
     {
-        g_LuaConsoleModuleOutputStr = g_LuaConsoleModuleOutputStr + ">>> " + LuaStringBuffer + "\n";
+        if (IsKeyPressed(ImGuiKey_Enter, false) and strcmp(LuaStringBuffer, "") != 0)
+        {
+            EnterPressed = true;
+            PreviousFrameWantsTextInputFocus = true;
+        }
+    }
+    else if (!IsItemFocused() and PreviousFrameWantsTextInputFocus)
+    {
+        PreviousFrameWantsTextInputFocus = false;
+        ImGui::SetFocusID(ImGui::GetID("##LuaInputString"), ImGui::GetCurrentWindow());
+    }
+
+    SameLine();
+    if (Button("Run") or EnterPressed)
+    {
+        g_LuaConsoleModuleOutputStr = g_LuaConsoleModuleOutputStr + LuaStringBuffer + "\n";
         RunLua("TwinkieLuaConsole", LuaStringBuffer, ErrorBuffer, 512);
         if (strcmp(ErrorBuffer, "OK") != 0)
         {
             Logger->PrintErrorArgs("Error while running lua string: {}", ErrorBuffer);
             memset(ErrorBuffer, 0, 512);
         }
+        AreBuffersZeroed = false;
+        EnterPressed = false;
     }
 
     End();
