@@ -7,8 +7,7 @@
 
 namespace Filesystem = std::filesystem;
 
-extern inline std::string AlsoGetDocumentsFolder();
-
+extern "C" int LuaConsolePrintOverride(lua_State* L);
 extern std::string g_LuaConsoleModuleOutputStr;
 
 class LuaConsoleModule : public IModule

@@ -1,8 +1,40 @@
 #include "LuaConsole.h"
+#include "../../Version.h"
 #include "../../imgui-dx9/imgui_internal.h"
 
 #define StringBufferMaxSize 512
+#define LuaConsoleStateName "TwinkieLuaConsole"
+#define LuaConsoleStrBootup "Lua console for Twinkie " TwinkieVersion "\nRunning Lua " LuaVersion
 #ifdef BUILD_DEBUG
+
+extern "C"
+{
+    int LuaConsolePrintOverride(lua_State* L)
+    {
+        int NumberOfElems = lua_gettop(L);
+        for (int Idx = 1; Idx <= NumberOfElems; Idx++)
+        {
+            const char* LuaStr = lua_tostring(L, Idx);
+            if (LuaStr)
+            {
+                g_LuaConsoleModuleOutputStr = g_LuaConsoleModuleOutputStr + LuaStr;
+            }
+            else
+            {
+                g_LuaConsoleModuleOutputStr = g_LuaConsoleModuleOutputStr + lua_typename(L, Idx);
+            }
+            if (Idx < NumberOfElems) g_LuaConsoleModuleOutputStr = g_LuaConsoleModuleOutputStr + "\t";
+        }
+        g_LuaConsoleModuleOutputStr = g_LuaConsoleModuleOutputStr + "\n";
+        return 0;
+    }
+
+    int LuaConsoleClear(lua_State* L)
+    {
+        g_LuaConsoleModuleOutputStr = LuaConsoleStrBootup;
+        return 0;
+    }
+}
 
 void LuaConsoleModule::Render()
 {
@@ -24,9 +56,17 @@ void LuaConsoleModule::Render()
         AreBuffersZeroed = true;
     }
 
-    if (!LuaInited("TwinkieLuaConsole"))
+    if (!LuaInited(LuaConsoleStateName))
     {
-        InitLua("TwinkieLuaConsole");
+        g_LuaConsoleModuleOutputStr = LuaConsoleStrBootup;
+        InitLua(LuaConsoleStateName);
+        SetLuaPrintFunctionForState(LuaConsoleStateName, LuaConsolePrintOverride);
+        UpdatePrintFunction(LuaConsoleStateName);
+
+        lua_pushcfunction(GetLuaState(LuaConsoleStateName), LuaConsoleClear);
+        lua_setglobal(GetLuaState(LuaConsoleStateName), "clear");
+        lua_getglobal(GetLuaState(LuaConsoleStateName), "clear");
+        lua_setglobal(GetLuaState(LuaConsoleStateName), "cls");
     }
 
     Begin(ICON_FK_CODE " Lua Console", &Enabled);
@@ -59,6 +99,7 @@ void LuaConsoleModule::Render()
         {
             EnterPressed = true;
             PreviousFrameWantsTextInputFocus = true;
+            SetNextFrameWantCaptureKeyboard(true);
         }
     }
 
@@ -66,10 +107,10 @@ void LuaConsoleModule::Render()
     if (Button("Run") or EnterPressed)
     {
         g_LuaConsoleModuleOutputStr = g_LuaConsoleModuleOutputStr + LuaStringBuffer + "\n";
-        RunLua("TwinkieLuaConsole", LuaStringBuffer, ErrorBuffer, StringBufferMaxSize);
+        RunLua(LuaConsoleStateName, LuaStringBuffer, ErrorBuffer, StringBufferMaxSize);
         if (strcmp(ErrorBuffer, "OK") != StringsAreEqual)
         {
-            Logger->PrintErrorArgs("Error while running lua string: {}", ErrorBuffer);
+            g_LuaConsoleModuleOutputStr = g_LuaConsoleModuleOutputStr + ErrorBuffer;
             memset(ErrorBuffer, 0, StringBufferMaxSize);
         }
         AreBuffersZeroed = false;
