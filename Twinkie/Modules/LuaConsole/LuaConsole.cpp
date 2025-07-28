@@ -4,7 +4,7 @@
 
 #define StringBufferMaxSize 512
 #define LuaConsoleStateName "TwinkieLuaConsole"
-#define LuaConsoleStrBootup "Lua console for Twinkie " TwinkieVersion "\nRunning Lua " LuaVersion
+#define LuaConsoleStrBootup "Lua console for Twinkie " TwinkieVersion "\nRunning Lua " LuaVersion "\n"
 #ifdef BUILD_DEBUG
 
 extern "C"
@@ -110,7 +110,7 @@ void LuaConsoleModule::Render()
         RunLua(LuaConsoleStateName, LuaStringBuffer, ErrorBuffer, StringBufferMaxSize);
         if (strcmp(ErrorBuffer, "OK") != StringsAreEqual)
         {
-            g_LuaConsoleModuleOutputStr = g_LuaConsoleModuleOutputStr + ErrorBuffer;
+            g_LuaConsoleModuleOutputStr = g_LuaConsoleModuleOutputStr + ErrorBuffer + "\n";
             memset(ErrorBuffer, 0, StringBufferMaxSize);
         }
         AreBuffersZeroed = false;
