@@ -45,7 +45,7 @@ void LuaConsoleModule::Render()
     if (PreviousFrameWantsTextInputFocus)
     {
         PreviousFrameWantsTextInputFocus = false;
-#define NextInputTextItem
+#define NextInputTextItem 0
         SetKeyboardFocusHere(NextInputTextItem);
     }
 
@@ -54,7 +54,8 @@ void LuaConsoleModule::Render()
     if (IsItemFocused())
     {
 #define NoRepeat false
-        if (IsKeyPressed(ImGuiKey_Enter, NoRepeat) and strcmp(LuaStringBuffer, "") != 0)
+#define StringsAreEqual 0
+        if (IsKeyPressed(ImGuiKey_Enter, NoRepeat) and strcmp(LuaStringBuffer, "") != StringsAreEqual)
         {
             EnterPressed = true;
             PreviousFrameWantsTextInputFocus = true;
@@ -66,7 +67,7 @@ void LuaConsoleModule::Render()
     {
         g_LuaConsoleModuleOutputStr = g_LuaConsoleModuleOutputStr + LuaStringBuffer + "\n";
         RunLua("TwinkieLuaConsole", LuaStringBuffer, ErrorBuffer, StringBufferMaxSize);
-        if (strcmp(ErrorBuffer, "OK") != 0)
+        if (strcmp(ErrorBuffer, "OK") != StringsAreEqual)
         {
             Logger->PrintErrorArgs("Error while running lua string: {}", ErrorBuffer);
             memset(ErrorBuffer, 0, StringBufferMaxSize);
