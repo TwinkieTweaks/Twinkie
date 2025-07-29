@@ -55,6 +55,6 @@ public:
 	virtual void SettingsInit(SettingMgr& Settings) {}
 	virtual void SettingsSave(SettingMgr& Settings) {}
 
-	virtual bool IsDebug() { return false; }
+	virtual bool IsDebug() { return true; }
 	virtual bool HasSettings() { return false; }
 };
