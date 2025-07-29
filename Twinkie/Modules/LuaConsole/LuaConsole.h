@@ -1,6 +1,5 @@
 #pragma once
 
-#ifdef BUILD_DEBUG
 #include "../../IModule.h"
 #include "../../LuaEngine/LuaEngine2.h"
 
@@ -8,6 +7,7 @@
 
 extern "C" int LuaConsolePrintOverride(lua_State* L);
 extern std::string g_LuaConsoleModuleOutputStr;
+extern std::vector<std::string> g_LuaConsoleModulePreviousStatements;
 
 class LuaConsoleModule : public IModule
 {
@@ -17,6 +17,9 @@ class LuaConsoleModule : public IModule
 
 	bool PreviousFrameWantsTextInputFocus = false;
 	int PreviouslyWrittenStatementIndex = -1;
+	bool WasPreviouslyWrittenStatementCopied = true;
+
+	unsigned int InputTextID = 0;
 public:
 	LuaConsoleModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled)
 	{
@@ -32,7 +35,6 @@ public:
 	{
 		delete[] this->LuaStringBuffer;
 		delete[] this->ErrorBuffer;
-		CloseLua("TwinkieLuaConsole");
 	}
 
 	LuaConsoleModule() = default;
@@ -56,4 +58,3 @@ public:
 	virtual bool IsDebug() { return false; }
 	virtual bool HasSettings() { return false; }
 };
-#endif

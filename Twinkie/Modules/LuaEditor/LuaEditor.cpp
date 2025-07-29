@@ -1,6 +1,5 @@
 #include "LuaEditor.h"
 
-#ifdef BUILD_DEBUG
 namespace Filesystem = std::filesystem;
 inline std::string AlsoGetDocumentsFolder()
 {
@@ -47,7 +46,6 @@ void LuaEditorModule::Render()
             LuaErrorOccured = true;
             LuaFileInitialized = false;
             LuaFileReload = false;
-            lua_settop(GetLuaState(ActiveLuaScript), 0);
             memset(ErrorBuffer, 0, 512);
         }
     }
@@ -85,7 +83,6 @@ void LuaEditorModule::Render()
             LuaErrorOccured = true;
             LuaFileInitialized = false;
             LuaFileReload = false;
-            lua_settop(GetLuaState(ActiveLuaScript), 0);
             memset(ErrorBuffer, 0, 512);
         }
     }
@@ -94,4 +91,3 @@ void LuaEditorModule::Render()
 
     End();
 }
-#endif

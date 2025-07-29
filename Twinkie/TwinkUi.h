@@ -33,10 +33,10 @@
 #include "Modules/GrindingStats/GrindingStats.h"
 #ifdef BUILD_DEBUG
 #include "Modules/PlayerInfo/PlayerInfo.h"
-#include "Modules/LuaEditor/LuaEditor.h"
-#include "Modules/LuaConsole/LuaConsole.h"
 #endif
 #ifdef BUILD_PREMIUM
+#include "Modules/LuaEditor/LuaEditor.h"
+#include "Modules/LuaConsole/LuaConsole.h"
 #include "Modules/AppExplorer.h"
 #endif
 
@@ -115,12 +115,12 @@ public:
 
 #ifdef BUILD_DEBUG
         Modules.push_back(new PlayerInfoModule(TrackmaniaMgr, Logger, &DoRender));
-        Modules.push_back(new LuaEditorModule(TrackmaniaMgr, Logger, &DoRender));
-        Modules.push_back(new LuaConsoleModule(TrackmaniaMgr, Logger, &DoRender));
 #endif
 #ifdef BUILD_PREMIUM
         Modules.push_back(new AppExplorerModule(TrackmaniaMgr, Logger, &DoRender));
 #endif
+        Modules.push_back(new LuaEditorModule(TrackmaniaMgr, Logger, &DoRender));
+        Modules.push_back(new LuaConsoleModule(TrackmaniaMgr, Logger, &DoRender));
         Modules.push_back(new AboutModule(TrackmaniaMgr, Logger, &DoRender));
         //
         Modules.push_back(new DashboardInputsModule(TrackmaniaMgr, Logger, &DoRender));
@@ -159,6 +159,8 @@ public:
 
         delete IoMgr;
         IoMgr = nullptr;
+
+        CloseLuaAll();
     }
 
     void InitFonts(ImGuiIO& ImIo)
@@ -352,12 +354,10 @@ public:
                 {
                     if (Module->IsDebug()) Module->RenderMenuItem();
                 }
-#ifdef BUILD_DEBUG
                 if (MenuItem("ImGui Demo", "", EnableImGuiDemo))
                 {
                     EnableImGuiDemo = !EnableImGuiDemo;
                 }
-#endif
                 ImGui::EndMenu();
             }
             EndMainMenuBar();
@@ -369,12 +369,10 @@ public:
         if (Logger.EnableLog)
             Logger.RenderLog();
 
-#ifdef BUILD_DEBUG
         if (EnableImGuiDemo)
         {
             ShowDemoWindow(&EnableImGuiDemo);
         }
-#endif
 
         if (FontMain) PopFont();
     }

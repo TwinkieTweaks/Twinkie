@@ -1,5 +1,4 @@
 #pragma once
-#ifdef BUILD_DEBUG
 #include "include/lua.hpp"
 
 extern lua_CFunction PrintFunc;
@@ -18,4 +17,3 @@ extern "C"
 	__declspec(dllimport) void CloseLua(const char* StateName);
 	__declspec(dllimport) void CloseLuaAll();
 }
-#endif

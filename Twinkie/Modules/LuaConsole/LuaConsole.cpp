@@ -1,10 +1,10 @@
 #include "LuaConsole.h"
 #include "../../Version.h"
 #include "../../imgui-dx9/imgui_internal.h"
+#include <cstdlib>
 
 #define LuaConsoleStateName "TwinkieLuaConsole"
 #define LuaConsoleStrBootup "Lua console for Twinkie " TwinkieVersion "\nRunning Lua " LUA_VERSION "\nAvailable globals: App\nAvailable functions: print(), clear(), cls()\n"
-#ifdef BUILD_DEBUG
 
 extern "C"
 {
@@ -31,6 +31,7 @@ extern "C"
     int LuaConsoleClear(lua_State* L)
     {
         g_LuaConsoleModuleOutputStr = LuaConsoleStrBootup;
+        g_LuaConsoleModulePreviousStatements.clear();
         return 0;
     }
 }
@@ -69,7 +70,7 @@ void LuaConsoleModule::Render()
     std::string Line;
     while (std::getline(Stream, Line))
     {
-        Text(("> " + Line).c_str());
+        TextUnformatted(Line.c_str());
     }
 
     EndChild();
@@ -81,7 +82,16 @@ void LuaConsoleModule::Render()
         SetKeyboardFocusHere(NextInputTextItem);
     }
 
+    if (!WasPreviouslyWrittenStatementCopied)
+    {
+        InputTextID = rand();
+        WasPreviouslyWrittenStatementCopied = true;
+        SetKeyboardFocusHere(NextInputTextItem);
+    }
+
+    PushID(InputTextID);
     InputText("##LuaInputString", LuaStringBuffer, StringBufferMaxSize);
+    PopID();
 
     if (IsItemFocused())
     {
@@ -93,12 +103,47 @@ void LuaConsoleModule::Render()
             PreviousFrameWantsTextInputFocus = true;
             SetNextFrameWantCaptureKeyboard(true);
         }
+        if (IsKeyPressed(ImGuiKey_UpArrow, NoRepeat))
+        {
+            PreviouslyWrittenStatementIndex++;
+            WasPreviouslyWrittenStatementCopied = false;
+        }
+        if (IsKeyPressed(ImGuiKey_DownArrow, NoRepeat))
+        {
+            PreviouslyWrittenStatementIndex--;
+            WasPreviouslyWrittenStatementCopied = false;
+        }
+    }
+
+    if (PreviouslyWrittenStatementIndex < -1)
+    {
+        PreviouslyWrittenStatementIndex = -1;
+    }
+    if (PreviouslyWrittenStatementIndex >= (int)g_LuaConsoleModulePreviousStatements.size())
+    {
+        PreviouslyWrittenStatementIndex = ((int)g_LuaConsoleModulePreviousStatements.size()) - 1;
+    }
+
+    if (!WasPreviouslyWrittenStatementCopied and g_LuaConsoleModulePreviousStatements.size() != 0)
+    {
+        if (PreviouslyWrittenStatementIndex != -1)
+        {
+            size_t PreviousStatementsLength = g_LuaConsoleModulePreviousStatements.size() - 1;
+            std::string PreviousStatement = g_LuaConsoleModulePreviousStatements[PreviousStatementsLength - PreviouslyWrittenStatementIndex];
+            strcpy_s(LuaStringBuffer, StringBufferMaxSize, PreviousStatement.c_str());
+        }
+        else
+        {
+            // strcpy_s(LuaStringBuffer, StringBufferMaxSize, "");
+            LuaStringBuffer[0] = '\0';
+        }
     }
 
     SameLine();
     if (Button("Run") or EnterPressed)
     {
-        g_LuaConsoleModuleOutputStr = g_LuaConsoleModuleOutputStr + LuaStringBuffer + "\n";
+        g_LuaConsoleModulePreviousStatements.push_back(LuaStringBuffer);
+        g_LuaConsoleModuleOutputStr = g_LuaConsoleModuleOutputStr + "> " + LuaStringBuffer + "\n";
         RunLua(LuaConsoleStateName, LuaStringBuffer, ErrorBuffer, StringBufferMaxSize);
         if (strcmp(ErrorBuffer, "OK") != StringsAreEqual)
         {
@@ -107,9 +152,10 @@ void LuaConsoleModule::Render()
         }
         AreBuffersZeroed = false;
         EnterPressed = false;
+        PreviouslyWrittenStatementIndex = -1;
     }
+    TextUnformatted(LuaStringBuffer);
+    Text("%d", PreviouslyWrittenStatementIndex);
 
     End();
 }
-
-#endif
