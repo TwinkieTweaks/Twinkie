@@ -354,7 +354,7 @@ public:
                 {
                     if (Module->IsDebug()) Module->RenderMenuItem();
                 }
-                if (MenuItem("ImGui Demo", "", EnableImGuiDemo))
+                if (MenuItem(ICON_KI_MOUSE " ImGui Demo", "", EnableImGuiDemo))
                 {
                     EnableImGuiDemo = !EnableImGuiDemo;
                 }
