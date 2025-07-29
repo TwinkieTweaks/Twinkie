@@ -2,9 +2,8 @@
 #include "../../Version.h"
 #include "../../imgui-dx9/imgui_internal.h"
 
-#define StringBufferMaxSize 512
 #define LuaConsoleStateName "TwinkieLuaConsole"
-#define LuaConsoleStrBootup "Lua console for Twinkie " TwinkieVersion "\nRunning Lua " LuaVersion "\nAvailable globals: App\nAvailable functions: print(), clear(), cls()\n"
+#define LuaConsoleStrBootup "Lua console for Twinkie " TwinkieVersion "\nRunning Lua " LUA_VERSION "\nAvailable globals: App\nAvailable functions: print(), clear(), cls()\n"
 #ifdef BUILD_DEBUG
 
 extern "C"
@@ -39,13 +38,6 @@ extern "C"
 void LuaConsoleModule::Render()
 {
     using namespace ImGui;
-
-    static char LuaStringBuffer[StringBufferMaxSize];
-    static char ErrorBuffer[StringBufferMaxSize];
-    static bool AreBuffersZeroed = false;
-
-    static bool PreviousFrameWantsTextInputFocus = false;
-    static int PreviouslyWrittenStatementIndex = -1;
 
     bool EnterPressed = false;
 
