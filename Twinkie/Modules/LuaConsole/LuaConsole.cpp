@@ -4,7 +4,7 @@
 
 #define StringBufferMaxSize 512
 #define LuaConsoleStateName "TwinkieLuaConsole"
-#define LuaConsoleStrBootup "Lua console for Twinkie " TwinkieVersion "\nRunning Lua " LuaVersion "\n"
+#define LuaConsoleStrBootup "Lua console for Twinkie " TwinkieVersion "\nRunning Lua " LuaVersion "\nAvailable globals: App\nAvailable functions: print(), clear(), cls()\n"
 #ifdef BUILD_DEBUG
 
 extern "C"
