@@ -11,6 +11,7 @@
 #include "Version.h"
 #include "SettingMgr.h"
 #include "TwinkLogs.h"
+#include "TwinkLuaMgr/TwinkLuaMgr.h"
 
 #include "imgui-dx9/imgui.h"
 #include "GlyphTable/IconsForkAwesome.h"
@@ -34,9 +35,8 @@
 #ifdef BUILD_DEBUG
 #include "Modules/PlayerInfo/PlayerInfo.h"
 #endif
-#ifdef BUILD_PREMIUM
-#include "Modules/LuaEditor/LuaEditor.h"
 #include "Modules/LuaConsole/LuaConsole.h"
+#ifdef BUILD_PREMIUM
 #include "Modules/AppExplorer.h"
 #endif
 
@@ -56,6 +56,7 @@ public:
     TwinkTrackmania TrackmaniaMgr;
     TwinkLogs Logger;
     TwinkIo* IoMgr;
+	TwinkLuaMgr* LuaMgr;
 	ImFont* FontMain = nullptr;
 
     float UiScale = 1.f;
@@ -80,6 +81,8 @@ public:
 
     size_t ActiveModuleIdx = 0;
     bool IsTwinkieSettingsOpen = true;
+
+	bool LuaModulesLoaded = false;
 
     void SettingsInit()
     {
@@ -109,6 +112,7 @@ public:
     TwinkUi()
     {
         IoMgr = new TwinkIo(TrackmaniaMgr);
+		LuaMgr = new TwinkLuaMgr(&Logger);
 
         Logger.PrintInternal(":3c");
         Logger.PrintInternalArgs("Twinkie for TrackMania Forever. Version {}", Versions.TwinkieVer);
@@ -119,7 +123,6 @@ public:
 #ifdef BUILD_PREMIUM
         Modules.push_back(new AppExplorerModule(TrackmaniaMgr, Logger, &DoRender));
 #endif
-        Modules.push_back(new LuaEditorModule(TrackmaniaMgr, Logger, &DoRender));
         Modules.push_back(new LuaConsoleModule(TrackmaniaMgr, Logger, &DoRender));
         Modules.push_back(new AboutModule(TrackmaniaMgr, Logger, &DoRender));
         //
@@ -140,7 +143,8 @@ public:
         Modules.push_back(new TelemetryModule(TrackmaniaMgr, Logger, &DoRender));
         Modules.push_back(new DownloadServerMapsModule(TrackmaniaMgr, Logger, &DoRender));
 
-        Logger.PrintInternalArgs("{} module{} initialized.", Modules.size(), Modules.size() == 1 ? "" : "s");
+        Logger.PrintInternalArgs("{} C++ module{} initialized.", Modules.size(), Modules.size() == 1 ? "" : "s");
+        Logger.PrintInternalArgs("{} Lua module{} initialized.", LuaMgr->LuaModules.size(), LuaMgr->LuaModules.size() == 1 ? "" : "s");
 
         SettingsInit();
     }
@@ -159,6 +163,9 @@ public:
 
         delete IoMgr;
         IoMgr = nullptr;
+
+		delete LuaMgr;
+		LuaMgr = nullptr;
 
         CloseLuaAll();
     }
@@ -302,6 +309,8 @@ public:
             if (ForceModulesNoRender) break;
             if (Module->Enabled) Module->Render();
         }
+
+		LuaMgr->RunModulesRender();
 
         if (BeginMainMenuBar()) {
             PushStyleColor(ImGuiCol_Text, ColorConvertFloat4ToU32({1.f, 0.f, 1.f, 1.f}));
@@ -456,6 +465,12 @@ public:
     void RenderAnyways()
     {
 		using namespace ImGui;
+
+        if (!LuaModulesLoaded)
+        {
+            LuaMgr->GetModulesFromDocuments();
+            LuaModulesLoaded = true;
+		}
 
 		if (FontMain) PushFont(FontMain, 14.f * UiScale);
 

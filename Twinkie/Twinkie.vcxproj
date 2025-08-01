@@ -529,7 +529,6 @@
     <ClInclude Include="Modules\GhostEditor\GhostEditor.h" />
     <ClInclude Include="Modules\GrindingStats\GrindingStats.h" />
     <ClInclude Include="Modules\LuaConsole\LuaConsole.h" />
-    <ClInclude Include="Modules\LuaEditor\LuaEditor.h" />
     <ClInclude Include="Modules\SplitSpeeds\SplitSpeeds.h" />
     <ClInclude Include="Modules\Telemetry\Telemetry.h" />
     <ClInclude Include="Telemetry.h" />
@@ -550,6 +549,8 @@
     <ClInclude Include="TrackMania.h" />
     <ClInclude Include="TwinkIo.h" />
     <ClInclude Include="TwinkLogs.h" />
+    <ClInclude Include="TwinkLuaMgr\ILuaModule.h" />
+    <ClInclude Include="TwinkLuaMgr\TwinkLuaMgr.h" />
     <ClInclude Include="TwinkUi.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Version.h" />
@@ -581,12 +582,12 @@
     <ClCompile Include="Modules\GhostEditor\GhostEditor.cpp" />
     <ClCompile Include="Modules\GrindingStats\GrindingStats.cpp" />
     <ClCompile Include="Modules\LuaConsole\LuaConsole.cpp" />
-    <ClCompile Include="Modules\LuaEditor\LuaEditor.cpp" />
     <ClCompile Include="Modules\Medals\Medals.cpp" />
     <ClCompile Include="Modules\PlayerInfo\PlayerInfo.cpp" />
     <ClCompile Include="Modules\SplitSpeeds\SplitSpeeds.cpp" />
     <ClCompile Include="Modules\Telemetry\Telemetry.cpp" />
     <ClCompile Include="Modules\Tweaker\Tweaker.cpp" />
+    <ClCompile Include="TwinkLuaMgr\TwinkLuaMgr.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="kiero\minhook\dll_resources\MinHook.def" />

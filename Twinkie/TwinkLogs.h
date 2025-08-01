@@ -43,6 +43,17 @@ public:
         LogFile.close();
     }
 
+    void PrintWarn(const char* Str)
+    {
+        std::ofstream LogFile(AndGetDocumentsFolder() + "\\Twinkie\\Twinkie.log", std::ios::app);
+        LogFile << "[WARN] " << Str << "\n";
+        LogStr = LogStr + "[WARN] " + Str + "\n";
+#ifdef TT_EXTERNAL_CONSOLE
+        std::cout << "[WARN] " << Str << "\n";
+#endif
+        LogFile.close();
+    }
+
     void PrintError(const char* Str)
     {
         std::ofstream LogFile(AndGetDocumentsFolder() + "\\Twinkie\\Twinkie.log", std::ios::app);
@@ -107,6 +118,18 @@ public:
         LogStr = LogStr + "[TWINK] " + std::vformat(Str, std::make_format_args(args...)) + "\n";
 #ifdef BUILD_EXTERNAL_CONSOLE
         std::cout << "[TWINK] " + std::vformat(Str, std::make_format_args(args...)) + "\n";
+#endif
+        LogFile.close();
+    }
+
+    template<typename... Args>
+    void PrintWarnArgs(const char* Str, Args&&... args)
+    {
+        std::ofstream LogFile(AndGetDocumentsFolder() + "\\Twinkie\\Twinkie.log", std::ios::app);
+        LogFile << "[WARN] " << std::vformat(Str, std::make_format_args(args...)) << "\n";
+        LogStr = LogStr + "[WARN] " + std::vformat(Str, std::make_format_args(args...)) + "\n";
+#ifdef BUILD_EXTERNAL_CONSOLE
+        std::cout << "[WARN] " + std::vformat(Str, std::make_format_args(args...)) + "\n";
 #endif
         LogFile.close();
     }

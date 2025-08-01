@@ -165,9 +165,6 @@
     <ClInclude Include="Modules\GrindingStats\GrindingStats.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Modules\LuaEditor\LuaEditor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LuaEngine\LuaEngine2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -187,6 +184,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Modules\LuaConsole\LuaConsole.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TwinkLuaMgr\TwinkLuaMgr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TwinkLuaMgr\ILuaModule.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -275,10 +278,10 @@
     <ClCompile Include="Modules\GrindingStats\GrindingStats.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Modules\LuaEditor\LuaEditor.cpp">
+    <ClCompile Include="Modules\LuaConsole\LuaConsole.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Modules\LuaConsole\LuaConsole.cpp">
+    <ClCompile Include="TwinkLuaMgr\TwinkLuaMgr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -4,7 +4,7 @@
 #include <cstdlib>
 
 #define LuaConsoleStateName "TwinkieLuaConsole"
-#define LuaConsoleStrBootup "Lua console for Twinkie " TwinkieVersion "\nRunning Lua " LUA_VERSION "\nAvailable globals: App\nAvailable functions: print(), clear(), cls()\n"
+#define LuaConsoleStrBootup "Lua console for Twinkie " TwinkieVersion "\nRunning " LUA_VERSION "\nAvailable globals: App\nAvailable functions: print(), clear(), cls()\n"
 
 extern "C"
 {
