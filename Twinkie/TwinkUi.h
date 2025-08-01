@@ -347,6 +347,7 @@ public:
                 {
                     if (!Module->IsDebug()) Module->RenderMenuItem();
                 }
+				LuaMgr->RunModulesRenderMenuItem();
                 ImGui::EndMenu();
             }
             if (BeginMenu(ICON_FK_CODE " Debug"))
@@ -369,6 +370,9 @@ public:
                 }
                 ImGui::EndMenu();
             }
+
+            LuaMgr->RunModulesRenderMainMenuItem();
+
             EndMainMenuBar();
         }
 
