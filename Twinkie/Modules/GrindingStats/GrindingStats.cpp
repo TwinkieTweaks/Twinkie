@@ -45,6 +45,8 @@ void GrindingStatsModule::SettingsSave(SettingMgr& Settings)
 
 void GrindingStatsModule::RenderInactive()
 {
+	if (Twinkie->TMInterfaceLoaded) return;
+
 	CurrentChallenge = Twinkie->GetChallenge();
 
 	if (!Twinkie->IsPlaying())
@@ -120,11 +122,15 @@ void GrindingStatsModule::RenderAnyways()
 	if (!*UiRenderEnabled) WindowFlags |= ImGuiWindowFlags_NoInputs;
 	Begin("##GrindingStats", nullptr, WindowFlags);
 
+	BeginDisabled(Twinkie->TMInterfaceLoaded);
+
 	Text(ICON_FK_CLOCK_O " Total time: %s", Twinkie->FormatTmDuration((unsigned int)TotalPlaytime).c_str());
 	Text(ICON_FK_PLAY_CIRCLE_O " Session time: %s", Twinkie->FormatTmDuration((unsigned int)CurrentPlaytime).c_str());
 	Text(ICON_FK_FLAG_CHECKERED " Finishes: %d / %d", CurrentStat.Finishes, GetCurrentTotalStat().Finishes);
 	Text(ICON_FK_REPEAT " Attempts: %d / %d", CurrentStat.Attempts, GetCurrentTotalStat().Attempts);
 	Text(ICON_FK_REFRESH " Respawns: %d / %d / %d", Twinkie->GetRespawns(), CurrentStat.Respawns, GetCurrentTotalStat().Respawns);
+
+	EndDisabled();
 
 	End();
 }

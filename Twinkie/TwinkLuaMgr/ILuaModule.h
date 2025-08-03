@@ -14,6 +14,8 @@ public:
 	bool HasMainMenuItemFn = true;
 	bool HasMenuItemFn = true;
 
+	bool ChecksumValid = false;
+
 	ILuaModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled, const char* Filename, ModuleInfo* LuaModuleInfo)
 	{
 		this->UiRenderEnabled = UiRenderEnabled;
@@ -27,7 +29,15 @@ public:
 	{
 		this->Filename = Filename;
 		this->LuaModuleInfo = *LuaModuleInfo;
-		this->Enabled = true;
+	}
+
+	void Reset()
+	{
+		HasErrored = false;
+
+		HasSettingsFn = true;
+		HasMainMenuItemFn = true;
+		HasMenuItemFn = true;
 	}
 
 	ILuaModule() = default;

@@ -197,10 +197,19 @@ class TwinkTrackmania
 public:
     PlayerInfo CurPlayerInfo = {};
 
+	bool TMInterfaceLoaded = false;
+
     const float MINRPM = 200.f;
     const float MAXRPM = 11000.f;
 
-    TwinkTrackmania() {}
+    TwinkTrackmania() 
+    {
+        auto TMInterface = LoadLibraryA("TMInterface.dll");
+        if (TMInterface)
+        {
+            TMInterfaceLoaded = true;
+        }
+    }
 
     template <typename T>
     T Read(uintptr_t Addr)

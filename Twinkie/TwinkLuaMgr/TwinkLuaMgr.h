@@ -2,11 +2,14 @@
 #include <vector>
 #include "ILuaModule.h"
 
+extern bool SetWorkingDirectory(const std::string& Directory);
+
 class TwinkLuaMgr
 {
 public:
 	std::vector<ILuaModule*> LuaModules = {};
 	TwinkLogs* Logger = nullptr;
+	bool ModuleManagerOpen = false;
 
 	TwinkLuaMgr(TwinkLogs* Logger)
 	{
@@ -23,10 +26,14 @@ public:
 		}
 	}
 
-	void GetModulesFromDocuments();
+	void CreateModule(const char* Filename);
+
+	void GetModulesFromDocuments(bool EnableByDefault = false);
 	void RunModulesRender();
 	void RunModulesRenderMenuItem();
 	void RunModulesRenderMainMenuItem();
 	void RunModulesRenderSettings();
-	void ReloadModule(const char* Filename);
+	bool ReloadModule(const char* Filename);
+	void RenderModuleManager();
+	void RenderModuleManagerMenuItem();
 };

@@ -45,6 +45,8 @@ void SplitSpeedsModule::RenderInactive()
 {
 	using namespace ImGui;
 
+	if (Twinkie->TMInterfaceLoaded) return;
+
 	CurrentChallenge = Twinkie->GetChallenge();
 
 	if (CurrentChallenge != PrevChallenge and CurrentChallenge)

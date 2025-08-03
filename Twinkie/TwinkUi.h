@@ -144,9 +144,13 @@ public:
         Modules.push_back(new DownloadServerMapsModule(TrackmaniaMgr, Logger, &DoRender));
 
         Logger.PrintInternalArgs("{} C++ module{} initialized.", Modules.size(), Modules.size() == 1 ? "" : "s");
-        Logger.PrintInternalArgs("{} Lua module{} initialized.", LuaMgr->LuaModules.size(), LuaMgr->LuaModules.size() == 1 ? "" : "s");
 
         SettingsInit();
+
+        if (TrackmaniaMgr.TMInterfaceLoaded)
+        {
+            Logger.PrintInternal("TMInterface was found, some modules' features will be disabled");
+        }
     }
 
     ~TwinkUi()
@@ -350,7 +354,7 @@ public:
 				LuaMgr->RunModulesRenderMenuItem();
                 ImGui::EndMenu();
             }
-            if (BeginMenu(ICON_FK_CODE " Debug"))
+            if (BeginMenu(ICON_FK_BUG " Debug"))
             {
                 if (MenuItem(ICON_FK_HDD_O " Log", "", Logger.EnableLog))
                 {
@@ -364,10 +368,11 @@ public:
                 {
                     if (Module->IsDebug()) Module->RenderMenuItem();
                 }
-                if (MenuItem(ICON_KI_MOUSE " ImGui Demo", "", EnableImGuiDemo))
+                if (MenuItem(ICON_FK_BUG " ImGui Demo", "", EnableImGuiDemo))
                 {
                     EnableImGuiDemo = !EnableImGuiDemo;
                 }
+                LuaMgr->RenderModuleManagerMenuItem();
                 ImGui::EndMenu();
             }
 
@@ -376,16 +381,11 @@ public:
             EndMainMenuBar();
         }
 
-        if (EnableSettings)
-            RenderSettings();
+        if (EnableSettings) RenderSettings();
 
-        if (Logger.EnableLog)
-            Logger.RenderLog();
+        if (Logger.EnableLog) Logger.RenderLog();
 
-        if (EnableImGuiDemo)
-        {
-            ShowDemoWindow(&EnableImGuiDemo);
-        }
+        if (EnableImGuiDemo) ShowDemoWindow(&EnableImGuiDemo);
 
         if (FontMain) PopFont();
     }
@@ -474,6 +474,7 @@ public:
         {
             LuaMgr->GetModulesFromDocuments();
             LuaModulesLoaded = true;
+            Logger.PrintInternalArgs("{} Lua module{} initialized.", LuaMgr->LuaModules.size(), LuaMgr->LuaModules.size() == 1 ? "" : "s");
 		}
 
 		if (FontMain) PushFont(FontMain, 14.f * UiScale);
@@ -486,6 +487,8 @@ public:
             if (Module->Enabled) Module->RenderAnyways();
             Module->RenderInactive();
         }
+
+		if (LuaMgr->ModuleManagerOpen) LuaMgr->RenderModuleManager();
 
 		if (FontMain) PopFont();
     }
