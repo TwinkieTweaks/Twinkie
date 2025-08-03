@@ -17,8 +17,8 @@ Stat& GrindingStatsModule::GetCurrentTotalStat()
 
 void GrindingStatsModule::SettingsInit(SettingMgr& Settings)
 {
-	auto& GrindingStatsSection = Settings["Grinding Stats"];
-
+	Tab& GrindingStatsSection = Settings["Grinding Stats"];
+	 
 	for (Setting& SettingValue : GrindingStatsSection.Settings)
 	{
 		if (!SettingValue.Name.starts_with("U_")) continue;
