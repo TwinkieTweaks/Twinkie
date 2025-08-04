@@ -318,13 +318,17 @@ public:
 
         if (BeginMainMenuBar()) {
             PushStyleColor(ImGuiCol_Text, ColorConvertFloat4ToU32({1.f, 0.f, 1.f, 1.f}));
-            if (BeginMenu(ICON_FK_COGS " Twinkie")) {
+            PushItemFlag(ImGuiItemFlags_AutoClosePopups, false);
+            if (BeginMenu(ICON_FK_COGS " Twinkie")) 
+            {
                 PopStyleColor();
                 if (MenuItem(ICON_FK_WRENCH " Settings", "", EnableSettings))
                 {
                     EnableSettings = !EnableSettings;
                 }
+
                 Separator();
+
                 if (MenuItem(ICON_FK_POWER_OFF " Shutdown", ""))
                 {
                     TrackmaniaMgr.CallGbxAppExit();
@@ -333,15 +337,17 @@ public:
                 {
                     SetTooltip("Softly closes the game.");
                 }
+
                 if (MenuItem(ICON_FK_EXCLAMATION_TRIANGLE " Terminate", ""))
                 {
-                    Logger.Print("Terminating, as user commanded");
+                    Logger.PrintInternal("Terminating, as user commanded");
                     free((void*)TrackmaniaMgr.GetTrackmania());
                 }
                 if (IsItemHovered())
                 {
                     SetTooltip(ICON_FK_EXCLAMATION_TRIANGLE " WARNING! This crashes the game.");
                 }
+
                 ImGui::EndMenu();
             }
             else PopStyleColor();
@@ -360,23 +366,30 @@ public:
                 {
                     Logger.EnableLog = !Logger.EnableLog;
                 }
+
                 if (MenuItem(ICON_FK_BAN " Disable all modules", "", ForceModulesNoRender))
                 {
                     ForceModulesNoRender = !ForceModulesNoRender;
                 }
+
                 for (IModule* Module : Modules)
                 {
                     if (Module->IsDebug()) Module->RenderMenuItem();
                 }
+
+                LuaMgr->RenderModuleManagerMenuItem();
+
                 if (MenuItem(ICON_FK_BUG " ImGui Demo", "", EnableImGuiDemo))
                 {
                     EnableImGuiDemo = !EnableImGuiDemo;
                 }
-                LuaMgr->RenderModuleManagerMenuItem();
+
                 ImGui::EndMenu();
             }
 
             LuaMgr->RunModulesRenderMainMenuItem();
+
+            PopItemFlag();
 
             EndMainMenuBar();
         }
@@ -417,7 +430,9 @@ public:
                     continue;
                 }
 
-                if (Selectable(((Module->Enabled ? ICON_FK_CHECK " " : ICON_FK_TIMES " ") + Module->FancyName).c_str(), (ActiveModuleIdx == CurModuleIdx) and (!IsTwinkieSettingsOpen)))
+				Checkbox(("##" + Module->FancyName).c_str(), &Module->Enabled);
+                SameLine();
+                if (Selectable(Module->FancyName.c_str(), (ActiveModuleIdx == CurModuleIdx) and (!IsTwinkieSettingsOpen)))
                 {
                     ActiveModuleIdx = CurModuleIdx;
                     IsTwinkieSettingsOpen = false;

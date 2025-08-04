@@ -12,7 +12,7 @@ void AboutModule::Render()
 		Text("Made with love by jailman. <3");
 #ifdef BUILD_DEBUG
 		Separator();
-		Text("This is a debug copy, please report any bugs to the author.");
+		Text("This is a debug copy, please report any bugs to the author, and do not share this with anyone.");
 #endif
 		Separator();
 
