@@ -100,6 +100,17 @@ void PlayerInfoModule::Render()
 		Text("Turbo factor: %f", *((float*)Twinkie->CurPlayerInfo.Vehicle + 0x182) + 1.0f);
 		ColorEdit3("Trail color", (float*)(Twinkie->CurPlayerInfo.Vehicle + 0xC8));
 
+		SeparatorText("VehicleStruct");
+
+		Text("Address of SceneVehicleStruct: %x", Twinkie->GetSceneVehicleStruct());
+		SameLine();
+		std::string SceneVehicleStructAddrStr = ToHex(Twinkie->GetSceneVehicleStruct());
+		if (SmallButton("Copy##SceneVehicleStruct"))
+		{
+			SetClipboardText(SceneVehicleStructAddrStr.c_str());
+			OffsetAddr = Twinkie->GetSceneVehicleStruct();
+		}
+
 		SeparatorText("Wheels");
 
 		Indent();

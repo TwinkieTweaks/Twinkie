@@ -192,6 +192,9 @@
     <ClInclude Include="TwinkLuaMgr\ILuaModule.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Modules\StadiumTrailsPatch\StadiumTrailsPatch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -282,6 +285,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TwinkLuaMgr\TwinkLuaMgr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules\StadiumTrailsPatch\StadiumTrailsPatch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

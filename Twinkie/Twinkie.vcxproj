@@ -530,6 +530,7 @@
     <ClInclude Include="Modules\GrindingStats\GrindingStats.h" />
     <ClInclude Include="Modules\LuaConsole\LuaConsole.h" />
     <ClInclude Include="Modules\SplitSpeeds\SplitSpeeds.h" />
+    <ClInclude Include="Modules\StadiumTrailsPatch\StadiumTrailsPatch.h" />
     <ClInclude Include="Modules\Telemetry\Telemetry.h" />
     <ClInclude Include="Telemetry.h" />
     <ClInclude Include="minhook\buffer.h" />
@@ -585,6 +586,7 @@
     <ClCompile Include="Modules\Medals\Medals.cpp" />
     <ClCompile Include="Modules\PlayerInfo\PlayerInfo.cpp" />
     <ClCompile Include="Modules\SplitSpeeds\SplitSpeeds.cpp" />
+    <ClCompile Include="Modules\StadiumTrailsPatch\StadiumTrailsPatch.cpp" />
     <ClCompile Include="Modules\Telemetry\Telemetry.cpp" />
     <ClCompile Include="Modules\Tweaker\Tweaker.cpp" />
     <ClCompile Include="TwinkLuaMgr\TwinkLuaMgr.cpp" />

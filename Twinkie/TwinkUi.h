@@ -32,6 +32,7 @@
 #include "Modules/DownloadServerMaps/DownloadServerMaps.h"
 #include "Modules/SplitSpeeds/SplitSpeeds.h"
 #include "Modules/GrindingStats/GrindingStats.h"
+#include "Modules/StadiumTrailsPatch/StadiumTrailsPatch.h"
 #ifdef BUILD_DEBUG
 #include "Modules/PlayerInfo/PlayerInfo.h"
 #endif
@@ -64,6 +65,10 @@ public:
     bool DoRender = true;
     bool Initialized = false;
     bool ForceModulesNoRender = false;
+
+	bool WantFullscreenWindowed = false;
+	bool FullscreenWindowed = false;
+	RECT WindowedRect = { 0, 0, 0, 0 };
 
     ResetFn oReset = NULL;
     PresentFn oPresent = NULL;
@@ -142,6 +147,7 @@ public:
         // Modules.push_back(new NicknamePatchModule(TrackmaniaMgr, Logger, &DoRender)); // Removed in 2.0.0
         Modules.push_back(new TelemetryModule(TrackmaniaMgr, Logger, &DoRender));
         Modules.push_back(new DownloadServerMapsModule(TrackmaniaMgr, Logger, &DoRender));
+		Modules.push_back(new StadiumTrailsPatchModule(TrackmaniaMgr, Logger, &DoRender));
 
         Logger.PrintInternalArgs("{} C++ module{} initialized.", Modules.size(), Modules.size() == 1 ? "" : "s");
 
@@ -174,11 +180,77 @@ public:
         CloseLuaAll();
     }
 
+    void PatchFullscreenWindowed(HWND WindowHandle)
+    {
+#define EnableFullscreenPatch true
+#define DisableFullscreenPatch false
+        if (WantFullscreenWindowed and FullscreenWindowed) return;
+		if (!WantFullscreenWindowed and !FullscreenWindowed) return;
+
+        if (WantFullscreenWindowed)
+        {
+            MONITORINFO MonitorInfo = { sizeof(MONITORINFO) };
+            HMONITOR Monitor = MonitorFromWindow(WindowHandle, MONITOR_DEFAULTTOPRIMARY);
+            GetWindowRect(WindowHandle, &WindowedRect);
+
+            if (GetMonitorInfo(Monitor, &MonitorInfo))
+            {
+                RECT MonitorRect = MonitorInfo.rcMonitor;
+
+                SetWindowLong(WindowHandle, GWL_STYLE, WS_POPUP | WS_VISIBLE);
+                SetWindowLong(WindowHandle, GWL_EXSTYLE, WS_EX_APPWINDOW);
+
+                SetWindowPos(
+                    WindowHandle,
+                    HWND_TOP,
+                    MonitorRect.left,
+                    MonitorRect.top,
+                    MonitorRect.right - MonitorRect.left,
+                    MonitorRect.bottom - MonitorRect.top,
+                    SWP_FRAMECHANGED | SWP_NOOWNERZORDER
+                );
+            }
+
+            int ScreenWidth = MonitorInfo.rcMonitor.right - MonitorInfo.rcMonitor.left;
+            int ScreenHeight = MonitorInfo.rcMonitor.bottom - MonitorInfo.rcMonitor.top;
+
+            TrackmaniaMgr.PatchFullscreenWindowedResolution(EnableFullscreenPatch, ScreenWidth, ScreenHeight);
+
+            FullscreenWindowed = true;
+            return;
+        }
+        else if (!WantFullscreenWindowed)
+        {
+            SetWindowLong(WindowHandle, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_VISIBLE);
+            SetWindowLong(WindowHandle, GWL_EXSTYLE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
+
+            SetWindowPos(
+                WindowHandle,
+                HWND_NOTOPMOST,
+                WindowedRect.left,
+                WindowedRect.top,
+                WindowedRect.right - WindowedRect.left,
+                WindowedRect.bottom - WindowedRect.top,
+                SWP_FRAMECHANGED | SWP_NOOWNERZORDER
+            );
+
+            ShowWindow(WindowHandle, SW_NORMAL);
+
+            TrackmaniaMgr.PatchFullscreenWindowedResolution(DisableFullscreenPatch, 512, 384);
+
+            FullscreenWindowed = false;
+            return;
+        }
+    }
+
     void InitFonts(ImGuiIO& ImIo)
     {
+        ImFontConfig MainCfg;
+        MainCfg.Flags |= ImFontFlags_NoLoadError;
+
         Logger.PrintInternalArgs("Documents are at: {}", GetDocumentsFolder());
         Logger.PrintInternalArgs("Expected path of Fonts is at: {}", (GetDocumentsFolder() + "\\Twinkie\\Fonts\\Twinkie.ttf"));
-        FontMain = ImIo.Fonts->AddFontFromFileTTF((GetDocumentsFolder() + "\\Twinkie\\Fonts\\Twinkie.ttf").c_str(), 14.f * UiScale);
+        FontMain = ImIo.Fonts->AddFontFromFileTTF((GetDocumentsFolder() + "\\Twinkie\\Fonts\\Twinkie.ttf").c_str(), 14.f * UiScale, &MainCfg);
        
         if (FontMain)
         {
@@ -322,6 +394,11 @@ public:
             if (BeginMenu(ICON_FK_COGS " Twinkie")) 
             {
                 PopStyleColor();
+                if (MenuItem(ICON_FK_WINDOWS " Fullscreen Windowed", "", FullscreenWindowed))
+                {
+                    WantFullscreenWindowed = !WantFullscreenWindowed;
+                }
+
                 if (MenuItem(ICON_FK_WRENCH " Settings", "", EnableSettings))
                 {
                     EnableSettings = !EnableSettings;

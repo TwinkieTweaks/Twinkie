@@ -458,6 +458,17 @@ public:
         *(int*)(NicknameEntry + 0x150) = 75;
     }
 
+    void PatchFullscreenWindowedResolution(bool Enable, unsigned int Width, unsigned int Height)
+    {
+        bool* ScreenShotForceRes = (bool*)(GetVisionViewport() + 0x13c);
+        int* ScreenShotWidth = (int*)(GetVisionViewport() + 0x140);
+        int* ScreenShotHeight = (int*)(GetVisionViewport() + 0x144);
+
+        *ScreenShotForceRes = Enable;
+        *ScreenShotWidth = Width;
+        *ScreenShotHeight = Height;
+    }
+
     bool IsProfileUnited()
     {
         return GetPayingAccountType() == TM::United;
@@ -687,6 +698,12 @@ public:
         return InfoStruct;
     }
 
+    uintptr_t GetSceneVehicleStruct()
+    {
+        if (!IsPlaying()) return 0;
+        return Read<uintptr_t>(CurPlayerInfo.Vehicle + 0x60);
+	}
+
     TM::CFastBuffer<SSimulationWheel> GetVehicleWheels()
     {
         return Read<TM::CFastBuffer<SSimulationWheel>>(CurPlayerInfo.Vehicle + 744);
@@ -853,7 +870,8 @@ public:
                CurPlayerInfo.PlayerInfo;
     }
 
-    std::string FormatTmDuration(unsigned int Duration) {
+    std::string FormatTmDuration(unsigned int Duration) 
+    {
         if (Duration == MAXDWORD) return "--:--:--";
         unsigned int TotalSeconds = Duration / 1000;
         unsigned int Millis = (Duration % 1000) / 10;
@@ -893,6 +911,31 @@ public:
         std::wstring wstrTo(size_needed, 0);
         MultiByteToWideChar(CP_UTF8, 0, str.data(), (int)str.size(), &wstrTo[0], size_needed);
         return wstrTo;
+    }
+
+    uintptr_t GetEngineByIdx(size_t Idx)
+    {
+		TM::CFastBuffer<uintptr_t> Engines = Read<TM::CFastBuffer<uintptr_t>>(GetMainEngine() + 0x28);
+		return Engines.Ptr[Idx];
+    }
+
+    uintptr_t GetSystemEngine()
+    {
+        return GetEngineByIdx(0xB);
+	}
+
+    uintptr_t GetSceneEngine()
+    {
+        return GetEngineByIdx(0xA);
+    }
+
+    uintptr_t SceneEngineCreateInstance(unsigned int ClassId)
+    {
+		using CreateInstanceFn = void(__thiscall*)(uintptr_t SceneEngine, unsigned int ClassId, uintptr_t* ppNewNod, int UnusedParam);
+        uintptr_t SceneEngine = GetSceneEngine();
+        uintptr_t NewNod = 0;
+        reinterpret_cast<CreateInstanceFn>(Virtual<33>(SceneEngine))(SceneEngine, ClassId, &NewNod, 0);
+		return NewNod;
     }
 
     void SetString(TM::CFastStringInt* String, wchar_t** CString)

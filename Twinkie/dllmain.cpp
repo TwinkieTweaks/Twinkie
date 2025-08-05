@@ -91,6 +91,8 @@ static LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 {
 	SetLuaPrintFunction(LuaPrintFunction);
 	if (!Twinkie.Initialized) return CallWindowProcA(Twinkie.oWndProc, hWnd, uMsg, wParam, lParam);
+	
+	Twinkie.PatchFullscreenWindowed(hWnd);
 
 	auto& ImIo = ImGui::GetIO();
 
