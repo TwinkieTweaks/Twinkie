@@ -181,10 +181,10 @@ namespace TM
 
 	struct GmIso4
 	{
-		GmVec3 x;
-		GmVec3 y;
-		GmVec3 z;
-		GmVec3 t;
+		GmVec3 x = { 1.f, 0.f, 0.f };
+		GmVec3 y = { 0.f, 1.f, 0.f };
+		GmVec3 z = { 0.f, 0.f, 1.f };
+		GmVec3 t = { 0.f, 0.f, 0.f };
 
 		operator GmMat4()
 		{

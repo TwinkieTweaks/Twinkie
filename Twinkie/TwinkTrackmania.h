@@ -1,6 +1,8 @@
 #pragma once
 
+#include <iostream>
 #include "TrackMania.h"
+#include "TmForeverLib/TmForever.h"
 
 #include <d3d9.h>
 #include <string>
@@ -197,12 +199,12 @@ class TwinkTrackmania
 public:
     PlayerInfo CurPlayerInfo = {};
 
-	bool TMInterfaceLoaded = false;
+    bool TMInterfaceLoaded = false;
 
     const float MINRPM = 200.f;
     const float MAXRPM = 11000.f;
 
-    TwinkTrackmania() 
+    TwinkTrackmania()
     {
         auto TMInterface = LoadLibraryA("TMInterface.dll");
         if (TMInterface)
@@ -231,7 +233,7 @@ public:
 
     uintptr_t GetExeBaseAddr()
     {
-        return (unsigned long)GetModuleHandle(NULL);
+        return (uintptr_t)GetModuleHandle(NULL);
     }
 
     uintptr_t GetTrackmania()
@@ -286,7 +288,7 @@ public:
 
         CMwStack* MwStack = new CMwStack();
         MwStack->m_Size = 1;
-        MwStack->ppMemberInfos = new CMwMemberInfo*[MwStack->m_Size]{MemberInfo};
+        MwStack->ppMemberInfos = new CMwMemberInfo * [MwStack->m_Size] {MemberInfo};
         MwStack->iCurrentPos = 0;
 
         T* ReturnVal = nullptr;
@@ -315,9 +317,9 @@ public:
     float GetHmsCameraFov()
     {
         if (!IsPlaying()) return 0;
-		if (!GetGameCamera()) return 0;
+        if (!GetGameCamera()) return 0;
         if (!GetHmsPocCamera()) return 0;
-		if (!IsHmsPocHmsCamera(GetHmsPocCamera())) return 0;
+        if (!IsHmsPocHmsCamera(GetHmsPocCamera())) return 0;
 
         uintptr_t Nod = GetHmsPocCamera();
 
@@ -343,7 +345,7 @@ public:
     bool GetIsInterfaceHidden()
     {
         if (!IsPlaying()) return false;
-        
+
         uintptr_t Nod = CurPlayerInfo.TrackmaniaRace;
 
         uintptr_t* InterfacePtr = VirtualParamGet<uintptr_t>(Nod, CMwMemberInfo::CLASS, 0x0300d000);
@@ -357,9 +359,9 @@ public:
         if (!IsPlaying()) return -1;
         uintptr_t ActualPlayerInfo = Read<uintptr_t>(CurPlayerInfo.Player + 0x1C);
 
-		auto NatPtr = VirtualParamGet<int>(ActualPlayerInfo, CMwMemberInfo::NATURAL, 0x24036017);
-		if (!NatPtr) return -1;
-		return *NatPtr;
+        auto NatPtr = VirtualParamGet<int>(ActualPlayerInfo, CMwMemberInfo::NATURAL, 0x24036017);
+        if (!NatPtr) return -1;
+        return *NatPtr;
     }
 
     int GetStuntsScore()
@@ -390,16 +392,16 @@ public:
         return Read<int>(GetVisionViewport() + 0x7c);
     }
 
-	IDirect3DDevice9* GetD3DDevice()
-	{
+    IDirect3DDevice9* GetD3DDevice()
+    {
         return Read<IDirect3DDevice9*>(GetVisionViewport() + 0x9F8);
-	}
+    }
 
     uintptr_t GetProfileScores()
     {
         return Read<uintptr_t>(GetTrackmania() + 0x16c);
     }
-    
+
     TM::CFastArray<uintptr_t> GetDevices()
     {
         return Read<TM::CFastArray<uintptr_t>>(GetInputPort() + 0x2c);
@@ -532,18 +534,18 @@ public:
 
     void CallSetOfficialRace()
     {
-		using SetOfficialRaceFn = void(__thiscall*)(uintptr_t);
-		uintptr_t SetOfficialRacePtr = GetExeBaseAddr() + 0x7B5F0;
+        using SetOfficialRaceFn = void(__thiscall*)(uintptr_t);
+        uintptr_t SetOfficialRacePtr = GetExeBaseAddr() + 0x7B5F0;
         if (CurPlayerInfo.TrackmaniaRace)
         {
-			reinterpret_cast<SetOfficialRaceFn>(SetOfficialRacePtr)(CurPlayerInfo.TrackmaniaRace);
+            reinterpret_cast<SetOfficialRaceFn>(SetOfficialRacePtr)(CurPlayerInfo.TrackmaniaRace);
         }
     }
 
     bool IsOnline()
     {
         // GetTrackmania() + 0x418 is ChallengeType
-		return (Read<unsigned int>(GetTrackmania() + 0x418) & 16) == 16;
+        return (Read<unsigned int>(GetTrackmania() + 0x418) & 16) == 16;
     }
 
     bool IsHmsPocHmsCamera(uintptr_t HmsPoc)
@@ -564,25 +566,25 @@ public:
         }
     }
 
-	CameraInfo GetCamInfo()
-	{
-		CameraInfo CamInfo{};
+    CameraInfo GetCamInfo()
+    {
+        CameraInfo CamInfo{};
 
-		if (!GetGameCamera() or !IsPlaying()) return CamInfo;
+        if (!GetGameCamera() or !IsPlaying()) return CamInfo;
 
-		uintptr_t Camera = GetHmsPocCamera();
-		CamInfo.HmsPocCamera = Camera;
-		if (IsHmsPocHmsCamera(Camera))
-		{
-			CamInfo.Position = Read<TM::GmIso4>(Camera + 0x18); // CHmsZoneElem.Location
-			CamInfo.Fov = GetHmsCameraFov(); // CHmsCamera.Fov (virtual)
-			CamInfo.NearZ = Read<float>(Camera + 292); // CHmsPoc.NearZ (virtual but i found the offset)
-			CamInfo.FarZ = Read<float>(Camera + 304); // CHmsPoc.FarZ (virtual but i found the offset)
-			CamInfo.AspectRatio = GetHmsCameraAspectRatio(); // CHmsCamera.RatioXY (virtual)
-		}
+        uintptr_t Camera = GetHmsPocCamera();
+        CamInfo.HmsPocCamera = Camera;
+        if (IsHmsPocHmsCamera(Camera))
+        {
+            CamInfo.Position = Read<TM::GmIso4>(Camera + 0x18); // CHmsZoneElem.Location
+            CamInfo.Fov = GetHmsCameraFov(); // CHmsCamera.Fov (virtual)
+            CamInfo.NearZ = Read<float>(Camera + 292); // CHmsPoc.NearZ (virtual but i found the offset)
+            CamInfo.FarZ = Read<float>(Camera + 304); // CHmsPoc.FarZ (virtual but i found the offset)
+            CamInfo.AspectRatio = GetHmsCameraAspectRatio(); // CHmsCamera.RatioXY (virtual)
+        }
 
-		return CamInfo;
-	}
+        return CamInfo;
+    }
 
     void CallMenuGhostEditor()
     {
@@ -641,7 +643,7 @@ public:
     bool ChallengeUsesScore()
     {
         // 5 -> Stunt
-		// 1 -> Platform
+        // 1 -> Platform
         return GetChallengeInfo().ChallengeType == 1 or GetChallengeInfo().ChallengeType == 5;
     }
 
@@ -702,7 +704,7 @@ public:
     {
         if (!IsPlaying()) return 0;
         return Read<uintptr_t>(CurPlayerInfo.Vehicle + 0x60);
-	}
+    }
 
     TM::CFastBuffer<SSimulationWheel> GetVehicleWheels()
     {
@@ -711,17 +713,17 @@ public:
 
     bool GetVehicleWheelIsContactingGround(SSimulationWheel* Wheel)
     {
-        return Read<unsigned int>((uintptr_t)(Wheel) + 292) == 1;
+        return Read<unsigned int>((uintptr_t)(Wheel)+292) == 1;
     }
 
     unsigned int GetVehicleWheelMatId(SSimulationWheel* Wheel)
     {
-        return Read<unsigned int>((uintptr_t)(Wheel) + 576);
+        return Read<unsigned int>((uintptr_t)(Wheel)+576);
     }
 
     bool GetVehicleWheelIsSlipping(SSimulationWheel* Wheel)
     {
-        return Read<unsigned int>((uintptr_t)(Wheel) + 300) == 1;
+        return Read<unsigned int>((uintptr_t)(Wheel)+300) == 1;
     }
 
     VehicleInputs GetInputInfo()
@@ -732,7 +734,7 @@ public:
     void GetIdName(unsigned int Ident, TM::CFastString* String)
     {
         using GetIdNameFn = void* (__thiscall*)(unsigned int* Ident, TM::CFastString* String);
-		reinterpret_cast<GetIdNameFn>(GetExeBaseAddr() + 0x3357D0 + 0x200000)(&Ident, String); // the +0x200000 is on purpose, might be modloader related
+        reinterpret_cast<GetIdNameFn>(GetExeBaseAddr() + 0x3357D0 + 0x200000)(&Ident, String); // the +0x200000 is on purpose, might be modloader related
     }
 
     std::string GetChallengeUID()
@@ -864,13 +866,13 @@ public:
     bool IsPlaying()
     {
         return CurPlayerInfo.Vehicle and
-               CurPlayerInfo.TrackmaniaRace and
-               CurPlayerInfo.Mobil and
-               CurPlayerInfo.Player and
-               CurPlayerInfo.PlayerInfo;
+            CurPlayerInfo.TrackmaniaRace and
+            CurPlayerInfo.Mobil and
+            CurPlayerInfo.Player and
+            CurPlayerInfo.PlayerInfo;
     }
 
-    std::string FormatTmDuration(unsigned int Duration) 
+    std::string FormatTmDuration(unsigned int Duration)
     {
         if (Duration == MAXDWORD) return "--:--:--";
         unsigned int TotalSeconds = Duration / 1000;
@@ -913,30 +915,124 @@ public:
         return wstrTo;
     }
 
+    char* GetDriveName(uintptr_t Drive)
+    {
+        using GetDriveNameFn = char* (__thiscall*)(uintptr_t SystemEngine, uintptr_t Drive);
+        return reinterpret_cast<GetDriveNameFn>(0x1be70 + GetExeBaseAddr())(GetSystemEngine(), Drive);
+    }
+
+    uintptr_t GetDriveByIdx(size_t Idx)
+    {
+        return Read<uintptr_t>(GetSystemEngine() + 0x24 + Idx * 4);
+    }
+
     uintptr_t GetEngineByIdx(size_t Idx)
     {
-		TM::CFastBuffer<uintptr_t> Engines = Read<TM::CFastBuffer<uintptr_t>>(GetMainEngine() + 0x28);
-		return Engines.Ptr[Idx];
+        TM::CFastBuffer<uintptr_t> Engines = Read<TM::CFastBuffer<uintptr_t>>(GetMainEngine() + 0x28);
+        return Engines.Ptr[Idx];
     }
 
     uintptr_t GetSystemEngine()
     {
-        return GetEngineByIdx(0xB);
-	}
+        return GetEngineByIdx(2);
+    }
 
     uintptr_t GetSceneEngine()
     {
-        return GetEngineByIdx(0xA);
+        return GetEngineByIdx(8);
     }
 
     uintptr_t SceneEngineCreateInstance(unsigned int ClassId)
     {
-		using CreateInstanceFn = void(__thiscall*)(uintptr_t SceneEngine, unsigned int ClassId, uintptr_t* ppNewNod, int UnusedParam);
+        using CreateInstanceFn = void(__thiscall*)(uintptr_t SceneEngine, unsigned int ClassId, uintptr_t* ppNewNod, int UnusedParam);
         uintptr_t SceneEngine = GetSceneEngine();
         uintptr_t NewNod = 0;
-        reinterpret_cast<CreateInstanceFn>(Virtual<33>(SceneEngine))(SceneEngine, ClassId, &NewNod, 0);
-		return NewNod;
+        uintptr_t CreateInstancePtr = Virtual<33>(SceneEngine);
+        CreateInstanceFn CreateInstance = reinterpret_cast<CreateInstanceFn>(CreateInstancePtr);
+        CreateInstance(SceneEngine, ClassId, &NewNod, 0);
+        return NewNod;
     }
+
+    void UseEmittersInVehicleStruct(uintptr_t FirstEmitter, uintptr_t SecondEmitter, uintptr_t VehicleStruct)
+    {
+		using BufferAddNewElemFn = uintptr_t(__thiscall*)(TM::CFastBuffer<uintptr_t>*);
+		TM::CFastBuffer<uintptr_t>* Emitters = (TM::CFastBuffer<uintptr_t>*)(VehicleStruct + 0x38);
+		BufferAddNewElemFn BufferAddNewElem = reinterpret_cast<BufferAddNewElemFn>(0x3f8470 + GetExeBaseAddr());
+        SetNodRef(BufferAddNewElem(Emitters), FirstEmitter);
+        SetNodRef(BufferAddNewElem(Emitters), SecondEmitter);
+    }
+
+    void SetEmitterNodRefs(uintptr_t Emitter, uintptr_t Nod)
+    {
+		Write<uintptr_t>(Nod, Emitter + 0x18);
+        Write<uintptr_t>(Nod, Emitter + 0x1c);
+        Write<uintptr_t>(Nod, Emitter + 0x20);
+    }
+
+    void InitEmitter(uintptr_t Emitter, int ThatOneInt)
+    {
+  //      // Chunk: 0x0A010002
+		//Write<int>(0, Emitter + 0x88);
+
+		//// Chunk: 0x0A010003
+  //      Write<TM::GmVec3>({0.f, 0.02f, 0.f}, Emitter + 0x70);
+  //      Write<TM::GmVec3>({0.f, -1.6f, 0.f}, Emitter + 0x70 + sizeof(TM::GmVec3));
+
+		//// Chunk: 0x0A010004
+		//Write<unsigned int>(0, Emitter + 0x14);
+  //      // Skipping the 3 nods set earlier
+  //      Write<int>(2, Emitter + 0x30);
+  //      Write<int>(-1, Emitter + 0x34);
+		//Write<int>(2, Emitter + 0x24);
+  //      Write<int>(0, Emitter + 0x28);
+  //      Write<int>(1, Emitter + 0x38);
+  //      Write<int>(0, Emitter + 0x3c);
+  //      Write<TM::GmIso4>({ { -0.03f, 0.f, -1.f }, { 0.f, 1.f, 0.f }, { 1.f, 0.f, -0.03f }, { 0.f, 0.02f, 0.f } }, Emitter + 0x40);
+  //      *(unsigned int*)(Emitter + 0x70) = *(unsigned int*)(Emitter + 0x64);
+  //      *(unsigned int*)(Emitter + 0x74) = *(unsigned int*)(Emitter + 0x68);
+  //      *(unsigned int*)(Emitter + 0x78) = *(unsigned int*)(Emitter + 0x6c);
+  //      Write<float>(0.f, Emitter + 0x8c);
+		//Write<float>(0.f, Emitter + 0x90);
+  //      Write<float>(0.f, Emitter + 0x94);
+  //      Write<float>(0.04f, Emitter + 0x98);
+  //      Write<float>(1.f, Emitter + 0x9c);
+  //      Write<float>(0.f, Emitter + 0xa0);
+  //      Write<float>(0.f, Emitter + 0xa4);
+  //      Write<float>(0.f, Emitter + 0xa8);
+		//Write<float>(0.5f, Emitter + 0xac);
+  //      Write<float>(0.01f, Emitter + 0xb0);
+  //      Write<float>(0.5f, Emitter + 0xb4);
+  //      Write<float>(0.5f, Emitter + 0xb8);
+  //      Write<float>(0.0f, Emitter + 0xbc);
+  //      Write<float>(0.2f, Emitter + 0xc0);
+
+		//// Chunk: 0x0A010005
+  //      Write<int>(0, Emitter + 0x2c);
+
+        Write<int>(4, Emitter + 20);
+        Write<int>(ThatOneInt, Emitter + 52);
+    }
+
+    uintptr_t GetDataDrive()
+    {
+		CSystemEngine* SystemEngine = reinterpret_cast<CSystemEngine*>(GetSystemEngine());
+        return (uintptr_t)SystemEngine->GetLocationData();
+    }
+
+    uintptr_t LoadNodFromFilename(wchar_t* Filename, uintptr_t Drive)
+    {
+        CFastStringInt String(Filename);
+        CMwNod* ResultNod = nullptr;
+        CSystemArchiveNod::LoadFileFrom(String, ResultNod, reinterpret_cast<CSystemFids*>(Drive), CSystemArchiveNod::SEVEN);
+        return (uintptr_t)ResultNod;
+    }
+
+    uintptr_t SetNodRef(uintptr_t NodRef, uintptr_t Nod)
+    {
+        using SetNodRefFn = void(__thiscall*)(uintptr_t, uintptr_t);
+        reinterpret_cast<SetNodRefFn>(0x7b520 + GetExeBaseAddr())(NodRef, Nod);
+        return NodRef;
+	}
 
     void SetString(TM::CFastStringInt* String, wchar_t** CString)
     {

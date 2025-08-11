@@ -547,6 +547,7 @@
     <ClInclude Include="nvg-dx9\stb_truetype.h" />
     <ClInclude Include="Release\Settings.h" />
     <ClInclude Include="SettingMgr.h" />
+    <ClInclude Include="TmForeverLib\TmForever.h" />
     <ClInclude Include="TrackMania.h" />
     <ClInclude Include="TwinkIo.h" />
     <ClInclude Include="TwinkLogs.h" />
@@ -593,6 +594,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="kiero\minhook\dll_resources\MinHook.def" />
+    <None Include="TmForeverLib\TmForever.def" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="kiero\minhook\dll_resources\MinHook.rc" />

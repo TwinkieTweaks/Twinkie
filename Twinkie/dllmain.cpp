@@ -35,7 +35,14 @@ int LuaPrintFunction(lua_State* L)
 		}
 		else 
 		{
-			Twinkie.Logger.PrintCustom(lua_typename(L, Idx));
+			if (lua_isnil(L, Idx))
+			{
+				Twinkie.Logger.PrintCustom("nil");
+			}
+			else if (lua_isboolean(L, Idx))
+			{
+				Twinkie.Logger.PrintCustom(lua_toboolean(L, Idx) ? "true" : "false");
+			}
 		}
 		if (Idx < NumberOfElems) Twinkie.Logger.PrintCustom("\t");
 	}

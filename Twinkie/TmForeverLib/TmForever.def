@@ -1,0 +1,5 @@
+LIBRARY TmForever.exe
+EXPORTS
+    ?LoadFileFrom@CSystemArchiveNod@@SAHABVCFastStringInt@@AAPAVCMwNod@@PAVCSystemFids@@W4EArchive@1@@Z @6
+    ??0CFastStringInt@@QAE@PB_W@Z                                                                       @18
+    ?GetLocationData@CSystemEngine@@QAEPAVCSystemFids@@XZ                                               @617

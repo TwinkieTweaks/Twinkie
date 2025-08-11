@@ -6,6 +6,7 @@
 #include <iomanip>
 #include <sstream>
 #include <vector>
+#include <chrono>
 
 #include "TwinkTrackmania.h"
 #include "Version.h"
@@ -32,7 +33,6 @@
 #include "Modules/DownloadServerMaps/DownloadServerMaps.h"
 #include "Modules/SplitSpeeds/SplitSpeeds.h"
 #include "Modules/GrindingStats/GrindingStats.h"
-#include "Modules/StadiumTrailsPatch/StadiumTrailsPatch.h"
 #ifdef BUILD_DEBUG
 #include "Modules/PlayerInfo/PlayerInfo.h"
 #endif
@@ -88,6 +88,9 @@ public:
     bool IsTwinkieSettingsOpen = true;
 
 	bool LuaModulesLoaded = false;
+
+    std::chrono::system_clock::time_point LastAutosaveTime = std::chrono::system_clock::now();
+	float AutosaveIntervalMinutes = 2.f;
 
     void SettingsInit()
     {
@@ -147,7 +150,6 @@ public:
         // Modules.push_back(new NicknamePatchModule(TrackmaniaMgr, Logger, &DoRender)); // Removed in 2.0.0
         Modules.push_back(new TelemetryModule(TrackmaniaMgr, Logger, &DoRender));
         Modules.push_back(new DownloadServerMapsModule(TrackmaniaMgr, Logger, &DoRender));
-		Modules.push_back(new StadiumTrailsPatchModule(TrackmaniaMgr, Logger, &DoRender));
 
         Logger.PrintInternalArgs("{} C++ module{} initialized.", Modules.size(), Modules.size() == 1 ? "" : "s");
 
@@ -537,8 +539,10 @@ public:
             else
             {
                 SliderFloat("UI Scale", &UiScale, 0.25f, 5.f, "%.3f");
+				SliderFloat("Autosave interval (minutes)", &AutosaveIntervalMinutes, 0.1f, 60.f, "%.1f");
                 if (Button("Save settings"))
                 {
+                    Logger.PrintInternal("Saving settings...");
                     Settings.Save();
                     if (Settings.Status != 0)
                     {
@@ -583,5 +587,39 @@ public:
 		if (LuaMgr->ModuleManagerOpen) LuaMgr->RenderModuleManager();
 
 		if (FontMain) PopFont();
+
+		bool TriggerAutosave = false;
+
+        if (std::chrono::system_clock::now() - LastAutosaveTime > std::chrono::seconds((unsigned long long)round(AutosaveIntervalMinutes * 60.f)))
+        {
+            if (TrackmaniaMgr.IsPlaying())
+            {
+                if (TrackmaniaMgr.GetState() != TM::RaceState::Running and !(TrackmaniaMgr.IsOfficial() and TrackmaniaMgr.GetState() == TM::RaceState::BeforeStart))
+                {
+					TriggerAutosave = true;
+                }
+            }
+            else
+            {
+				TriggerAutosave = true;
+            }
+        }
+
+        if (TriggerAutosave)
+        {
+            Logger.PrintInternal("Autosaving settings...");
+            Settings.Save();
+
+            if (Settings.Status != 0)
+            {
+                Logger.PrintErrorArgs("Could not save settings with reason {} ({})", Settings.Error, Settings.Status);
+            }
+            else
+            {
+                Logger.PrintInternal("Settings saved successfully.");
+            }
+
+            LastAutosaveTime = std::chrono::system_clock::now();
+        }
     }
 };

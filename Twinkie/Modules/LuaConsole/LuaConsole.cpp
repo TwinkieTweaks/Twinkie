@@ -20,7 +20,14 @@ extern "C"
             }
             else
             {
-                g_LuaConsoleModuleOutputStr = g_LuaConsoleModuleOutputStr + lua_typename(L, Idx);
+                if (lua_isnil(L, Idx))
+                {
+                    g_LuaConsoleModuleOutputStr = g_LuaConsoleModuleOutputStr + "nil";
+                }
+                else if (lua_isboolean(L, Idx))
+                {
+                    g_LuaConsoleModuleOutputStr = g_LuaConsoleModuleOutputStr + (lua_toboolean(L, Idx) ? "true" : "false");
+                }
             }
             if (Idx < NumberOfElems) g_LuaConsoleModuleOutputStr = g_LuaConsoleModuleOutputStr + "\t";
         }

@@ -6,6 +6,11 @@ class StadiumTrailsPatchModule : public IModule
 {
 	uintptr_t Emitters[2] = { 0, 0 };
 	bool HasCreatedEmitters = false;
+	bool HasSetEmitterNodRefs = false;
+	bool HasSetEmitterValues = false;
+	bool HasPatchedVehicleStruct = false;
+	uintptr_t LightTrailsFilePtr = 0;
+	uintptr_t VehicleStructFilePtr = 0;
 
 public:
 	StadiumTrailsPatchModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled)

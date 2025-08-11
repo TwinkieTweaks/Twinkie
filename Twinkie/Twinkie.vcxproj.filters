@@ -195,6 +195,9 @@
     <ClInclude Include="Modules\StadiumTrailsPatch\StadiumTrailsPatch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TmForeverLib\TmForever.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -293,6 +296,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="kiero\minhook\dll_resources\MinHook.def">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="TmForeverLib\TmForever.def">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
