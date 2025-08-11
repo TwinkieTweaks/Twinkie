@@ -102,16 +102,10 @@
     <ClInclude Include="Modules\CheckpointCounter\CheckpointCounter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TwinkTrackmania.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TwinkLogs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Modules\Dashboard\DashboardGears.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TwinkIo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Modules\Tweaker\Tweaker.h">
@@ -196,6 +190,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SettingMgr\SettingMgr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TwinkTrackmania\TwinkTrackmania.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TwinkIo\TwinkIo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -297,6 +297,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SettingMgr\SettingMgr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TwinkTrackmania\TwinkTrackmania.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TwinkIo\TwinkIo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

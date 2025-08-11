@@ -1,7 +1,7 @@
 #pragma once
 
 #include "SettingMgr/SettingMgr.h"
-#include "TwinkTrackmania.h"
+#include "TwinkTrackmania/TwinkTrackmania.h"
 #include "TwinkLogs.h"
 #include "Utils.h"
 #include "imgui-dx9/imgui.h"

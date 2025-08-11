@@ -549,15 +549,15 @@
     <ClInclude Include="Release\Settings.h" />
     <ClInclude Include="TmForeverLib\TmForever.h" />
     <ClInclude Include="TrackMania.h" />
-    <ClInclude Include="TwinkIo.h" />
+    <ClInclude Include="TwinkIo\TwinkIo.h" />
     <ClInclude Include="TwinkLogs.h" />
     <ClInclude Include="TwinkLuaMgr\ILuaModule.h" />
     <ClInclude Include="TwinkLuaMgr\TwinkLuaMgr.h" />
+    <ClInclude Include="TwinkTrackmania\TwinkTrackmania.h" />
     <ClInclude Include="TwinkUi\TwinkUi.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Version.h" />
     <ClInclude Include="Modules\CheckpointCounter\CheckpointCounter.h" />
-    <ClInclude Include="TwinkTrackmania.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -591,7 +591,9 @@
     <ClCompile Include="Modules\Telemetry\Telemetry.cpp" />
     <ClCompile Include="Modules\Tweaker\Tweaker.cpp" />
     <ClCompile Include="SettingMgr\SettingMgr.cpp" />
+    <ClCompile Include="TwinkIo\TwinkIo.cpp" />
     <ClCompile Include="TwinkLuaMgr\TwinkLuaMgr.cpp" />
+    <ClCompile Include="TwinkTrackmania\TwinkTrackmania.cpp" />
     <ClCompile Include="TwinkUi\TwinkUi.cpp" />
   </ItemGroup>
   <ItemGroup>

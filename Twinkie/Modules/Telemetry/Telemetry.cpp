@@ -112,7 +112,7 @@ void TelemetryModule::UpdateTelemetry()
 			// Telemetry.Vehicle.Timestamp = (int)Now();
 			Telemetry.Vehicle.InputSteer = Twinkie->GetInputInfo().Steer;
 			Telemetry.Vehicle.InputGasPedal = Twinkie->GetInputInfo().fGas;
-			Telemetry.Vehicle.InputIsBraking = Twinkie->GetInputInfo().get_Brake();
+			Telemetry.Vehicle.InputIsBraking = Twinkie->GetInputInfo().Brake();
 			Telemetry.Vehicle.EngineRpm = Twinkie->GetRpm();
 			Telemetry.Vehicle.EngineCurGear = Twinkie->GetGear();
 			Telemetry.Vehicle.EngineTurboRatio = *((bool*)Twinkie->CurPlayerInfo.Vehicle + 948) ? 1.f : 0.f;

@@ -57,7 +57,6 @@ TwinkUi::TwinkUi()
     Modules.push_back(new GhostEditorModule(TrackmaniaMgr, Logger, &DoRender));
     Modules.push_back(new TweakerModule(TrackmaniaMgr, Logger, &DoRender));
     Modules.push_back(new AlwaysOfficialModule(TrackmaniaMgr, Logger, &DoRender));
-    // Modules.push_back(new NicknamePatchModule(TrackmaniaMgr, Logger, &DoRender)); // Removed in 2.0.0
     Modules.push_back(new TelemetryModule(TrackmaniaMgr, Logger, &DoRender));
     Modules.push_back(new DownloadServerMapsModule(TrackmaniaMgr, Logger, &DoRender));
 
@@ -126,7 +125,7 @@ void TwinkUi::PatchFullscreenWindowed(HWND WindowHandle)
         int ScreenWidth = MonitorInfo.rcMonitor.right - MonitorInfo.rcMonitor.left;
         int ScreenHeight = MonitorInfo.rcMonitor.bottom - MonitorInfo.rcMonitor.top;
 
-        TrackmaniaMgr.PatchFullscreenWindowedResolution(EnableFullscreenPatch, ScreenWidth, ScreenHeight);
+        TrackmaniaMgr.SetFullscreenWindowedResolution(EnableFullscreenPatch, ScreenWidth, ScreenHeight);
 
         FullscreenWindowed = true;
         return;
@@ -148,7 +147,7 @@ void TwinkUi::PatchFullscreenWindowed(HWND WindowHandle)
 
         ShowWindow(WindowHandle, SW_NORMAL);
 
-        TrackmaniaMgr.PatchFullscreenWindowedResolution(DisableFullscreenPatch, 512, 384);
+        TrackmaniaMgr.SetFullscreenWindowedResolution(DisableFullscreenPatch, 512, 384);
 
         FullscreenWindowed = false;
         return;

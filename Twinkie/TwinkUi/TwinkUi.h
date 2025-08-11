@@ -8,31 +8,30 @@
 #include <vector>
 #include <chrono>
 
-#include "../TwinkTrackmania.h"
 #include "../Version.h"
 #include "../SettingMgr/SettingMgr.h"
+#include "../TwinkTrackmania/TwinkTrackmania.h"
 #include "../TwinkLogs.h"
 #include "../TwinkLuaMgr/TwinkLuaMgr.h"
+#include "../TwinkIo/TwinkIo.h"
 
 #include "../imgui-dx9/imgui.h"
 #include "../GlyphTable/IconsForkAwesome.h"
 #include "../GlyphTable/IconsKenney.h"
-#include "../TwinkIo.h"
 
-#include "../Modules/CheckpointCounter/CheckpointCounter.h"
 #include "../Modules/About/About.h"
+#include "../Modules/AlwaysOfficial/AlwaysOfficial.h"
+#include "../Modules/CheckpointCounter/CheckpointCounter.h"
 #include "../Modules/Dashboard/DashboardInputs.h"
 #include "../Modules/Dashboard/DashboardTacho.h"
-#include "../Modules/Medals/Medals.h"
-#include "../Modules/GhostEditor/GhostEditor.h"
 #include "../Modules/Dashboard/DashboardGears.h"
-#include "../Modules/Tweaker/Tweaker.h"
-#include "../Modules/AlwaysOfficial/AlwaysOfficial.h"
-// #include "../Modules/NicknamePatch/NicknamePatch.h" // Removed in 2.0.0
-#include "../Modules/Telemetry/Telemetry.h"
 #include "../Modules/DownloadServerMaps/DownloadServerMaps.h"
-#include "../Modules/SplitSpeeds/SplitSpeeds.h"
+#include "../Modules/GhostEditor/GhostEditor.h"
 #include "../Modules/GrindingStats/GrindingStats.h"
+#include "../Modules/Medals/Medals.h"
+#include "../Modules/SplitSpeeds/SplitSpeeds.h"
+#include "../Modules/Tweaker/Tweaker.h"
+#include "../Modules/Telemetry/Telemetry.h"
 #ifdef BUILD_DEBUG
 #include "../Modules/PlayerInfo/PlayerInfo.h"
 #endif
