@@ -4,18 +4,17 @@ void AlwaysOfficialModule::RenderAnyways()
 {
 	if (!Twinkie->IsProfileUnited()) return;
 	if (!Twinkie->IsPlaying()) return;
-	if (!Twinkie->CurPlayerInfo.TrackmaniaRace) return;
 
 	if (!Twinkie->IsOnline())
 	{
-		CurrentState = Twinkie->GetState();
+		CurrentRacetime = Twinkie->GetSignedRaceTime();
 
-		if (CurrentState == TM::RaceState::BeforeStart and CurrentState != PreviousState and (!Twinkie->IsOfficial() or PreviousState == TM::RaceState::Running))
+		if (CurrentRacetime < PreviousRacetime and CurrentRacetime < 0 and !Twinkie->IsOfficial())
 		{
 			Twinkie->CallSetOfficialRace();
 		}
 
-		PreviousState = Twinkie->GetState();
+		PreviousRacetime = CurrentRacetime;
 	}
 }
 

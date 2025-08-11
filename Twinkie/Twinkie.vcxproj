@@ -553,7 +553,7 @@
     <ClInclude Include="TwinkLogs.h" />
     <ClInclude Include="TwinkLuaMgr\ILuaModule.h" />
     <ClInclude Include="TwinkLuaMgr\TwinkLuaMgr.h" />
-    <ClInclude Include="TwinkUi.h" />
+    <ClInclude Include="TwinkUi\TwinkUi.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Version.h" />
     <ClInclude Include="Modules\CheckpointCounter\CheckpointCounter.h" />
@@ -591,6 +591,7 @@
     <ClCompile Include="Modules\Telemetry\Telemetry.cpp" />
     <ClCompile Include="Modules\Tweaker\Tweaker.cpp" />
     <ClCompile Include="TwinkLuaMgr\TwinkLuaMgr.cpp" />
+    <ClCompile Include="TwinkUi\TwinkUi.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="kiero\minhook\dll_resources\MinHook.def" />

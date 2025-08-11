@@ -1,6 +1,6 @@
 #include "Medals.h"
 
-ImVec4 MedalIconColors[4] = {
+ImVec4 g_MedalModuleMedalIconColors[4] = {
 	{ 0.f, 0.875f, 0.15f, 1.f },
 	{ 0.4643f, 0.3929f, 0.1429f, 1.f },
 	{ 0.3077f, 0.3462f, 0.3462f, 1.f },
@@ -35,7 +35,7 @@ void MedalsModule::RenderAnyways()
 
 		if (!Twinkie->ChallengeUsesScore())
 		{
-			TextColored(MedalIconColors[0], ICON_FK_CIRCLE);
+			TextColored(g_MedalModuleMedalIconColors[0], ICON_FK_CIRCLE);
 			SameLine();
 			TextColored(ColorTextMedals, (AuthorName + (AuthorName != "" ? ": " : "") + Twinkie->FormatTmDuration(InfoStruct.AuthorTime)).c_str());
 			if (Twinkie->GetBestTime() != MAXDWORD)
@@ -44,7 +44,7 @@ void MedalsModule::RenderAnyways()
 				TextColored(InfoStructDiff.AuthorTime < 0 ? ColorTextBadDelta : ColorTextGoodDelta, ((InfoStructDiff.AuthorTime < 0 ? "+" : "-") + Twinkie->FormatTmDuration(abs(InfoStructDiff.AuthorTime))).c_str());
 			}
 
-			TextColored(MedalIconColors[1], ICON_FK_CIRCLE);
+			TextColored(g_MedalModuleMedalIconColors[1], ICON_FK_CIRCLE);
 			SameLine();
 			TextColored(ColorTextMedals, (GoldName + (GoldName != "" ? ": " : "") + Twinkie->FormatTmDuration(InfoStruct.GoldTime)).c_str());
 			if (Twinkie->GetBestTime() != MAXDWORD)
@@ -53,7 +53,7 @@ void MedalsModule::RenderAnyways()
 				TextColored(InfoStructDiff.GoldTime < 0 ? ColorTextBadDelta : ColorTextGoodDelta, ((InfoStructDiff.GoldTime < 0 ? "+" : "-") + Twinkie->FormatTmDuration(abs(InfoStructDiff.GoldTime))).c_str());
 			}
 
-			TextColored(MedalIconColors[2], ICON_FK_CIRCLE);
+			TextColored(g_MedalModuleMedalIconColors[2], ICON_FK_CIRCLE);
 			SameLine();
 			TextColored(ColorTextMedals, (SilverName + (SilverName != "" ? ": " : "") + Twinkie->FormatTmDuration(InfoStruct.SilverTime)).c_str());
 			if (Twinkie->GetBestTime() != MAXDWORD)
@@ -62,7 +62,7 @@ void MedalsModule::RenderAnyways()
 				TextColored(InfoStructDiff.SilverTime < 0 ? ColorTextBadDelta : ColorTextGoodDelta, ((InfoStructDiff.SilverTime < 0 ? "+" : "-") + Twinkie->FormatTmDuration(abs(InfoStructDiff.SilverTime))).c_str());
 			}
 
-			TextColored(MedalIconColors[3], ICON_FK_CIRCLE);
+			TextColored(g_MedalModuleMedalIconColors[3], ICON_FK_CIRCLE);
 			SameLine();
 			TextColored(ColorTextMedals, (BronzeName + (BronzeName != "" ? ": " : "") + Twinkie->FormatTmDuration(InfoStruct.BronzeTime)).c_str());
 			if (Twinkie->GetBestTime() != MAXDWORD)
@@ -73,7 +73,7 @@ void MedalsModule::RenderAnyways()
 		}
 		else
 		{
-			TextColored(MedalIconColors[0], ICON_FK_CIRCLE);
+			TextColored(g_MedalModuleMedalIconColors[0], ICON_FK_CIRCLE);
 			SameLine();
 			TextColored(ColorTextMedals, (AuthorName + (AuthorName != "" ? ": %lu" : "%lu")).c_str(), InfoStruct.AuthorScore);
 			if (Twinkie->GetBestTime() != MAXDWORD)
@@ -82,7 +82,7 @@ void MedalsModule::RenderAnyways()
 				TextColored((InfoStruct.ChallengeType == 5 ? InfoStructDiff.AuthorTime > 0 : InfoStructDiff.AuthorTime < 0) ? ColorTextBadDelta : ColorTextGoodDelta, (((InfoStruct.ChallengeType == 5 ? InfoStructDiff.AuthorTime > 0 : InfoStructDiff.AuthorTime < 0) ? "+" : "-") + std::to_string(abs(InfoStructDiff.AuthorTime))).c_str());
 			}
 
-			TextColored(MedalIconColors[1], ICON_FK_CIRCLE);
+			TextColored(g_MedalModuleMedalIconColors[1], ICON_FK_CIRCLE);
 			SameLine();
 			TextColored(ColorTextMedals, (GoldName + (GoldName != "" ? ": %lu" : "%lu")).c_str(), InfoStruct.GoldTime);
 			if (Twinkie->GetBestTime() != MAXDWORD)
@@ -91,7 +91,7 @@ void MedalsModule::RenderAnyways()
 				TextColored((InfoStruct.ChallengeType == 5 ? InfoStructDiff.GoldTime > 0 : InfoStructDiff.GoldTime < 0) ? ColorTextBadDelta : ColorTextGoodDelta, (((InfoStruct.ChallengeType == 5 ? InfoStructDiff.GoldTime > 0 : InfoStructDiff.GoldTime < 0) ? "+" : "-") + std::to_string(abs(InfoStructDiff.GoldTime))).c_str());
 			}
 
-			TextColored(MedalIconColors[2], ICON_FK_CIRCLE);
+			TextColored(g_MedalModuleMedalIconColors[2], ICON_FK_CIRCLE);
 			SameLine();
 			TextColored(ColorTextMedals, (SilverName + (SilverName != "" ? ": %lu" : "%lu")).c_str(), InfoStruct.SilverTime);
 			if (Twinkie->GetBestTime() != MAXDWORD)
@@ -100,7 +100,7 @@ void MedalsModule::RenderAnyways()
 				TextColored((InfoStruct.ChallengeType == 5 ? InfoStructDiff.SilverTime > 0 : InfoStructDiff.SilverTime < 0) ? ColorTextBadDelta : ColorTextGoodDelta, (((InfoStruct.ChallengeType == 5 ? InfoStructDiff.SilverTime > 0 : InfoStructDiff.SilverTime < 0) ? "+" : "-") + std::to_string(abs(InfoStructDiff.SilverTime))).c_str());
 			}
 
-			TextColored(MedalIconColors[3], ICON_FK_CIRCLE);
+			TextColored(g_MedalModuleMedalIconColors[3], ICON_FK_CIRCLE);
 			SameLine();
 			TextColored(ColorTextMedals, (BronzeName + (BronzeName != "" ? ": %lu" : "%lu")).c_str(), InfoStruct.BronzeTime);
 			if (Twinkie->GetBestTime() != MAXDWORD)

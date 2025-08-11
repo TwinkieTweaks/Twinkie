@@ -5,8 +5,8 @@
 class AlwaysOfficialModule : public IModule
 {
 public:
-	TM::RaceState CurrentState = TM::RaceState::BeforeStart;
-	TM::RaceState PreviousState = TM::RaceState::BeforeStart;
+	int CurrentRacetime = 0;
+	int PreviousRacetime = 0;
 
 	AlwaysOfficialModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled)
 	{
@@ -14,8 +14,8 @@ public:
 		this->Twinkie = &Twinkie;
 		this->Logger = &Logger;
 
-		Name = "AlwaysOfficial";
-		FancyName = "Always Official";
+		this->Name = "AlwaysOfficial";
+		this->FancyName = "Always Official";
 	}
 
 	AlwaysOfficialModule() = default;
