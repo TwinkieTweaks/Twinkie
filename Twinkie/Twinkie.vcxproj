@@ -532,6 +532,7 @@
     <ClInclude Include="Modules\SplitSpeeds\SplitSpeeds.h" />
     <ClInclude Include="Modules\StadiumTrailsPatch\StadiumTrailsPatch.h" />
     <ClInclude Include="Modules\Telemetry\Telemetry.h" />
+    <ClInclude Include="SettingMgr\SettingMgr.h" />
     <ClInclude Include="Telemetry.h" />
     <ClInclude Include="minhook\buffer.h" />
     <ClInclude Include="mINI\ini.h" />
@@ -546,7 +547,6 @@
     <ClInclude Include="nvg-dx9\stb_image.h" />
     <ClInclude Include="nvg-dx9\stb_truetype.h" />
     <ClInclude Include="Release\Settings.h" />
-    <ClInclude Include="SettingMgr.h" />
     <ClInclude Include="TmForeverLib\TmForever.h" />
     <ClInclude Include="TrackMania.h" />
     <ClInclude Include="TwinkIo.h" />
@@ -590,6 +590,7 @@
     <ClCompile Include="Modules\StadiumTrailsPatch\StadiumTrailsPatch.cpp" />
     <ClCompile Include="Modules\Telemetry\Telemetry.cpp" />
     <ClCompile Include="Modules\Tweaker\Tweaker.cpp" />
+    <ClCompile Include="SettingMgr\SettingMgr.cpp" />
     <ClCompile Include="TwinkLuaMgr\TwinkLuaMgr.cpp" />
     <ClCompile Include="TwinkUi\TwinkUi.cpp" />
   </ItemGroup>

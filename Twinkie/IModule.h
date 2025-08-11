@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SettingMgr.h"
+#include "SettingMgr/SettingMgr.h"
 #include "TwinkTrackmania.h"
 #include "TwinkLogs.h"
 #include "Utils.h"

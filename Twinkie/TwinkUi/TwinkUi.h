@@ -10,7 +10,7 @@
 
 #include "../TwinkTrackmania.h"
 #include "../Version.h"
-#include "../SettingMgr.h"
+#include "../SettingMgr/SettingMgr.h"
 #include "../TwinkLogs.h"
 #include "../TwinkLuaMgr/TwinkLuaMgr.h"
 
