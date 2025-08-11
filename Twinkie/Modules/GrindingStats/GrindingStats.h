@@ -67,6 +67,9 @@ class GrindingStatsModule : public IModule
 	std::string LastLoadedChallengeUID = "";
 	unsigned long long LastNonZeroUnsignedRaceTime = 0;
 
+	ImVec4 ColorText = ImVec4(1.f, 1.f, 1.f, 1.f);
+	ImVec4 ColorBackground = ImVec4(0.1294117718935013f, 0.1372549086809158f, 0.168627455830574f, 0.8f);
+
 public:
 	GrindingStatsModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled)
 	{
@@ -90,7 +93,7 @@ public:
 	virtual void Render() {}
 	virtual void RenderAnyways();
 	virtual void RenderInactive();
-	virtual void RenderSettings() {}
+	virtual void RenderSettings();
 	virtual void RenderMenuItem();
 
 	virtual void SettingsInit(SettingMgr& Settings);

@@ -29,6 +29,8 @@ void GrindingStatsModule::SettingsInit(SettingMgr& Settings)
 	}
 
 	GrindingStatsSection["Enable UI"].GetAsBool(&Enabled);
+	GrindingStatsSection["Background color"].GetAsVec4(&ColorBackground);
+	GrindingStatsSection["Text color"].GetAsVec4(&ColorText);
 }
 
 void GrindingStatsModule::SettingsSave(SettingMgr& Settings)
@@ -41,6 +43,8 @@ void GrindingStatsModule::SettingsSave(SettingMgr& Settings)
 	}
 
 	GrindingStatsSection["Enable UI"].Set(Enabled);
+	GrindingStatsSection["Background color"].Set(ColorBackground);
+	GrindingStatsSection["Text color"].Set(ColorText);
 }
 
 void GrindingStatsModule::RenderInactive()
@@ -120,6 +124,9 @@ void GrindingStatsModule::RenderAnyways()
 
 	auto WindowFlags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize;
 	if (!*UiRenderEnabled) WindowFlags |= ImGuiWindowFlags_NoInputs;
+
+	PushStyleColor(ImGuiCol_WindowBg, ColorBackground);
+	PushStyleColor(ImGuiCol_Text, ColorText);
 	Begin("##GrindingStats", nullptr, WindowFlags);
 
 	BeginDisabled(Twinkie->TMInterfaceLoaded);
@@ -133,6 +140,15 @@ void GrindingStatsModule::RenderAnyways()
 	EndDisabled();
 
 	End();
+
+	PopStyleColor(2);
+}
+
+void GrindingStatsModule::RenderSettings()
+{
+	using namespace ImGui;
+	ColorEdit4("Background color", &ColorBackground.x, ImGuiColorEditFlags_NoInputs);
+	ColorEdit4("Text color", &ColorText.x, ImGuiColorEditFlags_NoInputs);
 }
 
 void GrindingStatsModule::OnReset()

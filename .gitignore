@@ -369,7 +369,8 @@ Modloader/
 Debug/
 Release/
 Premium/
-/Twinkie/Modules/AppExplorer.h
+/Twinkie/Modules/AppExplorerDev.h
+/Twinkie/Modules/AppExplorerNadeo.h
 *.c
 /Modloader/TwinkieModloader.dll
 /Premium/TwinkieModloader.dll

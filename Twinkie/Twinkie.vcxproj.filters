@@ -111,7 +111,7 @@
     <ClInclude Include="Modules\Tweaker\Tweaker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Modules\AppExplorer.h">
+    <ClInclude Include="Modules\AppExplorerDev.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="nvg-dx9\fontstash.h">
@@ -196,6 +196,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TwinkIo\TwinkIo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Modules\AppExplorerNadeo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
