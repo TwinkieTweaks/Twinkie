@@ -6,6 +6,8 @@
 #define LuaConsoleStateName "TwinkieLuaConsole"
 #define LuaConsoleStrBootup "Lua console for Twinkie " TwinkieVersion "\nRunning " LUA_VERSION "\nAvailable globals: App\nAvailable functions: print(), clear(), cls()\n"
 
+extern void AddToLuaPackagePath(lua_State* L, const std::string& Directory);
+
 extern "C"
 {
     int LuaConsolePrintOverride(lua_State* L)
@@ -60,6 +62,7 @@ void LuaConsoleModule::Render()
     {
         g_LuaConsoleModuleOutputStr = LuaConsoleStrBootup;
         InitLua(LuaConsoleStateName);
+        AddToLuaPackagePath(GetLuaState(LuaConsoleStateName), ";" + GetDocumentsFolder() + "\\Twinkie\\LuaScripts\\?.lua");
         SetLuaPrintFunctionForState(LuaConsoleStateName, LuaConsolePrintOverride);
         UpdatePrintFunction(LuaConsoleStateName);
 
@@ -161,8 +164,6 @@ void LuaConsoleModule::Render()
         EnterPressed = false;
         PreviouslyWrittenStatementIndex = -1;
     }
-    TextUnformatted(LuaStringBuffer);
-    Text("%d", PreviouslyWrittenStatementIndex);
 
     End();
 }

@@ -19,7 +19,7 @@ void DownloadServerMapsModule::RenderInactive()
 void DownloadServerMapsModule::RenderSettings()
 {
 	using namespace ImGui;
-	Checkbox("Enable map downloads on servers", &Enabled);
+	Checkbox("Always download server maps", &Enabled);
 }
 
 void DownloadServerMapsModule::SettingsInit(SettingMgr& Settings)

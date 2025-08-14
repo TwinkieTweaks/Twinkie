@@ -7,14 +7,20 @@
 
 namespace Filesystem = std::filesystem;
 
-bool SetWorkingDirectory(const std::string& Directory) 
+void AddToLuaPackagePath(lua_State* L, const std::string& Directory)
 {
-	return SetCurrentDirectoryA(Directory.c_str()) != 0;
+	lua_getglobal(L, "package");
+	lua_getfield(L, -1, "path");
+	std::string CurrentPath = lua_tostring(L, -1);
+	lua_pop(L, 1);
+	CurrentPath += Directory;
+	lua_pushstring(L, CurrentPath.c_str());
+	lua_setfield(L, -2, "path");
+	lua_pop(L, 1);
 }
 
 void TwinkLuaMgr::GetModulesFromDocuments(bool EnableByDefault)
 {
-	SetWorkingDirectory(GetDocumentsFolder() + "\\Twinkie\\LuaScripts");
 	std::string DocumentsFolder = GetDocumentsFolder();
 	Filesystem::path LuaModulesPath = DocumentsFolder + "\\Twinkie\\LuaScripts";
 
@@ -32,6 +38,7 @@ void TwinkLuaMgr::GetModulesFromDocuments(bool EnableByDefault)
 			char ErrorStrBuffer[ErrorStrBufferSize] = { 0 };
 
 			InitLua(Filename.c_str());
+			AddToLuaPackagePath(GetLuaState(Filename.c_str()), ";" + LuaModulesPath.string() + "\\?.lua");
 			ExportImGuiForState(Filename.c_str());
 			SetImGuiContext(ImGui::GetCurrentContext());
 			RunLuaFile(Filename.c_str(), FilePath.c_str(), ErrorStrBuffer, sizeof(ErrorStrBuffer));
@@ -51,6 +58,12 @@ void TwinkLuaMgr::GetModulesFromDocuments(bool EnableByDefault)
 				continue;
 			}
 			LuaModuleInfo = *pLuaModuleInfo;
+
+			RunMain(Filename.c_str(), ErrorStrBuffer, sizeof(ErrorStrBuffer));
+			if (strcmp(ErrorStrBuffer, "OK") != 0)
+			{
+				Logger->PrintWarnArgs("While running 'Main' in {}: {}", Filename, ErrorStrBuffer);
+			}
 
 			ILuaModule* LuaModule = new ILuaModule(Filename.c_str(), &LuaModuleInfo);
 			delete pLuaModuleInfo;
@@ -99,15 +112,14 @@ void TwinkLuaMgr::RunModulesRender()
 {
 	for (ILuaModule* LuaModule : LuaModules)
 	{
-		if (LuaModule->Enabled and !LuaModule->HasErrored)
+		if (LuaModule->HasRenderFn and LuaModule->Enabled and !LuaModule->HasErrored)
 		{
 			char ErrorStrBuffer[ErrorStrBufferSize] = { 0 };
 			RunRender(LuaModule->Filename.c_str(), ErrorStrBuffer, sizeof(ErrorStrBuffer));
 			if (strcmp(ErrorStrBuffer, "OK") != 0)
 			{
-				Logger->PrintErrorArgs("Error while running lua module {}: {}", LuaModule->Filename, ErrorStrBuffer);
-				CloseLua(LuaModule->Filename.c_str());
-				LuaModule->HasErrored = true;
+				Logger->PrintWarnArgs("While running 'Render' in {}: {}", LuaModule->Filename, ErrorStrBuffer);
+				LuaModule->HasRenderFn = false;
 			}
 		}
 	}
@@ -117,14 +129,14 @@ void TwinkLuaMgr::RunModulesRenderMenuItem()
 {
 	for (ILuaModule* LuaModule : LuaModules)
 	{
-		if (LuaModule->HasMenuItemFn and LuaModule->Enabled and !LuaModule->HasErrored)
+		if (LuaModule->HasRenderMenuItemFn and LuaModule->Enabled and !LuaModule->HasErrored)
 		{
 			char ErrorStrBuffer[ErrorStrBufferSize] = { 0 };
 			RunRenderMenuItem(LuaModule->Filename.c_str(), ErrorStrBuffer, sizeof(ErrorStrBuffer));
 			if (strcmp(ErrorStrBuffer, "OK") != 0)
 			{
 				Logger->PrintWarnArgs("While running 'RenderMenuItem' in {}: {}", LuaModule->Filename, ErrorStrBuffer);
-				LuaModule->HasMenuItemFn = false;
+				LuaModule->HasRenderMenuItemFn = false;
 			}
 		}
 	}
@@ -134,14 +146,14 @@ void TwinkLuaMgr::RunModulesRenderMainMenuItem()
 {
 	for (ILuaModule* LuaModule : LuaModules)
 	{
-		if (LuaModule->HasMainMenuItemFn and LuaModule->Enabled and !LuaModule->HasErrored)
+		if (LuaModule->HasRenderMainMenuItemFn and LuaModule->Enabled and !LuaModule->HasErrored)
 		{
 			char ErrorStrBuffer[ErrorStrBufferSize] = { 0 };
 			RunRenderMainMenuItem(LuaModule->Filename.c_str(), ErrorStrBuffer, sizeof(ErrorStrBuffer));
 			if (strcmp(ErrorStrBuffer, "OK") != 0)
 			{
 				Logger->PrintWarnArgs("While running 'RenderMainMenuItem' in {}: {}", LuaModule->Filename, ErrorStrBuffer);
-				LuaModule->HasMainMenuItemFn = false;
+				LuaModule->HasRenderMainMenuItemFn = false;
 			}
 		}
 	}
@@ -151,14 +163,14 @@ void TwinkLuaMgr::RunModulesRenderSettings()
 {
 	for (ILuaModule* LuaModule : LuaModules)
 	{
-		if (LuaModule->HasSettingsFn and LuaModule->Enabled and !LuaModule->HasErrored)
+		if (LuaModule->HasRenderSettingsFn and LuaModule->Enabled and !LuaModule->HasErrored)
 		{
 			char ErrorStrBuffer[ErrorStrBufferSize] = { 0 };
 			RunRenderSettings(LuaModule->Filename.c_str(), ErrorStrBuffer, sizeof(ErrorStrBuffer));
 			if (strcmp(ErrorStrBuffer, "OK") != 0)
 			{
 				Logger->PrintWarnArgs("While running 'RenderSettings' in {}: {}", LuaModule->Filename, ErrorStrBuffer);
-				LuaModule->HasSettingsFn = false;
+				LuaModule->HasRenderSettingsFn = false;
 			}
 		}
 	}

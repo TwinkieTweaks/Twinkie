@@ -8,8 +8,8 @@ public:
 
 	ImVec4 ColorText = ImVec4(1.f, 1.f, 1.f, 1.f);
 	ImVec4 ColorBackground = ImVec4(0.1294117718935013f, 0.1372549086809158f, 0.168627455830574f, 0.8f);
-	TwinkTrackmania* Twinkie = nullptr;
-	TwinkLogs* Logger = nullptr;
+
+	bool EnableWhenOnline = true;
 
 	CheckpointCounterModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled)
 	{

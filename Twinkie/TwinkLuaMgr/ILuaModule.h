@@ -10,11 +10,10 @@ public:
 
 	bool HasErrored = false;
 
-	bool HasSettingsFn = true;
-	bool HasMainMenuItemFn = true;
-	bool HasMenuItemFn = true;
-
-	bool ChecksumValid = false;
+	bool HasRenderFn = true;
+	bool HasRenderSettingsFn = true;
+	bool HasRenderMainMenuItemFn = true;
+	bool HasRenderMenuItemFn = true;
 
 	ILuaModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled, const char* Filename, ModuleInfo* LuaModuleInfo)
 	{
@@ -35,9 +34,10 @@ public:
 	{
 		HasErrored = false;
 
-		HasSettingsFn = true;
-		HasMainMenuItemFn = true;
-		HasMenuItemFn = true;
+		HasRenderFn = true;
+		HasRenderSettingsFn = true;
+		HasRenderMainMenuItemFn = true;
+		HasRenderMenuItemFn = true;
 	}
 
 	ILuaModule() = default;

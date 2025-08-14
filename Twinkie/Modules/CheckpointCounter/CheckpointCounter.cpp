@@ -5,6 +5,7 @@ void CheckpointCounterModule::RenderSettings()
 	using namespace ImGui;
 	ColorEdit4("Background color", &ColorBackground.x, ImGuiColorEditFlags_NoInputs);
 	ColorEdit4("Text color", &ColorText.x, ImGuiColorEditFlags_NoInputs);
+	Checkbox("Enable when online", &EnableWhenOnline);
 }
 
 void CheckpointCounterModule::RenderAnyways()
@@ -13,6 +14,7 @@ void CheckpointCounterModule::RenderAnyways()
 	if (Twinkie->IsPlaying())
 	{
 		if (Twinkie->GetChallengeInfo().CheckpointCount == 0) return;
+		if (Twinkie->IsOnline() and !EnableWhenOnline) return;
 		PushStyleColor(ImGuiCol_WindowBg, ColorBackground);
 		auto WindowFlags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize;
 		if (!*UiRenderEnabled) WindowFlags |= ImGuiWindowFlags_NoInputs;
@@ -41,6 +43,7 @@ void CheckpointCounterModule::SettingsInit(SettingMgr& Settings)
 
 	Settings["CheckpointCounter"]["Background color"].GetAsVec4(&ColorBackground);
 	Settings["CheckpointCounter"]["Text color"].GetAsVec4(&ColorText);
+	Settings["CheckpointCounter"]["Enable when online"].GetAsBool(&EnableWhenOnline);
 }
 
 void CheckpointCounterModule::SettingsSave(SettingMgr& Settings)
@@ -49,4 +52,5 @@ void CheckpointCounterModule::SettingsSave(SettingMgr& Settings)
 
 	Settings["CheckpointCounter"]["Background color"].Set(ColorBackground);
 	Settings["CheckpointCounter"]["Text color"].Set(ColorText);
+	Settings["CheckpointCounter"]["Enable when online"].Set(EnableWhenOnline);
 }

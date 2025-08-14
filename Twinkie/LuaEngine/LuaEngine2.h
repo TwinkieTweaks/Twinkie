@@ -21,7 +21,9 @@ extern "C"
 	__declspec(dllimport) void SetLuaPrintFunctionForState(const char* StateName, lua_CFunction PrintFunction);
 	__declspec(dllexport) void ExportImGuiForState(const char* StateName);
 	__declspec(dllimport) void InitLua(const char* StateName);
+	__declspec(dllimport) void RunMain(const char* StateName, char* ErrorStrBuffer, size_t ErrorStrSize);
 	__declspec(dllimport) void RunRender(const char* StateName, char* ErrorStrBuffer, size_t ErrorStrSize);
+	__declspec(dllimport) void RunRenderInterface(const char* StateName, char* ErrorStrBuffer, size_t ErrorStrSize);
 	__declspec(dllimport) void RunRenderMenuItem(const char* StateName, char* ErrorStrBuffer, size_t ErrorStrSize);
 	__declspec(dllimport) void RunRenderMainMenuItem(const char* StateName, char* ErrorStrBuffer, size_t ErrorStrSize);
 	__declspec(dllimport) void RunRenderSettings(const char* StateName, char* ErrorStrBuffer, size_t ErrorStrSize);

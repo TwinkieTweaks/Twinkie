@@ -34,11 +34,11 @@
 #include "../Modules/Telemetry/Telemetry.h"
 #ifdef BUILD_DEBUG
 #include "../Modules/PlayerInfo/PlayerInfo.h"
+#include "../Modules/AppExplorerDev.h"
+#else
+#include "../Modules/AppExplorerNadeo.h"
 #endif
 #include "../Modules/LuaConsole/LuaConsole.h"
-#ifdef BUILD_PREMIUM
-#include "../Modules/AppExplorer.h"
-#endif
 
 #include <d3d9.h>
 
