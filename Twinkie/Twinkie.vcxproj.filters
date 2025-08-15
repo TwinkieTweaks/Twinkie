@@ -201,6 +201,9 @@
     <ClInclude Include="Modules\AppExplorerNadeo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Modules\MapValidator\MapValidator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -306,6 +309,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TwinkIo\TwinkIo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules\MapValidator\MapValidator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

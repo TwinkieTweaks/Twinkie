@@ -4,7 +4,8 @@ void DashboardTachometerModule::RenderAnyways()
 {
 	using namespace ImGui;
 
-	if (!Twinkie->CurPlayerInfo.Vehicle) return;
+	if (!Twinkie->IsPlaying()) return;
+	if (Twinkie->IsInEditor()) return;
 	if (DisableTMO and std::find(TMOCarNames.begin(), TMOCarNames.end(), Twinkie->GetNameOfNod(Twinkie->CurPlayerInfo.Vehicle)) != TMOCarNames.end()) return;
 
 	int DashboardWindowFlags = ImGuiWindowFlags_NoTitleBar;

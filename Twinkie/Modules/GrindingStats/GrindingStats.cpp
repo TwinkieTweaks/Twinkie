@@ -110,6 +110,7 @@ void GrindingStatsModule::RenderInactive()
 void GrindingStatsModule::RenderAnyways()
 {
 	if (!Twinkie->IsPlaying()) return;
+	if (Twinkie->IsInEditor()) return;
 
 	using namespace ImGui;
 

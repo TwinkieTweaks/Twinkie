@@ -233,6 +233,7 @@ public:
     uintptr_t GetSystemEngine();
     uintptr_t GetSceneEngine();
     uintptr_t GetDataDrive();
+    uintptr_t GetEditor();
     IDirect3DDevice9* GetD3DDevice();
     uintptr_t LoadNodFromFilename(wchar_t* Filename, uintptr_t Drive);
     uintptr_t SceneEngineCreateInstance(unsigned int ClassId);
@@ -279,6 +280,8 @@ public:
     bool IsMwNodKindOf(uintptr_t Nod, unsigned int Id);
     bool IsChallengePlatform();
     bool IsPlaying();
+	bool IsInEditor();
+	bool IsInMediaTracker();
     bool ChallengeUsesScore();
     int ViewportOverlayDisabled();
 

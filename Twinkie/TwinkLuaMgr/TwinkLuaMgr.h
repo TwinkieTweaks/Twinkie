@@ -30,6 +30,7 @@ public:
 
 	void GetModulesFromDocuments(bool EnableByDefault = false);
 	void RunModulesRender();
+	void RunModulesRenderInterface();
 	void RunModulesRenderMenuItem();
 	void RunModulesRenderMainMenuItem();
 	void RunModulesRenderSettings();

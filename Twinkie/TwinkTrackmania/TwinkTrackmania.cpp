@@ -827,3 +827,19 @@ void TwinkTrackmania::UseEmittersInVehicleStruct(uintptr_t FirstEmitter, uintptr
     SetNodRef(BufferAddNewElem(Emitters), FirstEmitter);
     SetNodRef(BufferAddNewElem(Emitters), SecondEmitter);
 }
+
+uintptr_t TwinkTrackmania::GetEditor()
+{
+    return Read<uintptr_t>(GetTrackmania() + 0x414);
+}
+
+bool TwinkTrackmania::IsInEditor()
+{
+    if (!GetChallenge()) return false;
+    return Read<bool>(GetChallenge() + 0xD4);
+}
+bool TwinkTrackmania::IsInMediaTracker()
+{
+    if (!GetEditor()) return false;
+    return IsMwNodKindOf(GetEditor(), 0x030b1000);
+}

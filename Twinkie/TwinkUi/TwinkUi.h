@@ -32,6 +32,7 @@
 #include "../Modules/SplitSpeeds/SplitSpeeds.h"
 #include "../Modules/Tweaker/Tweaker.h"
 #include "../Modules/Telemetry/Telemetry.h"
+#include "../Modules/MapValidator/MapValidator.h"
 #ifdef BUILD_DEBUG
 #include "../Modules/PlayerInfo/PlayerInfo.h"
 #include "../Modules/AppExplorerDev.h"

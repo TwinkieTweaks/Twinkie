@@ -159,6 +159,23 @@ void TwinkLuaMgr::RunModulesRenderMainMenuItem()
 	}
 }
 
+void TwinkLuaMgr::RunModulesRenderInterface()
+{
+	for (ILuaModule* LuaModule : LuaModules)
+	{
+		if (LuaModule->HasRenderInterfaceFn and LuaModule->Enabled and !LuaModule->HasErrored)
+		{
+			char ErrorStrBuffer[ErrorStrBufferSize] = { 0 };
+			RunRenderInterface(LuaModule->Filename.c_str(), ErrorStrBuffer, sizeof(ErrorStrBuffer));
+			if (strcmp(ErrorStrBuffer, "OK") != 0)
+			{
+				Logger->PrintWarnArgs("While running 'RenderInterface' in {}: {}", LuaModule->Filename, ErrorStrBuffer);
+				LuaModule->HasRenderInterfaceFn = false;
+			}
+		}
+	}
+}
+
 void TwinkLuaMgr::RunModulesRenderSettings()
 {
 	for (ILuaModule* LuaModule : LuaModules)
@@ -203,6 +220,7 @@ bool TwinkLuaMgr::ReloadModule(const char* Filename)
 			LuaModule->HasErrored = false;
 
 			InitLua(Filename);
+			AddToLuaPackagePath(GetLuaState(Filename), ";" + LuaModulePath.string() + "\\?.lua");
 			ExportImGuiForState(Filename);
 			SetImGuiContext(ImGui::GetCurrentContext());
 

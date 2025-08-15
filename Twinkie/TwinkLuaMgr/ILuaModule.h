@@ -14,6 +14,7 @@ public:
 	bool HasRenderSettingsFn = true;
 	bool HasRenderMainMenuItemFn = true;
 	bool HasRenderMenuItemFn = true;
+	bool HasRenderInterfaceFn = true;
 
 	ILuaModule(TwinkTrackmania& Twinkie, TwinkLogs& Logger, const bool* UiRenderEnabled, const char* Filename, ModuleInfo* LuaModuleInfo)
 	{
@@ -38,6 +39,7 @@ public:
 		HasRenderSettingsFn = true;
 		HasRenderMainMenuItemFn = true;
 		HasRenderMenuItemFn = true;
+		HasRenderInterfaceFn = true;
 	}
 
 	ILuaModule() = default;

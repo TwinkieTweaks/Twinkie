@@ -57,6 +57,8 @@ void SplitSpeedsModule::RenderInactive()
 	if (Twinkie->IsPlaying())
 	{
 		if (Twinkie->IsChallengePlatform() or Twinkie->IsOnline()) return;
+		if (Twinkie->IsInEditor()) return;
+
 		CurrentState = Twinkie->GetState();
 
 		CurrentRaceTime = Twinkie->GetRaceTime();

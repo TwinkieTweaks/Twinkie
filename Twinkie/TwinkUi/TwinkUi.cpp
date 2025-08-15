@@ -54,6 +54,7 @@ TwinkUi::TwinkUi()
     //
     Modules.push_back(new MedalsModule(TrackmaniaMgr, Logger, &DoRender));
     //
+	Modules.push_back(new MapValidatorModule(TrackmaniaMgr, Logger, &DoRender));
     Modules.push_back(new GhostEditorModule(TrackmaniaMgr, Logger, &DoRender));
     Modules.push_back(new TweakerModule(TrackmaniaMgr, Logger, &DoRender));
     Modules.push_back(new AlwaysOfficialModule(TrackmaniaMgr, Logger, &DoRender));
@@ -66,7 +67,7 @@ TwinkUi::TwinkUi()
 
     if (TrackmaniaMgr.TMInterfaceLoaded)
     {
-        Logger.PrintInternal("TMInterface was found, some modules' features will be disabled");
+        Logger.PrintWarn("TMInterface was found, some modules' features will be disabled");
     }
 }
 
@@ -495,6 +496,7 @@ void TwinkUi::RenderAnyways()
     }
 
     if (LuaMgr->ModuleManagerOpen) LuaMgr->RenderModuleManager();
+	LuaMgr->RunModulesRenderInterface();
 
     if (FontMain) PopFont();
 

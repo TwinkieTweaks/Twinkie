@@ -12,6 +12,8 @@ void MedalsModule::RenderAnyways()
 	using namespace ImGui;
 	if (Twinkie->IsPlaying())
 	{
+		if (Twinkie->IsInEditor()) return;
+
 		ChallengeInfo InfoStruct = Twinkie->GetChallengeInfo();
 
 		if (InfoStruct.AuthorTime == (MAXDWORD)) return;

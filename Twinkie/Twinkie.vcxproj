@@ -530,6 +530,7 @@
     <ClInclude Include="Modules\GhostEditor\GhostEditor.h" />
     <ClInclude Include="Modules\GrindingStats\GrindingStats.h" />
     <ClInclude Include="Modules\LuaConsole\LuaConsole.h" />
+    <ClInclude Include="Modules\MapValidator\MapValidator.h" />
     <ClInclude Include="Modules\SplitSpeeds\SplitSpeeds.h" />
     <ClInclude Include="Modules\StadiumTrailsPatch\StadiumTrailsPatch.h" />
     <ClInclude Include="Modules\Telemetry\Telemetry.h" />
@@ -585,6 +586,7 @@
     <ClCompile Include="Modules\GhostEditor\GhostEditor.cpp" />
     <ClCompile Include="Modules\GrindingStats\GrindingStats.cpp" />
     <ClCompile Include="Modules\LuaConsole\LuaConsole.cpp" />
+    <ClCompile Include="Modules\MapValidator\MapValidator.cpp" />
     <ClCompile Include="Modules\Medals\Medals.cpp" />
     <ClCompile Include="Modules\PlayerInfo\PlayerInfo.cpp" />
     <ClCompile Include="Modules\SplitSpeeds\SplitSpeeds.cpp" />

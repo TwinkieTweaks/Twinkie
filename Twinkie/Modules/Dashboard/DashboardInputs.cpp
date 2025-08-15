@@ -15,7 +15,8 @@ void DashboardInputsModule::RenderAnyways()
 	using namespace ImGui;
 	if (Twinkie->IsPlaying())
 	{
-		static bool IsPrevHovered = false;
+		if (Twinkie->IsInEditor()) return;
+
 		VehicleInputs InputInfo = Twinkie->GetInputInfo();
 
 		PushStyleColor(ImGuiCol_WindowBg, ColorBackground);

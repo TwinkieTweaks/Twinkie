@@ -15,6 +15,7 @@ void CheckpointCounterModule::RenderAnyways()
 	{
 		if (Twinkie->GetChallengeInfo().CheckpointCount == 0) return;
 		if (Twinkie->IsOnline() and !EnableWhenOnline) return;
+		if (Twinkie->IsInEditor()) return;
 		PushStyleColor(ImGuiCol_WindowBg, ColorBackground);
 		auto WindowFlags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize;
 		if (!*UiRenderEnabled) WindowFlags |= ImGuiWindowFlags_NoInputs;
