@@ -4,7 +4,7 @@
 #include <cstdlib>
 
 #define LuaConsoleStateName "TwinkieLuaConsole"
-#define LuaConsoleStrBootup "Lua console for Twinkie " TwinkieVersion "\nRunning " LUA_VERSION "\nAvailable globals: App\nAvailable functions: print(), clear(), cls()\n"
+#define LuaConsoleStrBootup "Lua console for Twinkie " TwinkieVersion "\nRunning " LUA_VERSION "\nAvailable globals: App, Dev\nAvailable functions: print(), clear(), cls()\n"
 
 extern void AddToLuaPackagePath(lua_State* L, const std::string& Directory);
 
@@ -154,6 +154,11 @@ void LuaConsoleModule::Render()
     {
         g_LuaConsoleModulePreviousStatements.push_back(LuaStringBuffer);
         g_LuaConsoleModuleOutputStr = g_LuaConsoleModuleOutputStr + "> " + LuaStringBuffer + "\n";
+        if (std::string(LuaStringBuffer).starts_with("local"))
+        {
+            g_LuaConsoleModuleOutputStr = g_LuaConsoleModuleOutputStr + "!! Locals go out of scope with each statement (i.e. if you make a local variable, you cannot access it later) !!\n"
+                                                                        "!! If you want to create a variable, make it global (don't use the local directive) !!";
+        }
         RunLua(LuaConsoleStateName, LuaStringBuffer, ErrorBuffer, StringBufferMaxSize);
         if (strcmp(ErrorBuffer, "OK") != StringsAreEqual)
         {
