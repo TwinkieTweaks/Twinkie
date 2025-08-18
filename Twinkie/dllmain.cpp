@@ -1,4 +1,10 @@
+#ifndef LUAJIT
+#include "LuaEngine/include/lua.hpp"
 #pragma comment(lib, "LuaEngine/lua54.lib")
+#else
+#include "LuaEngine/include/lua.hpp"
+#pragma comment(lib, "LuaEngine/lua51.lib")
+#endif
 #pragma comment(lib, "LuaEngine/LuaEngine2.lib")
 #include "LuaEngine/LuaEngine2.h"
 #define WIN32_LEAN_AND_MEAN
