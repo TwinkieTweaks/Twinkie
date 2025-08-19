@@ -3,7 +3,7 @@
 #include "../../IModule.h"
 #include "../../LuaEngine/LuaEngine2.h"
 
-#define StringBufferMaxSize 512
+#define StringBufferMaxSize 4096
 
 extern "C" int LuaConsolePrintOverride(lua_State* L);
 extern std::string g_LuaConsoleModuleOutputStr;

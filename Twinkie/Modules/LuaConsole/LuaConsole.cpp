@@ -4,7 +4,7 @@
 #include <cstdlib>
 
 #define LuaConsoleStateName "TwinkieLuaConsole"
-#define LuaConsoleStrBootup "Lua console for Twinkie " TwinkieVersion "\nRunning " LUA_VERSION "\nAvailable globals: App, Dev\nAvailable functions: print(), clear(), cls()\n"
+#define LuaConsoleStrBootup "Lua console for Twinkie " TwinkieVersion "\nRunning " LUA_VERSION "\nAvailable globals: App, Dev, Reflection\nAvailable functions: print(), clear(), cls()\n"
 
 extern void AddToLuaPackagePath(lua_State* L, const std::string& Directory);
 
