@@ -203,6 +203,7 @@ bool TwinkLuaMgr::ReloadModule(const char* Filename)
 		Filesystem::create_directories(LuaModulePath);
 	}
 
+	Filesystem::path LuaModulePathNoFilename = LuaModulePath;
 	LuaModulePath /= Filename;
 
 	if (!Filesystem::exists(LuaModulePath))
@@ -220,7 +221,7 @@ bool TwinkLuaMgr::ReloadModule(const char* Filename)
 			LuaModule->HasErrored = false;
 
 			InitLua(Filename);
-			AddToLuaPackagePath(GetLuaState(Filename), ";" + LuaModulePath.string() + "\\?.lua");
+			AddToLuaPackagePath(GetLuaState(Filename), ";" + LuaModulePathNoFilename.string() + "\\?.lua");
 			ExportImGuiForState(Filename);
 			SetImGuiContext(ImGui::GetCurrentContext());
 
