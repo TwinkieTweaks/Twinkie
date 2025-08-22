@@ -1,7 +1,7 @@
 #pragma once
 #include "LuaEngine/include/lua.hpp"
 
-#define TwinkieVersion "v2.0.0-luaengine-rcthree"
+#define TwinkieVersion "v2.0.0-luaengine-rcfour"
 
 class Versioning
 {
