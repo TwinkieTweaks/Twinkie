@@ -35,9 +35,6 @@
 #include "../Modules/MapValidator/MapValidator.h"
 #ifdef BUILD_DEBUG
 #include "../Modules/PlayerInfo/PlayerInfo.h"
-#include "../Modules/AppExplorerDev.h"
-#else
-#include "../Modules/AppExplorerNadeo.h"
 #endif
 #include "../Modules/LuaConsole/LuaConsole.h"
 

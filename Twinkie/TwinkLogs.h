@@ -16,7 +16,7 @@ inline std::string AndGetDocumentsFolder()
     return path;
 }
 
-class TwinkLogs
+class __declspec(dllexport) TwinkLogs
 {
 public:
 	bool EnableLog = false;

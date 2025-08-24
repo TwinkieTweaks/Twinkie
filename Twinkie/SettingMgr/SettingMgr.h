@@ -21,7 +21,7 @@ inline std::string GetDocumentsFolder()
 	return path;
 }
 
-class Setting
+class __declspec(dllexport) Setting
 {
 public:
 	std::string Name = "";
@@ -47,7 +47,7 @@ public:
 	void Set(std::vector<float>& Value);
 };
 
-class Tab
+class __declspec(dllexport) Tab
 {
 public:
 	std::string Name = "";
@@ -63,7 +63,7 @@ public:
 	Setting& operator[](std::string Name);
 };
 
-class SettingMgr
+class __declspec(dllexport) SettingMgr
 {
 public:
 	std::vector<Tab> Tabs;

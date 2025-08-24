@@ -188,7 +188,7 @@ public:
     void* pValue2 = nullptr;
 };
 
-class TwinkTrackmania
+class __declspec(dllexport) TwinkTrackmania
 {
 public:
     PlayerInfo CurPlayerInfo = {};

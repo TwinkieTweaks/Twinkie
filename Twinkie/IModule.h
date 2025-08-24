@@ -10,7 +10,7 @@
 #include <vector>
 
 // this isn't *technically* an interface but it's the class all modules inherit from
-class IModule
+class __declspec(dllexport) IModule
 {
 public:
 	bool Enabled = false;

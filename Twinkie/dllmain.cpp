@@ -99,6 +99,26 @@ TwinkUi Twinkie;
 std::string g_LuaConsoleModuleOutputStr = "";
 std::vector<std::string> g_LuaConsoleModulePreviousStatements = {};
 
+__declspec(dllexport) void AddModule(IModule* Module)
+{
+	Twinkie.Modules.push_back(Module);
+}
+
+__declspec(dllexport) TwinkTrackmania* const GetTrackmaniaMgr()
+{
+	return &Twinkie.TrackmaniaMgr;
+}
+
+__declspec(dllexport) TwinkLogs* const GetLogger()
+{
+	return &Twinkie.Logger;
+}
+
+__declspec(dllexport) bool* const GetUiRenderEnabled()
+{
+	return &Twinkie.DoRender;
+}
+
 int LuaPrintFunction(lua_State* L)
 {
 	int NumberOfElems = lua_gettop(L);
