@@ -102,6 +102,8 @@ std::vector<std::string> g_LuaConsoleModulePreviousStatements = {};
 __declspec(dllexport) void AddModule(IModule* Module)
 {
 	Twinkie.Modules.push_back(Module);
+	Twinkie.Logger.PrintInternalArgs("New C++ module added: {}", Module->Name);
+	Twinkie.Logger.PrintInternalArgs("{} C++ module{} initialized.", Twinkie.Modules.size(), Twinkie.Modules.size() == 1 ? "" : "s");
 }
 
 __declspec(dllexport) TwinkTrackmania* const GetTrackmaniaMgr()
@@ -249,7 +251,6 @@ static DWORD WINAPI MainThread(LPVOID lpReserved)
 	while (!HookedAndAttached)
 	{
 		Twinkie.Logger.PrintInternal("Hooking DX9...");
-		Twinkie.Logger.PrintInternalArgs("IDirect3DDevice9* (0x{:x})", (unsigned int)D3DDevice);
 		if ((Twinkie.DX9HookStatus = kiero::init(kiero::RenderType::D3D9)) == kiero::Status::Success)
 		{
 			Twinkie.Logger.PrintInternal("kiero initialized");

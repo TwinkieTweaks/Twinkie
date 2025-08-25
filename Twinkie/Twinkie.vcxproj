@@ -525,7 +525,6 @@
     <ClInclude Include="LuaEngine\LuaEngine2.h" />
     <ClInclude Include="Modules\About\About.h" />
     <ClInclude Include="Modules\AlwaysOfficial\AlwaysOfficial.h" />
-    <ClInclude Include="Modules\AppExplorerNadeo.h" />
     <ClInclude Include="Modules\DownloadServerMaps\DownloadServerMaps.h" />
     <ClInclude Include="Modules\GhostEditor\GhostEditor.h" />
     <ClInclude Include="Modules\GrindingStats\GrindingStats.h" />
@@ -538,7 +537,6 @@
     <ClInclude Include="Telemetry.h" />
     <ClInclude Include="minhook\buffer.h" />
     <ClInclude Include="mINI\ini.h" />
-    <ClInclude Include="Modules\AppExplorerDev.h" />
     <ClInclude Include="Modules\Dashboard\DashboardInputs.h" />
     <ClInclude Include="Modules\Dashboard\DashboardTacho.h" />
     <ClInclude Include="Modules\Dashboard\DashboardGears.h" />

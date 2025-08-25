@@ -28,8 +28,8 @@ Global
 		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Debug|x86.Build.0 = Modloader|Win32
 		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Modloader|x64.ActiveCfg = Modloader|x64
 		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Modloader|x64.Build.0 = Modloader|x64
-		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Modloader|x86.ActiveCfg = Modloader|Win32
-		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Modloader|x86.Build.0 = Modloader|Win32
+		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Modloader|x86.ActiveCfg = Nations|Win32
+		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Modloader|x86.Build.0 = Nations|Win32
 		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Nations|x64.ActiveCfg = Nations|x64
 		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Nations|x64.Build.0 = Nations|x64
 		{E43A687A-2577-4CD5-A45C-EA35254221E9}.Nations|x86.ActiveCfg = Nations|Win32
