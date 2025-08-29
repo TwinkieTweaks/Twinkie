@@ -239,6 +239,7 @@ public:
     uintptr_t SceneEngineCreateInstance(unsigned int ClassId);
 
     TM::CFastStringInt GetChatText();
+    TM::CFastStringInt GetDocumentsFolderTM();
     std::string GetNameOfNod(uintptr_t Nod);
     std::string GetChallengeDecorationName();
     std::string GetChallengeUID();

@@ -639,6 +639,16 @@ uintptr_t TwinkTrackmania::GetDataDrive()
     return (uintptr_t)SystemEngine->GetLocationData();
 }
 
+TM::CFastStringInt TwinkTrackmania::GetDocumentsFolderTM()
+{
+    TM::CFastStringInt ReturnVal = {};
+    
+    using GetMyDocumentsDirFn = void(__cdecl*)(TM::CFastStringInt*);
+    reinterpret_cast<GetMyDocumentsDirFn>(GetExeBaseAddr() + 0x32d40)(&ReturnVal);
+
+    return ReturnVal;
+}
+
 // SETTERS
 void TwinkTrackmania::ForceDevicePoll(uintptr_t Device, int MustNotPoll)
 {

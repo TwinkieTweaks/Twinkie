@@ -6,9 +6,12 @@ void TwinkUi::SettingsInit()
     {
         Module->SettingsInit(Settings);
     }
-
+    
     Settings["Twinkie"]["UI Scale"].GetAsFloat(&UiScale);
-    Settings["Twinkie"]["Autosave interval (minutes)"].GetAsFloat(&AutosaveIntervalMinutes);
+    Settings["Twinkie"]["AutPosave interval (minutes)"].GetAsFloat(&AutosaveIntervalMinutes);
+    Settings["Twinkie"]["Font"].GetAsString(&FontName);
+
+    FontIdx = FontName == "BricolageGrotesque" ? 1 : 0;
 
     if (Settings.Status != 0)
     {
@@ -25,6 +28,7 @@ void TwinkUi::SettingsSave()
 
     Settings["Twinkie"]["UI Scale"].Set(UiScale);
     Settings["Twinkie"]["Autosave interval (minutes)"].Set(AutosaveIntervalMinutes);
+    Settings["Twinkie"]["Font"].Set(FontName);
 }
 
 TwinkUi::TwinkUi()
@@ -154,42 +158,94 @@ void TwinkUi::PatchFullscreenWindowed(HWND WindowHandle)
 
 void TwinkUi::InitFonts(ImGuiIO& ImIo)
 {
-    ImFontConfig MainCfg;
-    MainCfg.Flags |= ImFontFlags_NoLoadError;
+    bool SkipIconsMono = false;
+    bool SkipIconsRegu = false;
 
-    Logger.PrintInternalArgs("Documents are at: {}", GetDocumentsFolder());
-    Logger.PrintInternalArgs("Expected path of Fonts is at: {}", (GetDocumentsFolder() + "\\Twinkie\\Fonts\\Twinkie.ttf"));
-    FontMain = ImIo.Fonts->AddFontFromFileTTF((GetDocumentsFolder() + "\\Twinkie\\Fonts\\Twinkie.ttf").c_str(), 14.f * UiScale, &MainCfg);
+    ImFontConfig MonoCfg;
+    MonoCfg.Flags |= ImFontFlags_NoLoadError;
 
-    if (FontMain)
+    std::string DocsFolder = GetDocumentsFolder();
+
+    Logger.PrintInternalArgs("Documents are at: {}", DocsFolder);
+    Logger.PrintInternalArgs("Expected path of Fonts is at: {}", (DocsFolder + "\\Twinkie\\Fonts\\CascadiaMono.ttf"));
+    FontMono = ImIo.Fonts->AddFontFromFileTTF((DocsFolder + "\\Twinkie\\Fonts\\CascadiaMono.ttf").c_str(), 14.f * UiScale, &MonoCfg);
+
+    if (FontMono)
     {
-        Logger.PrintInternal("Font \"Main\" initialized.");
+        Logger.PrintInternal("Font \"CascadiaMono\" initialized.");
     }
     else
     {
-        Logger.PrintError("Font \"Main\" not initialized.");
-        return;
+        Logger.PrintError("Font \"CascadiaMono\" not initialized.");
+        SkipIconsMono = true;
     }
 
-    // Taken example from https://github.com/juliettef/IconFontCppHeaders?tab=readme-ov-file#example-code
-    float IconFontSize = (14.f * UiScale);
-
-    ImFontConfig IconCfg;
-    IconCfg.MergeMode = true;
-    IconCfg.PixelSnapH = true;
-    IconCfg.GlyphMinAdvanceX = IconFontSize;
-
-    Logger.PrintInternalArgs("Documents are at: {}", GetDocumentsFolder());
-    Logger.PrintInternalArgs("Expected path of Fonts is at: {}", (GetDocumentsFolder() + "\\Twinkie\\Fonts\\ManiaIcons.ttf"));
-    auto FontManiaIcons = ImIo.Fonts->AddFontFromFileTTF((GetDocumentsFolder() + "\\Twinkie\\Fonts\\ManiaIcons.ttf").c_str(), IconFontSize, &IconCfg);
-
-    if (FontManiaIcons)
+    if (!SkipIconsMono)
     {
-        Logger.PrintInternal("Font \"ManiaIcons\" initialized.");
+        // Taken example from https://github.com/juliettef/IconFontCppHeaders?tab=readme-ov-file#example-code
+        float MonoIconFontSize = (14.f * UiScale);
+
+        ImFontConfig MonoIconCfg;
+        MonoIconCfg.MergeMode = true;
+        MonoIconCfg.PixelSnapH = true;
+        MonoIconCfg.GlyphMinAdvanceX = MonoIconFontSize;
+        MonoIconCfg.Flags |= ImFontFlags_NoLoadError;
+
+        Logger.PrintInternalArgs("Documents are at: {}", DocsFolder);
+        Logger.PrintInternalArgs("Expected path of Fonts is at: {}", (DocsFolder + "\\Twinkie\\Fonts\\ManiaIcons.ttf"));
+        auto FontManiaIconsMono = ImIo.Fonts->AddFontFromFileTTF((DocsFolder + "\\Twinkie\\Fonts\\ManiaIcons.ttf").c_str(), MonoIconFontSize, &MonoIconCfg);
+
+        if (FontManiaIconsMono)
+        {
+            Logger.PrintInternal("Font \"ManiaIcons\" initialized.");
+        }
+        else
+        {
+            Logger.PrintError("Font \"ManiaIcons\" not initialized.");
+        }
+    }
+
+    ImFontConfig ReguCfg;
+    ReguCfg.MergeMode = false;
+    ReguCfg.Flags |= ImFontFlags_NoLoadError;
+
+    Logger.PrintInternalArgs("Documents are at: {}", DocsFolder);
+    Logger.PrintInternalArgs("Expected path of Fonts is at: {}", (DocsFolder + "\\Twinkie\\Fonts\\BricolageGrotesque.ttf"));
+    FontRegu = ImIo.Fonts->AddFontFromFileTTF((DocsFolder + "\\Twinkie\\Fonts\\BricolageGrotesque.ttf").c_str(), 14.f * UiScale, &ReguCfg);
+
+    if (FontRegu)
+    {
+        Logger.PrintInternal("Font \"BricolageGrotesque\" initialized.");
     }
     else
     {
-        Logger.PrintError("Font \"ManiaIcons\" not initialized.");
+        Logger.PrintError("Font \"BricolageGrotesque\" not initialized.");
+        SkipIconsRegu = true;
+    }
+
+    if (!SkipIconsRegu)
+    {
+        // Taken example from https://github.com/juliettef/IconFontCppHeaders?tab=readme-ov-file#example-code
+        float ReguIconFontSize = (14.f * UiScale);
+
+        ImFontConfig ReguIconCfg;
+        ReguIconCfg.MergeMode = true;
+        ReguIconCfg.PixelSnapH = true;
+        ReguIconCfg.GlyphMinAdvanceX = ReguIconFontSize;
+        ReguIconCfg.Flags |= ImFontFlags_NoLoadError;
+
+        Logger.PrintInternalArgs("Documents are at: {}", DocsFolder);
+        Logger.PrintInternalArgs("Expected path of Fonts is at: {}", (DocsFolder + "\\Twinkie\\Fonts\\ManiaIcons.ttf"));
+        auto FontManiaIconsRegu = ImIo.Fonts->AddFontFromFileTTF((DocsFolder + "\\Twinkie\\Fonts\\ManiaIcons.ttf").c_str(), ReguIconFontSize, &ReguIconCfg);
+
+        if (FontManiaIconsRegu)
+        {
+            Logger.PrintInternal("Font \"ManiaIcons\" initialized.");
+        }
+        else
+        {
+            Logger.PrintError("Font \"ManiaIcons\" not initialized.");
+        }
     }
 }
 
@@ -287,7 +343,7 @@ void TwinkUi::SetupImGuiStyle()
 void TwinkUi::Render()
 {
     using namespace ImGui;
-    if (FontMain) PushFont(FontMain, 14.f * UiScale);
+    if (SelectedFont) PushFont(SelectedFont, 14.f * UiScale);
 
     for (IModule* Module : Modules)
     {
@@ -387,7 +443,9 @@ void TwinkUi::Render()
 
     if (EnableImGuiDemo) ShowDemoWindow(&EnableImGuiDemo);
 
-    if (FontMain) PopFont();
+    if (SelectedFont) PopFont();
+
+    SelectedFont = (FontName == "BricolageGrotesque" or FontName == "") ? FontRegu : FontMono;
 }
 
 void TwinkUi::RenderSettings()
@@ -461,6 +519,10 @@ void TwinkUi::RenderSettings()
                     Logger.PrintInternal("Settings saved successfully.");
                 }
             }
+            if (Combo("Font", (int*)&FontIdx, g_FontNames, IM_ARRAYSIZE(g_FontNames)))
+            {
+                FontName = g_FontNames[FontIdx];
+            }
         }
 
         EndChild();
@@ -481,7 +543,7 @@ void TwinkUi::RenderAnyways()
         Logger.PrintInternalArgs("{} Lua module{} initialized.", LuaMgr->LuaModules.size(), LuaMgr->LuaModules.size() == 1 ? "" : "s");
     }
 
-    if (FontMain) PushFont(FontMain, 14.f * UiScale);
+    if (SelectedFont) PushFont(SelectedFont, 14.f * UiScale);
 
     IoMgr->Update();
 
@@ -495,7 +557,7 @@ void TwinkUi::RenderAnyways()
     if (LuaMgr->ModuleManagerOpen) LuaMgr->RenderModuleManager();
 	LuaMgr->RunModulesRenderInterface();
 
-    if (FontMain) PopFont();
+    if (SelectedFont) PopFont();
 
     bool TriggerAutosave = false;
 

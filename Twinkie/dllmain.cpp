@@ -79,6 +79,12 @@ const char* g_NamesOfMwTypes[] =
 	"PROC"
 };
 
+const char* g_FontNames[2] =
+{
+	"CascadiaMono",
+	"BricolageGrotesque"
+};
+
 #include <iostream>
 #include "TwinkUi/TwinkUi.h"
 #include "imgui-dx9/imgui_impl_dx9.h"
