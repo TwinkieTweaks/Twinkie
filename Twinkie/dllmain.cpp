@@ -176,6 +176,7 @@ static long __stdcall hkPresent(LPDIRECT3DDEVICE9 pDevice, LPVOID A, LPVOID B, H
 	{
 		InitImGui(pDevice);
 		Twinkie.Initialized = true;
+		SetImGuiContext(ImGui::GetCurrentContext());
 	}
 
 	ImGui_ImplDX9_NewFrame();
@@ -261,7 +262,7 @@ static DWORD WINAPI MainThread(LPVOID lpReserved)
 			if (D3DDevice->GetCreationParameters(&D3DCreationParams) == D3D_OK)
 			{
 				Twinkie.Window = D3DCreationParams.hFocusWindow;
-				if (!Twinkie.Window) continue; // just to shut up MSVC, Window cannot be possibly null here because of Line 116
+				if (!Twinkie.Window) continue; // just to shut up MSVC, Window cannot be possibly null here because of dllmain.cpp(245,5)
 				Twinkie.oWndProc = (WNDPROC)SetWindowLongPtr(Twinkie.Window, GWLP_WNDPROC, (LONG_PTR)WndProc);
 				if (!Twinkie.oWndProc)
 					Twinkie.Logger.PrintErrorArgs("Failed to hook WndProc");
