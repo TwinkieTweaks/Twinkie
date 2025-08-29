@@ -48,6 +48,7 @@ using ResetFn = HRESULT(APIENTRY*)(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMET
 using PresentFn = long(__stdcall*)(LPDIRECT3DDEVICE9 pDevice, LPVOID, LPVOID, HWND, LPVOID);
 
 extern const char* g_FontNames[3];
+extern const char* g_ThemeNames[2];
 
 class TwinkUi
 {
@@ -63,7 +64,10 @@ public:
     ImFont* FontDroidSans = nullptr;
     ImFont* SelectedFont = FontBricolageGrotesque;
     size_t FontIdx = 1;
-    std::string FontName = "";
+    std::string FontName = "BricolageGrotesque";
+
+    size_t ThemeIdx = 0;
+    std::string ThemeName = "Twinkie";
 
     float UiScale = 1.f;
 
@@ -104,7 +108,8 @@ public:
     ~TwinkUi();
     void PatchFullscreenWindowed(HWND WindowHandle);
     void InitFonts(ImGuiIO& ImIo);
-    void SetupImGuiStyle();
+    void SetupTwinkieImGuiStyle();
+    void SetupOpenplanetImGuiStyle();
 
     void Render();
     void RenderSettings();

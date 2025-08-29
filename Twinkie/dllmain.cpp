@@ -86,6 +86,12 @@ const char* g_FontNames[3] =
 	"DroidSans"
 };
 
+const char* g_ThemeNames[2] =
+{
+	"Twinkie",
+	"Openplanet"
+};
+
 #include <iostream>
 #include "TwinkUi/TwinkUi.h"
 #include "imgui-dx9/imgui_impl_dx9.h"
@@ -158,7 +164,14 @@ int LuaPrintFunction(lua_State* L)
 static void InitImGui(LPDIRECT3DDEVICE9 pDevice)
 {
 	ImGui::CreateContext();
-	Twinkie.SetupImGuiStyle();
+	if (Twinkie.ThemeIdx == 0)
+	{
+		Twinkie.SetupTwinkieImGuiStyle();
+	}
+	else
+	{
+		Twinkie.SetupOpenplanetImGuiStyle();
+	}
 	ImGuiIO& ImIo = ImGui::GetIO();
 	ImGui_ImplWin32_Init(Twinkie.Window);
 	ImGui_ImplDX9_Init(pDevice);
