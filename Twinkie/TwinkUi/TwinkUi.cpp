@@ -504,7 +504,13 @@ void TwinkUi::RenderSettings()
         }
         else
         {
+            SeparatorText("User Interface");
             SliderFloat("UI Scale", &UiScale, 0.25f, 5.f, "%.3f");
+            if (Combo("Font", (int*)&FontIdx, g_FontNames, IM_ARRAYSIZE(g_FontNames)))
+            {
+                FontName = g_FontNames[FontIdx];
+            }
+            SeparatorText("Autosave");
             SliderFloat("Autosave interval (minutes)", &AutosaveIntervalMinutes, 0.1f, 60.f, "%.1f");
             if (Button("Save settings"))
             {
@@ -518,10 +524,6 @@ void TwinkUi::RenderSettings()
                 {
                     Logger.PrintInternal("Settings saved successfully.");
                 }
-            }
-            if (Combo("Font", (int*)&FontIdx, g_FontNames, IM_ARRAYSIZE(g_FontNames)))
-            {
-                FontName = g_FontNames[FontIdx];
             }
         }
 
