@@ -79,10 +79,11 @@ const char* g_NamesOfMwTypes[] =
 	"PROC"
 };
 
-const char* g_FontNames[2] =
+const char* g_FontNames[3] =
 {
 	"CascadiaMono",
-	"BricolageGrotesque"
+	"BricolageGrotesque",
+	"DroidSans"
 };
 
 #include <iostream>

@@ -11,7 +11,7 @@ void TwinkUi::SettingsInit()
     Settings["Twinkie"]["AutPosave interval (minutes)"].GetAsFloat(&AutosaveIntervalMinutes);
     Settings["Twinkie"]["Font"].GetAsString(&FontName);
 
-    FontIdx = FontName == "BricolageGrotesque" ? 1 : 0;
+    FontIdx = FontName == "BricolageGrotesque" ? 1 : FontName == "DroidSans" ? 2 : 0;
 
     if (Settings.Status != 0)
     {
@@ -159,7 +159,8 @@ void TwinkUi::PatchFullscreenWindowed(HWND WindowHandle)
 void TwinkUi::InitFonts(ImGuiIO& ImIo)
 {
     bool SkipIconsMono = false;
-    bool SkipIconsRegu = false;
+    bool SkipIconsBricolageGrotesque = false;
+    bool SkipIconsDroidSans = false;
 
     ImFontConfig MonoCfg;
     MonoCfg.Flags |= ImFontFlags_NoLoadError;
@@ -205,40 +206,83 @@ void TwinkUi::InitFonts(ImGuiIO& ImIo)
         }
     }
 
-    ImFontConfig ReguCfg;
-    ReguCfg.MergeMode = false;
-    ReguCfg.Flags |= ImFontFlags_NoLoadError;
+    ImFontConfig BricolageGrotesqueCfg;
+    BricolageGrotesqueCfg.MergeMode = false;
+    BricolageGrotesqueCfg.Flags |= ImFontFlags_NoLoadError;
 
     Logger.PrintInternalArgs("Documents are at: {}", DocsFolder);
     Logger.PrintInternalArgs("Expected path of Fonts is at: {}", (DocsFolder + "\\Twinkie\\Fonts\\BricolageGrotesque.ttf"));
-    FontRegu = ImIo.Fonts->AddFontFromFileTTF((DocsFolder + "\\Twinkie\\Fonts\\BricolageGrotesque.ttf").c_str(), 14.f * UiScale, &ReguCfg);
+    FontBricolageGrotesque = ImIo.Fonts->AddFontFromFileTTF((DocsFolder + "\\Twinkie\\Fonts\\BricolageGrotesque.ttf").c_str(), 14.f * UiScale, &BricolageGrotesqueCfg);
 
-    if (FontRegu)
+    if (FontBricolageGrotesque)
     {
         Logger.PrintInternal("Font \"BricolageGrotesque\" initialized.");
     }
     else
     {
         Logger.PrintError("Font \"BricolageGrotesque\" not initialized.");
-        SkipIconsRegu = true;
+        SkipIconsBricolageGrotesque = true;
     }
 
-    if (!SkipIconsRegu)
+    if (!SkipIconsBricolageGrotesque)
     {
         // Taken example from https://github.com/juliettef/IconFontCppHeaders?tab=readme-ov-file#example-code
-        float ReguIconFontSize = (14.f * UiScale);
+        float BricolageGrotesqueIconFontSize = (14.f * UiScale);
 
-        ImFontConfig ReguIconCfg;
-        ReguIconCfg.MergeMode = true;
-        ReguIconCfg.PixelSnapH = true;
-        ReguIconCfg.GlyphMinAdvanceX = ReguIconFontSize;
-        ReguIconCfg.Flags |= ImFontFlags_NoLoadError;
+        ImFontConfig BricolageGrotesqueIconCfg;
+        BricolageGrotesqueIconCfg.MergeMode = true;
+        BricolageGrotesqueIconCfg.PixelSnapH = true;
+        BricolageGrotesqueIconCfg.GlyphMinAdvanceX = BricolageGrotesqueIconFontSize;
+        BricolageGrotesqueIconCfg.Flags |= ImFontFlags_NoLoadError;
 
         Logger.PrintInternalArgs("Documents are at: {}", DocsFolder);
         Logger.PrintInternalArgs("Expected path of Fonts is at: {}", (DocsFolder + "\\Twinkie\\Fonts\\ManiaIcons.ttf"));
-        auto FontManiaIconsRegu = ImIo.Fonts->AddFontFromFileTTF((DocsFolder + "\\Twinkie\\Fonts\\ManiaIcons.ttf").c_str(), ReguIconFontSize, &ReguIconCfg);
+        auto FontManiaIconsBricolageGrotesque = ImIo.Fonts->AddFontFromFileTTF((DocsFolder + "\\Twinkie\\Fonts\\ManiaIcons.ttf").c_str(), BricolageGrotesqueIconFontSize, &BricolageGrotesqueIconCfg);
 
-        if (FontManiaIconsRegu)
+        if (FontManiaIconsBricolageGrotesque)
+        {
+            Logger.PrintInternal("Font \"ManiaIcons\" initialized.");
+        }
+        else
+        {
+            Logger.PrintError("Font \"ManiaIcons\" not initialized.");
+        }
+    }
+
+    ImFontConfig DroidSansCfg;
+    DroidSansCfg.MergeMode = false;
+    DroidSansCfg.Flags |= ImFontFlags_NoLoadError;
+
+    Logger.PrintInternalArgs("Documents are at: {}", DocsFolder);
+    Logger.PrintInternalArgs("Expected path of Fonts is at: {}", (DocsFolder + "\\Twinkie\\Fonts\\DroidSans.ttf"));
+    FontDroidSans = ImIo.Fonts->AddFontFromFileTTF((DocsFolder + "\\Twinkie\\Fonts\\DroidSans.ttf").c_str(), 14.f * UiScale, &DroidSansCfg);
+
+    if (FontDroidSans)
+    {
+        Logger.PrintInternal("Font \"DroidSans\" initialized.");
+    }
+    else
+    {
+        Logger.PrintError("Font \"DroidSans\" not initialized.");
+        SkipIconsDroidSans = true;
+    }
+
+    if (!SkipIconsDroidSans)
+    {
+        // Taken example from https://github.com/juliettef/IconFontCppHeaders?tab=readme-ov-file#example-code
+        float DroidSansIconFontSize = (14.f * UiScale);
+
+        ImFontConfig DroidSansIconCfg;
+        DroidSansIconCfg.MergeMode = true;
+        DroidSansIconCfg.PixelSnapH = true;
+        DroidSansIconCfg.GlyphMinAdvanceX = DroidSansIconFontSize;
+        DroidSansIconCfg.Flags |= ImFontFlags_NoLoadError;
+
+        Logger.PrintInternalArgs("Documents are at: {}", DocsFolder);
+        Logger.PrintInternalArgs("Expected path of Fonts is at: {}", (DocsFolder + "\\Twinkie\\Fonts\\ManiaIcons.ttf"));
+        auto FontManiaIconsDroidSans = ImIo.Fonts->AddFontFromFileTTF((DocsFolder + "\\Twinkie\\Fonts\\ManiaIcons.ttf").c_str(), DroidSansIconFontSize, &DroidSansIconCfg);
+
+        if (FontManiaIconsDroidSans)
         {
             Logger.PrintInternal("Font \"ManiaIcons\" initialized.");
         }
@@ -445,7 +489,7 @@ void TwinkUi::Render()
 
     if (SelectedFont) PopFont();
 
-    SelectedFont = (FontName == "BricolageGrotesque" or FontName == "") ? FontRegu : FontMono;
+    SelectedFont = (FontName == "BricolageGrotesque" or FontName == "") ? FontBricolageGrotesque : FontName == "DroidSans" ? FontDroidSans : FontMono;
 }
 
 void TwinkUi::RenderSettings()
