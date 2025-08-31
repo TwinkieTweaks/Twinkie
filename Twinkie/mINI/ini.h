@@ -93,6 +93,7 @@
 #include <fstream>
 #include <sys/stat.h>
 #include <cctype>
+#include <filesystem>
 
 namespace mINI
 {
@@ -443,7 +444,7 @@ namespace mINI
 
 		INIGenerator(std::string const& filename)
 		{
-			fileWriteStream.open(filename, std::ios::out | std::ios::binary);
+			fileWriteStream.open(std::filesystem::u8path(filename), std::ios::out | std::ios::binary);
 			char buf[512];
 			err = strerror_s(buf, 512, errno);
 		}

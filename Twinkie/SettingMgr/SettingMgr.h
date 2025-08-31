@@ -9,16 +9,38 @@
 #include <shlobj.h>
 #include <shlwapi.h>
 
+inline std::string WStringToUTF8(const std::wstring& wstr)
+{
+	if (wstr.empty()) return {};
+
+	int size_needed = WideCharToMultiByte(CP_UTF8, 0, wstr.data(), (int)wstr.size(), nullptr, 0, nullptr, nullptr);
+	std::string strTo(size_needed, 0);
+	WideCharToMultiByte(CP_UTF8, 0, wstr.data(), (int)wstr.size() + 1, &strTo[0], size_needed, nullptr, nullptr);
+	return strTo;
+}
+
 namespace Filesystem = std::filesystem;
 inline std::string GetDocumentsFolder()
 {
-	std::string path;
+	CoInitialize(NULL);
+	PWSTR path = nullptr;
+	HRESULT hr = SHGetKnownFolderPath(FOLDERID_Documents, 0, NULL, &path);
+	std::string result;
 
-	char szPath[MAX_PATH + 1] = {};
-	if (SHGetFolderPathA(NULL, CSIDL_MYDOCUMENTS, NULL, SHGFP_TYPE_CURRENT, szPath) == S_OK)
-		path = szPath;
+	if (SUCCEEDED(hr) && path != nullptr)
+	{
+		std::wstring widePath(path);
+		result = WStringToUTF8(widePath);
+		CoTaskMemFree(path);
+	}
+	else
+	{
+		return "";
+	}
 
-	return path;
+	CoUninitialize();
+
+	return result;
 }
 
 class __declspec(dllexport) Setting

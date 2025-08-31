@@ -141,7 +141,7 @@ SettingMgr::SettingMgr()
 		GenerateIni();
 		if (!IniFile.generate(IniStruct, true))
 		{
-			Filesystem::create_directories(GetDocumentsFolder() + "\\Twinkie\\");
+			Filesystem::create_directories(std::filesystem::u8path(GetDocumentsFolder() + "\\Twinkie\\"));
 			IniFile.generate(IniStruct, true);
 		}
 	}
