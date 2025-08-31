@@ -384,7 +384,7 @@ namespace mINI
 	public:
 		INIReader(std::string const& filename, bool keepLineData = false)
 		{
-			fileReadStream.open(filename, std::ios::in | std::ios::binary);
+			fileReadStream.open(std::filesystem::u8path(filename), std::ios::in | std::ios::binary);
 			if (keepLineData)
 			{
 				lineData = std::make_shared<T_LineData>();
@@ -707,7 +707,7 @@ namespace mINI
 				return false;
 			}
 			T_LineData output = getLazyOutput(lineData, data, originalData);
-			std::ofstream fileWriteStream(filename, std::ios::out | std::ios::binary);
+			std::ofstream fileWriteStream(std::filesystem::u8path(filename), std::ios::out | std::ios::binary);
 			if (fileWriteStream.is_open())
 			{
 				if (fileIsBOM) {

@@ -644,7 +644,7 @@ void TwinkUi::RenderSettings()
                 ThemeName = g_ThemeNames[ThemeIdx];
             }
             SeparatorText("Autosave");
-            SliderFloat("Autosave interval (minutes)", &AutosaveIntervalMinutes, 0.1f, 60.f, "%.1f");
+            SliderFloat("Autosave interval", &AutosaveIntervalMinutes, 0.1f, 60.f, "%.1f minutes");
             if (Button("Save settings"))
             {
                 Logger.PrintInternal("Saving settings...");
