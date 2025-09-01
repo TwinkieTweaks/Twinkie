@@ -211,6 +211,8 @@ public:
     template <int Idx>
     uintptr_t Virtual(uintptr_t This);
 
+    uintptr_t VirtualWrite(unsigned int Idx, uintptr_t This, uintptr_t ToWrite);
+
     // GETTERS
     uintptr_t GetExeBaseAddr();
     uintptr_t GetTrackmania();

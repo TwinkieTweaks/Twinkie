@@ -44,6 +44,13 @@ uintptr_t TwinkTrackmania::Virtual(uintptr_t This)
     return Read<uintptr_t>(Read<uintptr_t>(This) + Idx * 4);
 }
 
+uintptr_t TwinkTrackmania::VirtualWrite(unsigned int Idx, uintptr_t This, uintptr_t ToWrite)
+{
+    uintptr_t Original = Read<uintptr_t>(Read<uintptr_t>(This) + Idx * 4);
+    Write<uintptr_t>(ToWrite, Read<uintptr_t>(This) + Idx * 4);
+    return Original;
+}
+
 // GETTERS
 uintptr_t TwinkTrackmania::GetExeBaseAddr()
 {
