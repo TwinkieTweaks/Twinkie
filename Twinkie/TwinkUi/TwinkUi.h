@@ -40,6 +40,9 @@
 
 #include <d3d9.h>
 
+#include "../kiero/kiero.h"
+#include "../kiero/minhook/include/MinHook.h"
+
 using WNDPROC = LRESULT(CALLBACK*)(HWND, UINT, WPARAM, LPARAM);
 using ResetFn = HRESULT(APIENTRY*)(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pPresentationParameters);
 using PresentFn = long(__stdcall*)(LPDIRECT3DDEVICE9 pDevice, LPVOID, LPVOID, HWND, LPVOID);
@@ -80,12 +83,13 @@ public:
     PresentFn oPresent = NULL;
     WNDPROC oWndProc = NULL;
     HWND Window = NULL;
-    IDirect3DDevice9* D3DDevice = NULL;
 
     bool EnableSettings = false;
     bool EnableImGuiDemo = false;
 
     std::vector<IModule*> Modules = {};
+
+    kiero::Status::Enum DX9HookStatus = kiero::Status::UnknownError;
 
     SettingMgr Settings;
 

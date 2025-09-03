@@ -648,7 +648,6 @@ void TwinkUi::RenderSettings()
             if (Button("Save settings"))
             {
                 Logger.PrintInternal("Saving settings...");
-                Logger.PrintInternal(std::filesystem::current_path().string().c_str());
                 Settings.Save();
                 if (Settings.Status != 0)
                 {

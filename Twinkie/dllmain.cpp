@@ -249,20 +249,51 @@ static DWORD WINAPI MainThread(LPVOID lpReserved)
 	freopen_s((FILE**)stdout, "CONOUT$", "w", stdout);
 #endif
 
-	// From: https://github.com/CodyNinja1/TMFHookDx9
-
-	while (!Twinkie.TrackmaniaMgr.GetTrackmania()) Sleep(1);
-	while (!Twinkie.TrackmaniaMgr.GetVisionViewport()) Sleep(1);
-	while (!Twinkie.TrackmaniaMgr.GetD3DDevice()) Sleep(1);
-
-	Twinkie.D3DDevice = Twinkie.TrackmaniaMgr.GetD3DDevice();
+	while (!Twinkie.TrackmaniaMgr.GetTrackmania())
+	{
+		Sleep(1);
+	}
+	while (!Twinkie.TrackmaniaMgr.GetVisionViewport())
+	{
+		Sleep(1);
+	}
+	while (!Twinkie.TrackmaniaMgr.GetD3DDevice())
+	{
+		Sleep(1);
+	}
+	auto D3DDevice = Twinkie.TrackmaniaMgr.GetD3DDevice();
 	D3DDEVICE_CREATION_PARAMETERS D3DCreationParams = {};
-	while ((Twinkie.D3DDevice->GetCreationParameters(&D3DCreationParams) != D3D_OK) or !D3DCreationParams.hFocusWindow) Sleep(1);
+	while ((D3DDevice->GetCreationParameters(&D3DCreationParams) != D3D_OK) or !D3DCreationParams.hFocusWindow)
+	{
+		Sleep(1);
+	}
 
-	Twinkie.Window = D3DCreationParams.hFocusWindow;
-	Twinkie.oWndProc = (WNDPROC)SetWindowLongPtr(D3DCreationParams.hFocusWindow, GWLP_WNDPROC, (LONG_PTR)WndProc);
-	Twinkie.oPresent = reinterpret_cast<PresentFn>(Twinkie.TrackmaniaMgr.VirtualWrite(17, (uintptr_t)Twinkie.D3DDevice, (uintptr_t)hkPresent));
-	Twinkie.oReset = reinterpret_cast<ResetFn>(Twinkie.TrackmaniaMgr.VirtualWrite(16, (uintptr_t)Twinkie.D3DDevice, (uintptr_t)hkReset));
+	bool HookedAndAttached = false;
+	while (!HookedAndAttached)
+	{
+		Twinkie.Logger.PrintInternal("Hooking DX9...");
+		if ((Twinkie.DX9HookStatus = kiero::init(kiero::RenderType::D3D9)) == kiero::Status::Success)
+		{
+			Twinkie.Logger.PrintInternal("kiero initialized");
+			kiero::bind(16, (void**)&Twinkie.oReset, hkReset);
+			Twinkie.DX9HookStatus = kiero::bind(17, (void**)&Twinkie.oPresent, hkPresent);
+			Twinkie.Logger.PrintInternalArgs("kiero status: {}", (int)Twinkie.DX9HookStatus);
+			
+			if (D3DDevice->GetCreationParameters(&D3DCreationParams) == D3D_OK)
+			{
+				Twinkie.Window = D3DCreationParams.hFocusWindow;
+				if (!Twinkie.Window) continue; // just to shut up MSVC, Window cannot be possibly null here because of dllmain.cpp(245,5)
+				Twinkie.oWndProc = (WNDPROC)SetWindowLongPtr(Twinkie.Window, GWLP_WNDPROC, (LONG_PTR)WndProc);
+				if (!Twinkie.oWndProc)
+					Twinkie.Logger.PrintErrorArgs("Failed to hook WndProc");
+				HookedAndAttached = true;
+			}
+			else
+			{
+				Twinkie.Logger.PrintError("Could not get D3D9CreationParameters");
+			}
+		}
+	}
 
 	return TRUE;
 }
@@ -276,8 +307,7 @@ BOOL WINAPI DllMain(HMODULE hMod, DWORD dwReason, LPVOID lpReserved)
 		CreateThread(nullptr, 0, MainThread, hMod, 0, nullptr);
 		break;
 	case DLL_PROCESS_DETACH:
-		Twinkie.TrackmaniaMgr.VirtualWrite(17, (uintptr_t)Twinkie.D3DDevice, (uintptr_t)Twinkie.oPresent);
-		Twinkie.TrackmaniaMgr.VirtualWrite(16, (uintptr_t)Twinkie.D3DDevice, (uintptr_t)Twinkie.oReset);
+		kiero::shutdown();
 		break;
 	}
 	return TRUE;
