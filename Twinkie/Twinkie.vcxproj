@@ -508,6 +508,15 @@
     <ClInclude Include="imgui-dx9\imstb_textedit.h" />
     <ClInclude Include="imgui-dx9\imstb_truetype.h" />
     <ClInclude Include="IModule.h" />
+    <ClInclude Include="kiero\kiero.h" />
+    <ClInclude Include="kiero\minhook\include\MinHook.h" />
+    <ClInclude Include="kiero\minhook\src\buffer.h" />
+    <ClInclude Include="kiero\minhook\src\hde\hde32.h" />
+    <ClInclude Include="kiero\minhook\src\hde\hde64.h" />
+    <ClInclude Include="kiero\minhook\src\hde\pstdint.h" />
+    <ClInclude Include="kiero\minhook\src\hde\table32.h" />
+    <ClInclude Include="kiero\minhook\src\hde\table64.h" />
+    <ClInclude Include="kiero\minhook\src\trampoline.h" />
     <ClInclude Include="LuaEngine\include\lauxlib.h" />
     <ClInclude Include="LuaEngine\include\lua.h" />
     <ClInclude Include="LuaEngine\include\lua.hpp" />
@@ -559,6 +568,12 @@
     <ClCompile Include="imgui-dx9\imgui_impl_win32.cpp" />
     <ClCompile Include="imgui-dx9\imgui_tables.cpp" />
     <ClCompile Include="imgui-dx9\imgui_widgets.cpp" />
+    <ClCompile Include="kiero\kiero.cpp" />
+    <ClCompile Include="kiero\minhook\src\buffer.c" />
+    <ClCompile Include="kiero\minhook\src\hde\hde32.c" />
+    <ClCompile Include="kiero\minhook\src\hde\hde64.c" />
+    <ClCompile Include="kiero\minhook\src\hook.c" />
+    <ClCompile Include="kiero\minhook\src\trampoline.c" />
     <ClCompile Include="Modules\About\About.cpp" />
     <ClCompile Include="Modules\AlwaysOfficial\AlwaysOfficial.cpp" />
     <ClCompile Include="Modules\CheckpointCounter\CheckpointCounter.cpp" />
@@ -583,7 +598,11 @@
     <ClCompile Include="TwinkUi\TwinkUi.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="kiero\minhook\dll_resources\MinHook.def" />
     <None Include="TmForeverLib\TmForever.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="kiero\minhook\dll_resources\MinHook.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
