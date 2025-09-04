@@ -1,9 +1,7 @@
 # Twinkie
 [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/TwinkieTweaks/Twinkie?include_prereleases&color=f132e3)](https://github.com/TwinkieTweaks/Twinkie/releases)
 [![GitHub all releases](https://img.shields.io/github/downloads/TwinkieTweaks/Twinkie/total?color=f132e3)](https://github.com/TwinkieTweaks/Twinkie/releases)
-[![GitHub contributors](https://img.shields.io/github/contributors/TwinkieTweaks/Twinkie?color=f132e3)](https://github.com/TwinkieTweaks/Twinkie/graphs/contributors)
-[![GitHub stars](https://img.shields.io/github/stars/TwinkieTweaks/Twinkie?style=flat&color=f132e3)](https://github.com/TwinkieTweaks/Twinkie/stargazers)
-[![Time since last git commit](https://img.shields.io/github/last-commit/TwinkieTweaks/Twinkie?style=flat&color=f132e3)](https://github.com/TwinkieTweaks/Twinkie/commits/master)\
+[![GitHub contributors](https://img.shields.io/github/contributors/TwinkieTweaks/Twinkie?color=f132e3)](https://github.com/TwinkieTweaks/Twinkie/graphs/contributors)\
 Twinkie is a QOL modification for TrackMania Forever, a practical alternative to Openplanet, but for TMNF and TMUF.\
 It features a modular (or plugin-like) system for overlays and patches, that makes it practical to customize every feature available.
 
