@@ -34,5 +34,5 @@ extern "C"
 	__declspec(dllimport) void CloseLuaAll();
 }
 
-__declspec(dllimport) ModuleInfo* RunModuleInfo(const char* StateName, char* ErrorStrBuffer, size_t ErrorStrSize);
+__declspec(dllimport) ModuleInfo RunModuleInfo(const char* StateName, char* ErrorStrBuffer, size_t ErrorStrSize);
 __declspec(dllimport) void SetImGuiContext(ImGuiContext* Ctx);

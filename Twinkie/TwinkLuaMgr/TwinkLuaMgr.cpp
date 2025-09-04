@@ -48,16 +48,13 @@ void TwinkLuaMgr::GetModulesFromDocuments(bool EnableByDefault)
 				continue;
 			}
 
-			ModuleInfo* pLuaModuleInfo;
 			ModuleInfo LuaModuleInfo;
-			pLuaModuleInfo = RunModuleInfo(Filename.c_str(), ErrorStrBuffer, sizeof(ErrorStrBuffer));
-			if (!pLuaModuleInfo)
+			LuaModuleInfo = RunModuleInfo(Filename.c_str(), ErrorStrBuffer, sizeof(ErrorStrBuffer));
+			if (strcmp("OK", ErrorStrBuffer) != 0)
 			{
 				Logger->PrintErrorArgs("Error while getting module info for {}: {}", Filename, ErrorStrBuffer);
-				delete pLuaModuleInfo;
 				continue;
 			}
-			LuaModuleInfo = *pLuaModuleInfo;
 
 			RunMain(Filename.c_str(), ErrorStrBuffer, sizeof(ErrorStrBuffer));
 			if (strcmp(ErrorStrBuffer, "OK") != 0)
@@ -66,7 +63,6 @@ void TwinkLuaMgr::GetModulesFromDocuments(bool EnableByDefault)
 			}
 
 			ILuaModule* LuaModule = new ILuaModule(Filename.c_str(), &LuaModuleInfo);
-			delete pLuaModuleInfo;
 
 			LuaModule->FancyName = LuaModuleInfo.Name;
 			LuaModule->Name = Filename;
@@ -233,24 +229,20 @@ bool TwinkLuaMgr::ReloadModule(const char* Filename)
 				return true;
 			}
 
-			ModuleInfo* pLuaModuleInfo;
 			ModuleInfo LuaModuleInfo;
-			pLuaModuleInfo = RunModuleInfo(Filename, ErrorStrBuffer, sizeof(ErrorStrBuffer));
-			if (!pLuaModuleInfo)
+			LuaModuleInfo = RunModuleInfo(Filename, ErrorStrBuffer, sizeof(ErrorStrBuffer));
+			if (strcmp("OK", ErrorStrBuffer) != 0)
 			{
 				Logger->PrintErrorArgs("Error while getting module info for {}: {}", Filename, ErrorStrBuffer);
-				delete pLuaModuleInfo;
 				LuaModule->HasErrored = true;
 				return true;
 			}
-			LuaModuleInfo = *pLuaModuleInfo;
 
 			LuaModule->LuaModuleInfo = LuaModuleInfo;
 			LuaModule->Name = Filename;
 			LuaModule->FancyName = LuaModuleInfo.Name;
 			LuaModule->Reset();
 
-			delete pLuaModuleInfo;
 			return true;
 		}
 	}
