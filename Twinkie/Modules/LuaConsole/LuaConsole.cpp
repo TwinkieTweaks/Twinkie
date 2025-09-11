@@ -157,7 +157,7 @@ void LuaConsoleModule::Render()
         if (std::string(LuaStringBuffer).starts_with("local"))
         {
             g_LuaConsoleModuleOutputStr = g_LuaConsoleModuleOutputStr + "!! Locals go out of scope with each statement (i.e. if you make a local variable, you cannot access it later) !!\n"
-                                                                        "!! If you want to create a variable, make it global (don't use the local directive) !!";
+                                                                        "!! If you want to create a variable, make it global (don't use the local directive) !!\n";
         }
         RunLua(LuaConsoleStateName, LuaStringBuffer, ErrorBuffer, StringBufferMaxSize);
         if (strcmp(ErrorBuffer, "OK") != StringsAreEqual)
